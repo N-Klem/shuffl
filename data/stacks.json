@@ -1,0 +1,7 @@
+[
+ {"id":"traveller","name":"The Traveller","description":"Flights, stays and lounge time — without the spreadsheet.","persona":"Frequent flyers who want smoother trips","icon":"plane","cardIds":["altitude-journey","venture-path","harbor-reserve"]},
+ {"id":"student","name":"The Student","description":"Easy approvals, no annual fees and simple everyday cashback.","persona":"Students building credit from scratch","icon":"student","cardIds":["campus-cash","student-savor","discover-student-flex"]},
+ {"id":"everyday","name":"The Everyday","description":"A low-maintenance combo that earns wherever life happens.","persona":"Anyone who wants balanced daily rewards","icon":"sparkles","cardIds":["everyday-double","grocery-glow","dine-one"]},
+ {"id":"points-hacker","name":"The Points Hacker","description":"Transferable points and premium perks for maximum upside.","persona":"Optimisers happy to juggle a few cards","icon":"zap","cardIds":["harbor-reserve","gold-table","flex-freedom"]},
+ {"id":"cashback-maximiser","name":"The Cashback Maximiser","description":"Straight cash, strong category rates, zero point maths.","persona":"Cashback fans who want every purchase covered","icon":"cash","cardIds":["everyday-double","grocery-glow","custom-cash"]}
+]

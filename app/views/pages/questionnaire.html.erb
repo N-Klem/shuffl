@@ -1,0 +1,370 @@
+<% content_for :title, "Find your card stack — Shuffl" %>
+<%= render "shared/nav" %>
+<main class="questionnaire shell" data-questionnaire>
+  <div class="question-top"><a href="/" class="back-link">← Back</a><span id="step-label">Step 1 of 17</span><button type="button" class="quiet-button" data-reset>Start over</button></div>
+  <div class="progress"><span data-progress></span></div>
+  <form action="/results" method="get" data-questionnaire-form>
+
+    <!-- Q1: Credit score -->
+    <section class="question-step active" data-step="1">
+      <span class="kicker">LET'S START HERE</span>
+      <h1>How's your credit looking?</h1>
+      <p>Don't know the number? The plain-English answer is enough.</p>
+      <div class="choice-list">
+        <% [
+          ["unknown","I don't know","That's totally fine — we'll work with it"],
+          ["fair","Fair","Still building it up"],
+          ["good","Good","In a solid place"],
+          ["excellent","Excellent","Top-tier territory"]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="credit_band" value="<%= v %>" required>
+            <span><strong><%= t %></strong><small><%= s %></small></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q2: Life stage -->
+    <section class="question-step" data-step="2">
+      <span class="kicker">ABOUT YOU</span>
+      <h1>What best describes you?</h1>
+      <p>This helps us recommend cards designed for your stage of life.</p>
+      <div class="choice-grid two">
+        <% [
+          ["student","🎓","Student","In school or university"],
+          ["young_professional","💼","Young professional","Early in your career"],
+          ["professional","📊","Working professional","Established in your career"],
+          ["retired","🌴","Retired","Enjoying the good life"]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="life_stage" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q3: Annual income -->
+    <section class="question-step" data-step="3">
+      <span class="kicker">NO JUDGEMENT</span>
+      <h1>What's your approximate annual income?</h1>
+      <p>Some cards have minimum income requirements. We'll only show you cards you can get.</p>
+      <div class="choice-list">
+        <% [
+          ["under_15k","Under $15,000","Student or part-time income"],
+          ["15k_30k","$15,000 – $30,000",""],
+          ["30k_50k","$30,000 – $50,000",""],
+          ["50k_75k","$50,000 – $75,000",""],
+          ["75k_100k","$75,000 – $100,000",""],
+          ["over_100k","$100,000+",""]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="income" value="<%= v %>" required>
+            <span><strong><%= t %></strong><% if s.present? %><small><%= s %></small><% end %></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q4: Existing cards -->
+    <section class="question-step" data-step="4">
+      <span class="kicker">YOUR WALLET TODAY</span>
+      <h1>Do you already have any credit cards?</h1>
+      <p>Whether you're starting from scratch or optimising an existing setup, we'll tailor the advice.</p>
+      <div class="choice-grid three">
+        <% [
+          ["none","🆕","No, this would be my first",""],
+          ["few","✌️","Yes, 1–2 cards",""],
+          ["many","🃏","Yes, 3 or more",""]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="existing_cards" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q5: Authorized user / parents -->
+    <section class="question-step" data-step="5">
+      <span class="kicker">CREDIT BUILDING</span>
+      <h1>Are you an authorized user on a parent's card?</h1>
+      <p>Being added to a family member's card can help build your credit history — even before you get your own.</p>
+      <div class="choice-list">
+        <% [
+          ["yes","Yes, I'm already an authorized user","Great — this helps your credit profile"],
+          ["interested","No, but I'm interested","We can recommend cards that support this"],
+          ["no","No, and I'm not interested","No worries — we'll focus on your own cards"]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="authorized_user" value="<%= v %>" required>
+            <span><strong><%= t %></strong><small><%= s %></small></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q6: Main goal -->
+    <section class="question-step" data-step="6">
+      <span class="kicker">YOUR GOAL</span>
+      <h1>What's your main goal with a credit card?</h1>
+      <p>This shapes everything we recommend.</p>
+      <div class="choice-grid two">
+        <% [
+          ["build_credit","🏗️","Build my credit","I want to establish or improve my score"],
+          ["maximize_rewards","🎯","Maximise rewards","I want the most value from my spending"],
+          ["simplify","✨","Keep it simple","One great card that covers everything"],
+          ["specific_perk","🎁","Get a specific perk","Lounge access, travel insurance, etc."]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="goal" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q7: Travel or cashback -->
+    <section class="question-step" data-step="7">
+      <span class="kicker">REWARD STYLE</span>
+      <h1>What type of rewards do you prefer?</h1>
+      <p>Pick the one you'd actually be excited to use.</p>
+      <div class="choice-grid three">
+        <% [
+          ["cashback","$","Cash back","Simple money back on everything"],
+          ["travel","✈︎","Travel rewards","Turn spending into flights and stays"],
+          ["points","◆","Flexible points","Points you can use for anything"]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="preference" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q8: Biggest spending category -->
+    <section class="question-step" data-step="8">
+      <span class="kicker">YOUR SPENDING</span>
+      <h1>Where does most of your money go?</h1>
+      <p>Pick your single biggest spending category.</p>
+      <div class="choice-grid three">
+        <% [
+          ["dining","🍜","Dining","Restaurants, takeaway, coffee"],
+          ["groceries","🥑","Groceries","Supermarkets and food shops"],
+          ["travel","✈︎","Travel","Flights, hotels, transport"],
+          ["gas","⛽","Fuel & transport","Petrol, rideshares, transit"],
+          ["streaming","▶","Subscriptions","Streaming, apps, memberships"],
+          ["other","✦","Everything else","General spending"]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="top_category" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q9: Secondary categories -->
+    <section class="question-step" data-step="9">
+      <span class="kicker">AND ALSO…</span>
+      <h1>What else do you spend on regularly?</h1>
+      <p>Choose as many as you like — we'll prioritise rewards in these areas.</p>
+      <div class="choice-grid three">
+        <% {dining:"🍜 Dining",travel:"✈︎ Travel",groceries:"🥑 Groceries",gas:"⛽ Fuel",streaming:"▶ Streaming",other:"✦ Everything else"}.each do |value,label| %>
+          <label class="mini-choice">
+            <input type="checkbox" name="categories[]" value="<%= value %>">
+            <span><%= label %></span>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q10: Monthly spending -->
+    <section class="question-step" data-step="10">
+      <span class="kicker">SPENDING HABITS</span>
+      <h1>Roughly how much do you spend per month?</h1>
+      <p>This helps us figure out which sign-up bonuses you can realistically hit and whether premium cards will pay for themselves.</p>
+      <div class="choice-list">
+        <% [
+          ["under_500","Under $500",""],
+          ["500_1000","$500 – $1,000",""],
+          ["1000_2000","$1,000 – $2,000",""],
+          ["2000_4000","$2,000 – $4,000",""],
+          ["over_4000","$4,000+",""]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="monthly_spend" value="<%= v %>" required>
+            <span><strong><%= t %></strong></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q11: International spending -->
+    <section class="question-step" data-step="11">
+      <span class="kicker">GOING GLOBAL</span>
+      <h1>Do you spend money abroad or in foreign currencies?</h1>
+      <p>Foreign transaction fees can cost 3% on every purchase — we'll avoid those if you need to.</p>
+      <div class="choice-list">
+        <% [
+          ["regularly","Yes, regularly","I travel or shop internationally often"],
+          ["occasionally","Occasionally","A few times a year"],
+          ["never","Never","I only spend domestically"]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="foreign_spending" value="<%= v %>" required>
+            <span><strong><%= t %></strong><small><%= s %></small></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q12: Preferred airline / hotel -->
+    <section class="question-step" data-step="12">
+      <span class="kicker">LOYALTY</span>
+      <h1>Do you have a preferred airline or hotel chain?</h1>
+      <p>If you're loyal to a brand, we'll find cards whose points transfer there.</p>
+      <div class="choice-list">
+        <% [
+          ["skyways","SkyWays","Frequent flyer with SkyWays"],
+          ["avios","Avios","Collect Avios points"],
+          ["world_hotels","World Hotels","Stay at World Hotels properties"],
+          ["no_preference","No preference","I'm flexible — show me the best value"]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="loyalty_program" value="<%= v %>" required>
+            <span><strong><%= t %></strong><small><%= s %></small></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q13: Perks that matter -->
+    <section class="question-step" data-step="13">
+      <span class="kicker">PERKS</span>
+      <h1>Which perks matter most to you?</h1>
+      <p>Pick up to three — we'll weight cards that offer these.</p>
+      <div class="choice-grid three">
+        <% [
+          ["lounge","✈︎","Lounge access"],
+          ["travel_insurance","🛡️","Travel insurance"],
+          ["phone_protection","📱","Phone protection"],
+          ["purchase_protection","🛒","Purchase protection"],
+          ["no_foreign_fee","🌍","No foreign fees"],
+          ["signup_bonus","🎁","Sign-up bonus"]
+        ].each do |v,emoji,t| %>
+          <label class="mini-choice">
+            <input type="checkbox" name="perks[]" value="<%= v %>">
+            <span><%= emoji %> <%= t %></span>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q14: Annual fee -->
+    <section class="question-step" data-step="14">
+      <span class="kicker">THE MONEY QUESTION</span>
+      <h1>How do you feel about annual fees?</h1>
+      <p>A fee can unlock more value, but only if it makes sense for your spending.</p>
+      <div class="choice-grid two">
+        <% [
+          ["none","💵","$0","I don't want to pay to hold a card"],
+          ["low","💳","Under $100","A small fee for extra value"],
+          ["medium","⭐","Under $250","Serious rewards and benefits"],
+          ["any","🚀","No limit","I'll pay if the value is there"]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="fee" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q15: Card network preference -->
+    <section class="question-step" data-step="15">
+      <span class="kicker">NETWORK</span>
+      <h1>Do you have a preferred card network?</h1>
+      <p>Some networks are accepted more widely than others, and each has different perks.</p>
+      <div class="choice-grid two">
+        <% [
+          ["visa","Visa","Accepted almost everywhere worldwide"],
+          ["mastercard","Mastercard","Global acceptance with strong protections"],
+          ["amex","Amex","Premium rewards, but not accepted everywhere"],
+          ["no_preference","No preference","I just want the best card"]
+        ].each do |v,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="card_network" value="<%= v %>" required>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q16: Sign-up bonus importance -->
+    <section class="question-step" data-step="16">
+      <span class="kicker">BONUS</span>
+      <h1>How important is a sign-up bonus?</h1>
+      <p>Many cards offer bonus points or cashback if you spend a certain amount in the first few months.</p>
+      <div class="choice-list">
+        <% [
+          ["very","Very important","I want the biggest welcome offer I can get"],
+          ["nice","Nice to have","I'd take one, but it's not a deal-breaker"],
+          ["not","Not important","I care more about ongoing rewards"]
+        ].each do |v,t,s| %>
+          <label class="line-choice">
+            <input type="radio" name="signup_bonus" value="<%= v %>" required>
+            <span><strong><%= t %></strong><small><%= s %></small></span>
+            <b>○</b>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Q17: How many cards -->
+    <section class="question-step" data-step="17">
+      <span class="kicker">LAST ONE</span>
+      <h1>How many cards are you comfortable managing?</h1>
+      <p>More cards can mean more rewards, but also more to keep track of.</p>
+      <div class="choice-grid three">
+        <% [
+          ["1","☝️","Just one","Keep it simple"],
+          ["2_3","✌️","Two or three","A balanced stack"],
+          ["no_limit","🃏","No limit","Maximise everything"]
+        ].each do |v,emoji,t,s| %>
+          <label class="choice-card compact">
+            <input type="radio" name="card_count" value="<%= v %>" required>
+            <span class="choice-emoji"><%= emoji %></span>
+            <strong><%= t %></strong>
+            <small><%= s %></small>
+          </label>
+        <% end %>
+      </div>
+    </section>
+
+    <div class="question-actions">
+      <button type="button" class="button button-secondary" data-prev disabled>← Back</button>
+      <button type="button" class="button" data-next>Continue →</button>
+    </div>
+  </form>
+</main>
