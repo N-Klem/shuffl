@@ -1744,3 +1744,25 @@ Processing by PagesController#wallet as HTML
 Completed 200 OK in 11ms (Views: 6.7ms | GC: 0.0ms)
 
 
+Started GET "/wallet" for ::1 at 2026-09-03 23:40:45 +0100
+Processing by PagesController#wallet as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/wallet.html.erb within layouts/application
+  Rendered shared/_nav.html.erb (Duration: 1.1ms | GC: 0.7ms)
+  Rendered pages/wallet.html.erb within layouts/application (Duration: 2.0ms | GC: 0.7ms)
+  Rendered shared/_chat_widget.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 23.5ms | GC: 9.5ms)
+Completed 200 OK in 45ms (Views: 28.3ms | GC: 14.0ms)
+
+
+Started GET "/" for ::1 at 2026-09-03 23:46:50 +0100
+Processing by PagesController#home as HTML
+  Rendering layout layouts/application.html.erb
+  Rendering pages/home.html.erb within layouts/application
+  Rendered shared/_nav.html.erb (Duration: 0.2ms | GC: 0.0ms)
+  Rendered pages/home.html.erb within layouts/application (Duration: 2.0ms | GC: 0.6ms)
+  Rendered shared/_chat_widget.html.erb (Duration: 0.1ms | GC: 0.0ms)
+  Rendered layout layouts/application.html.erb (Duration: 12.8ms | GC: 3.8ms)
+Completed 200 OK in 34ms (Views: 18.6ms | GC: 12.4ms)
+
+
