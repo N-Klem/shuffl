@@ -4,6 +4,36 @@ class PagesController < ApplicationController
   def questionnaire; end
   def wallet; end
 
+  def compare
+    ids = params[:ids].to_s.split(",").map(&:strip).reject(&:blank?).uniq.first(4)
+    @cards = ids.filter_map { |id| @cards_by_id[id] }
+    @reward_categories = %w[dining travel groceries gas streaming other]
+    @perks = @cards.flat_map { |card| card["perks"] }.uniq
+    @transfer_partners = @cards.flat_map { |card| card["transferPartners"] }.uniq
+  end
+
+  def explore
+    @cards_json = @all_cards.to_json
+  end
+
+  def card_detail
+    @card = @cards_by_id[params[:id]]
+    return redirect_to(root_path) unless @card
+
+    @card_index = @all_cards.index(@card)
+    @top_rewards = @card["rewards"].sort_by { |_, multiplier| -multiplier }.first(3)
+    @similar_cards = @all_cards
+      .reject { |card| card["id"] == @card["id"] }
+      .sort_by do |card|
+        overlap = (card["categories"] & @card["categories"]).length
+        reward_distance = @card["rewards"].sum do |category, multiplier|
+          (multiplier - card["rewards"].fetch(category, 0)).abs
+        end
+        [-overlap, reward_distance, card["name"]]
+      end
+      .first(3)
+  end
+
   def results
     if params[:stack].present?
       @stack = @stacks.find { |s| s["id"] == params[:stack] } || @stacks.first

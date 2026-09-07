@@ -1,0 +1,109 @@
+<% content_for :title, "#{@card['name']} — Shuffl" %>
+<%= render "shared/nav" %>
+
+<aside class="card-product-sticky" data-card-sticky aria-hidden="true" inert>
+  <div class="shell card-product-sticky-inner">
+    <strong class="card-product-sticky-name"><%= @card['name'] %></strong>
+    <div class="card-product-sticky-facts">
+      <span><strong><%= @top_rewards.first.last %>×</strong> top reward</span>
+      <span><strong><%= @card['annualFee'].zero? ? '$0' : "$#{@card['annualFee']}" %></strong> annual fee</span>
+    </div>
+    <button class="button card-wallet-button card-product-sticky-button" type="button" data-add-to-wallet>♡ Add to wallet</button>
+  </div>
+</aside>
+
+<main class="card-product" data-card-detail data-card='<%= raw @card.to_json %>'>
+  <section class="card-product-hero tone-bg-<%= (@card_index % 6) + 1 %>">
+    <div class="shell card-product-hero-inner">
+      <a href="<%= results_path %>" class="card-product-back">← Back to results</a>
+      <div class="card-product-visual tone-<%= (@card_index % 6) + 1 %>">
+        <div><span class="mini-chip"></span><b><%= @card['issuer'] %></b></div>
+        <span class="network"><%= @card['cardNetwork'] %></span>
+        <strong><%= @card['name'] %></strong>
+        <span>•••• <%= 4829 + (@card_index % 8) * 813 %></span>
+      </div>
+      <div class="card-product-intro">
+        <span class="eyebrow">CARD PROFILE</span>
+        <h1><%= @card['name'] %></h1>
+        <p><%= @card['issuer'] %> · <%= @card['cardNetwork'] %></p>
+        <button class="button card-wallet-button" type="button" data-add-to-wallet>♡ Add to wallet</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell card-product-content">
+    <section class="product-section why-card">
+      <span class="kicker">THE SHORT VERSION</span>
+      <h2>Why this card</h2>
+      <% top_names = @top_rewards.select { |_, value| value > 1 }.map { |category, _| category } %>
+      <p>
+        <%= @card['name'] %> earns its place with up to <%= @top_rewards.first.last %>× on <%= @top_rewards.first.first %><%= top_names.second ? " and strong rewards on #{top_names.second}" : "" %>.
+        <% if @card['perks'].any? %>Its standout extras include <%= @card['perks'].first(2).to_sentence.downcase %>, making it a compelling fit for people who value <%= @card['categories'].first(2).to_sentence %>.<% end %>
+        <%= @card['annualFee'].zero? ? "With no annual fee, those rewards are easy to keep working year after year." : "The $#{@card['annualFee']} annual fee is best justified when you make regular use of those rewards and benefits." %>
+      </p>
+    </section>
+
+    <div class="product-two-column">
+      <section class="product-section">
+        <span class="kicker">EARNING POWER</span>
+        <h2>Full rewards breakdown</h2>
+        <div class="product-rewards">
+          <% max_reward = @card['rewards'].values.max.to_f %>
+          <% @card['rewards'].sort_by { |_, multiplier| -multiplier }.each do |category, multiplier| %>
+            <div class="product-reward-row">
+              <div class="product-reward-label"><strong><%= multiplier %>×</strong> <span><%= category %></span></div>
+              <div class="product-reward-track"><span style="width:<%= (multiplier / max_reward * 100).round %>%"></span></div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <section class="product-section">
+        <span class="kicker">AT A GLANCE</span>
+        <h2>Key details</h2>
+        <div class="product-detail-grid">
+          <div><span>Annual fee</span><strong><%= @card['annualFee'].zero? ? '$0' : "$#{@card['annualFee']}" %></strong></div>
+          <div><span>Credit score</span><strong><%= @card['creditScoreMin'] %>+</strong></div>
+          <div><span>Points currency</span><strong><%= @card['pointsCurrency'] %></strong></div>
+          <div><span>Foreign txn fee</span><strong><%= @card['foreignTransactionFee'] ? 'Yes' : 'None' %></strong></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="product-section">
+      <span class="kicker">BUILT IN</span>
+      <h2>All perks</h2>
+      <div class="product-tags"><% @card['perks'].each do |perk| %><span>✦ <%= perk %></span><% end %></div>
+    </section>
+
+    <% if @card['transferPartners'].any? %>
+      <section class="product-section product-partners">
+        <span class="kicker">MORE WAYS TO REDEEM</span>
+        <h2>Transfer partners</h2>
+        <div class="product-tags"><% @card['transferPartners'].each do |partner| %><span><%= partner %></span><% end %></div>
+      </section>
+    <% end %>
+
+    <% bonus = @card['signUpBonus'] %>
+    <% if bonus && bonus['amount'].positive? %>
+      <section class="product-bonus">
+        <div><span class="kicker">WELCOME OFFER</span><h2><%= number_with_delimiter(bonus['amount']) %> <%= @card['pointsCurrency'] %></h2></div>
+        <p>Earn the bonus after spending <strong><%= number_to_currency(bonus['spend'], precision: 0) %></strong> in your first <strong><%= bonus['months'] %> months</strong>.</p>
+      </section>
+    <% end %>
+
+    <section class="product-section similar-section">
+      <span class="kicker">KEEP EXPLORING</span>
+      <h2>Similar cards</h2>
+      <div class="similar-card-grid">
+        <% @similar_cards.each do |card| %>
+          <% index = @all_cards.index(card) %>
+          <%= link_to card_detail_path(card['id']), class: "similar-card" do %>
+            <div class="similar-card-visual tone-<%= (index % 6) + 1 %>"><span><%= card['issuer'] %></span><strong><%= card['name'] %></strong><small><%= card['cardNetwork'] %></small></div>
+            <div><strong><%= card['name'] %></strong><span>Up to <%= card['rewards'].values.max %>× rewards · <%= card['annualFee'].zero? ? 'No annual fee' : "$#{card['annualFee']} annual fee" %></span></div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</main>

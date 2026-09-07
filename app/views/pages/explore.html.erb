@@ -1,0 +1,33 @@
+<% content_for :title, "Explore credit cards — Shuffl" %>
+<%= render "shared/nav" %>
+
+<%= tag.main class: "explore-page", data: { explore: true, cards: @cards_json } do %>
+  <header class="explore-heading shell">
+    <span class="kicker">ALL CARDS</span>
+    <h1>Find your next card</h1>
+    <p>Search and compare all 54 cards, then save the ones that fit.</p>
+  </header>
+
+  <section class="explore-toolbar" aria-label="Search, filter, and sort cards">
+    <div class="shell explore-toolbar-inner">
+      <label class="explore-search"><span aria-hidden="true">⌕</span><span class="sr-only">Search cards</span><input type="search" placeholder="Search by card or issuer…" data-card-search></label>
+      <div class="filter-chips" aria-label="Card filters">
+        <% [["no-annual-fee", "No Annual Fee"], ["no-foreign-fee", "No Foreign Txn Fee"], ["travel", "Travel"], ["cashback", "Cashback"], ["dining", "Dining"], ["groceries", "Groceries"], ["student", "Student"]].each do |value, label| %>
+          <button type="button" class="filter-chip" data-filter="<%= value %>" aria-pressed="false"><%= label %></button>
+        <% end %>
+      </div>
+      <label class="explore-sort"><span>Sort</span><select data-card-sort><option value="rewards">Best Rewards</option><option value="fee">Lowest Fee</option><option value="bonus">Highest Sign-Up Bonus</option></select></label>
+    </div>
+  </section>
+
+  <section class="shell explore-results" aria-live="polite">
+    <div class="explore-count"><strong data-result-count>54 cards</strong><button type="button" data-clear-filters hidden>Clear filters</button></div>
+    <div class="explore-grid" data-card-grid></div>
+    <div class="explore-empty" data-empty-state hidden><span>⌕</span><h2>No cards found</h2><p>Try a broader search or remove a filter.</p></div>
+  </section>
+
+  <dialog class="card-dialog" data-card-dialog>
+    <button type="button" class="dialog-close" data-dialog-close aria-label="Close card details">×</button>
+    <div data-dialog-content></div>
+  </dialog>
+<% end %>
