@@ -1,0 +1,55 @@
+  [1m[35mSQL (0.5ms)[0m  [1m[35mCREATE EXTENSION IF NOT EXISTS "plpgsql" SCHEMA pg_catalog[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "cards" CASCADE[0m
+  [1m[35m (13.2ms)[0m  [1m[35mCREATE TABLE "cards" ("id" bigserial primary key, "annual_fee" integer, "best_for" text, "card_type" character varying, "created_at" timestamp(6) NOT NULL, "description" text, "image_url" character varying, "issuer" character varying, "name" character varying, "network" character varying, "perks" text, "reward_rate" float, "updated_at" timestamp(6) NOT NULL, "welcome_bonus" character varying)[0m
+  [1m[35m (0.3ms)[0m  [1m[35mDROP TABLE IF EXISTS "messages" CASCADE[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "messages" ("id" bigserial primary key, "card_id" bigint, "content" text, "created_at" timestamp(6) NOT NULL, "role" character varying, "updated_at" timestamp(6) NOT NULL, "user_id" bigint NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_messages_on_card_id" ON "messages" ("card_id")[0m
+  [1m[35m (2.4ms)[0m  [1m[35mCREATE INDEX "index_messages_on_user_id" ON "messages" ("user_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "quiz_responses" CASCADE[0m
+  [1m[35m (3.1ms)[0m  [1m[35mCREATE TABLE "quiz_responses" ("id" bigserial primary key, "answers" text, "completed_at" timestamp(6), "created_at" timestamp(6) NOT NULL, "top_card_ids" text, "updated_at" timestamp(6) NOT NULL, "user_id" bigint NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE INDEX "index_quiz_responses_on_user_id" ON "quiz_responses" ("user_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE IF EXISTS "users" CASCADE[0m
+  [1m[35m (1.5ms)[0m  [1m[35mCREATE TABLE "users" ("id" bigserial primary key, "created_at" timestamp(6) NOT NULL, "email" character varying DEFAULT '' NOT NULL, "encrypted_password" character varying DEFAULT '' NOT NULL, "first_name" character varying, "remember_created_at" timestamp(6), "reset_password_sent_at" timestamp(6), "reset_password_token" character varying, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[35m (0.7ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email")[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_users_on_reset_password_token" ON "users" ("reset_password_token")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "wallet_items" CASCADE[0m
+  [1m[35m (0.9ms)[0m  [1m[35mCREATE TABLE "wallet_items" ("id" bigserial primary key, "card_id" bigint NOT NULL, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL, "user_id" bigint NOT NULL)[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE INDEX "index_wallet_items_on_card_id" ON "wallet_items" ("card_id")[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_wallet_items_on_user_id_and_card_id" ON "wallet_items" ("user_id", "card_id")[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE INDEX "index_wallet_items_on_user_id" ON "wallet_items" ("user_id")[0m
+  [1m[35m (2.8ms)[0m  [1m[35mALTER TABLE "messages" ADD CONSTRAINT "fk_rails_8fd2c7b88a"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+[0m
+  [1m[35m (0.7ms)[0m  [1m[35mALTER TABLE "messages" ADD CONSTRAINT "fk_rails_273a25a7a6"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+[0m
+  [1m[35m (0.4ms)[0m  [1m[35mALTER TABLE "quiz_responses" ADD CONSTRAINT "fk_rails_992c739fbd"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+[0m
+  [1m[35m (0.5ms)[0m  [1m[35mALTER TABLE "wallet_items" ADD CONSTRAINT "fk_rails_e5a47b4201"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+[0m
+  [1m[35m (0.4ms)[0m  [1m[35mALTER TABLE "wallet_items" ADD CONSTRAINT "fk_rails_15f7baf2a3"
+FOREIGN KEY ("user_id")
+  REFERENCES "users" ("id")
+[0m
+  [1m[35m (1.6ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL PRIMARY KEY)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.3ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20260908085156)[0m
+  [1m[35m (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES
+(20260908084837),
+(20260908084836),
+(20260908084835),
+(20260908084834),
+(20260908084833);[0m
+  [1m[35m (1.8ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" character varying NOT NULL PRIMARY KEY, "value" character varying, "created_at" timestamp(6) NOT NULL, "updated_at" timestamp(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.4ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.3ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'test', '2026-09-08 08:53:35.379417', '2026-09-08 08:53:35.379419') RETURNING "key"[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = $1 ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "schema_sha1"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('schema_sha1', 'c67afcf07b880996dceefd255ca0718c2fb5b103', '2026-09-08 08:53:35.380559', '2026-09-08 08:53:35.380560') RETURNING "key"[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
