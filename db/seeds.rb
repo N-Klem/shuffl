@@ -38,3 +38,57 @@ cards_data.each do |card|
 end
 
 puts "Seeded #{Card.count} cards."
+
+puts "Seeding stacks..."
+
+def cards_for_category(category, limit: 4)
+  Card.where("best_for LIKE ?", "%#{category}%").order(reward_rate: :desc).limit(limit)
+end
+
+stacks_data = [
+  {
+    name: "Traveler",
+    category: "Travel",
+    description: "Built for jet-setters who want to rack up points on flights, hotels, and everything in between.",
+    cards: cards_for_category("Travel")
+  },
+  {
+    name: "Foodie",
+    category: "Dining",
+    description: "Maximizes rewards on restaurants, takeout, and coffee runs.",
+    cards: cards_for_category("Dining")
+  },
+  {
+    name: "Student",
+    category: "Student",
+    description: "No annual fee essentials for building credit and earning rewards in college.",
+    cards: cards_for_category("Student")
+  },
+  {
+    name: "Cashback King",
+    category: "Cashback",
+    description: "Simple, straightforward cash back on everyday spending.",
+    cards: cards_for_category("Cashback")
+  },
+  {
+    name: "Luxury",
+    category: "Travel",
+    description: "Premium travel and dining cards with top-tier perks for high spenders.",
+    cards: Card.where("best_for LIKE ? OR best_for LIKE ?", "%Travel%", "%Dining%")
+               .order(annual_fee: :desc)
+               .limit(4)
+  }
+]
+
+stacks_data.each do |data|
+  stack = Stack.find_or_create_by!(name: data[:name]) do |s|
+    s.category    = data[:category]
+    s.description = data[:description]
+  end
+
+  data[:cards].each do |card|
+    StackCard.find_or_create_by!(stack: stack, card: card)
+  end
+end
+
+puts "Seeded #{Stack.count} stacks."

@@ -1,0 +1,18 @@
+<h1>My Wallet</h1>
+
+<% if @wallet_items.empty? %>
+  <p>Your wallet is empty. <%= link_to "Browse cards", cards_path %> to add some.</p>
+<% else %>
+  <div class="wallet-list">
+    <% @wallet_items.each do |wallet_item| %>
+      <% card = wallet_item.card %>
+      <div class="wallet-card">
+        <h2><%= link_to card.name, card_path(card) %></h2>
+        <p><%= card.issuer %></p>
+        <p>Annual fee: $<%= card.annual_fee %></p>
+        <p>Reward rate: <%= card.reward_rate %>x</p>
+        <%= button_to "Remove", wallet_item_path(wallet_item), method: :delete %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

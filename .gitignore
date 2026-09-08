@@ -1,2 +1,21 @@
 firstmate/
 no-mistakes/
+
+# Standard Rails ignores
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+/public/assets
+.byebug_history
+.bundle
+/node_modules
+/yarn-error.log
+/config/master.key
+/config/credentials/*.key
+*.swp
+*.swo
+*~
+.DS_Store

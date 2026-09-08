@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_08_085156) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_08_140646) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,6 +51,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_08_085156) do
     t.index ["user_id"], name: "index_quiz_responses_on_user_id"
   end
 
+  create_table "stack_cards", force: :cascade do |t|
+    t.bigint "card_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "stack_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_stack_cards_on_card_id"
+    t.index ["stack_id", "card_id"], name: "index_stack_cards_on_stack_id_and_card_id", unique: true
+    t.index ["stack_id"], name: "index_stack_cards_on_stack_id"
+  end
+
+  create_table "stacks", force: :cascade do |t|
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", default: "", null: false
@@ -77,6 +95,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_08_085156) do
   add_foreign_key "messages", "cards"
   add_foreign_key "messages", "users"
   add_foreign_key "quiz_responses", "users"
+  add_foreign_key "stack_cards", "cards"
+  add_foreign_key "stack_cards", "stacks"
   add_foreign_key "wallet_items", "cards"
   add_foreign_key "wallet_items", "users"
 end

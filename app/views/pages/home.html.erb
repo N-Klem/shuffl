@@ -1,2 +1,14 @@
 <h1>Shuffl</h1>
 <p>Find your perfect credit card.</p>
+
+<p>
+  <%= link_to "Browse stacks", stacks_path %> |
+  <%= link_to "Browse cards", cards_path %>
+</p>
+
+<% unless user_signed_in? %>
+  <p>
+    <%= link_to "Sign in", new_user_session_path %> |
+    <%= link_to "Sign up", new_user_registration_path %>
+  </p>
+<% end %>
