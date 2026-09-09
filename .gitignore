@@ -21,3 +21,6 @@ no-mistakes/
 .DS_Store
 *.bak
 graphify-out/
+.kamal/secrets
+.codex/
+Claude outputs/
