@@ -20,3 +20,4 @@ no-mistakes/
 *~
 .DS_Store
 *.bak
+graphify-out/

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_09_120512) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_09_152823) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,7 +22,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120512) do
     t.integer "credit_score_min"
     t.text "description"
     t.boolean "foreign_transaction_fee", default: false, null: false
-    t.string "image_url"
     t.string "issuer"
     t.string "name"
     t.string "network"
@@ -30,17 +29,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120512) do
     t.float "reward_rate"
     t.datetime "updated_at", null: false
     t.string "welcome_bonus"
-  end
-
-  create_table "messages", force: :cascade do |t|
-    t.bigint "card_id"
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.string "role"
-    t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
-    t.index ["card_id"], name: "index_messages_on_card_id"
-    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
   create_table "quiz_responses", force: :cascade do |t|
@@ -94,8 +82,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_09_120512) do
     t.index ["user_id"], name: "index_wallet_items_on_user_id"
   end
 
-  add_foreign_key "messages", "cards"
-  add_foreign_key "messages", "users"
   add_foreign_key "quiz_responses", "users"
   add_foreign_key "stack_cards", "cards"
   add_foreign_key "stack_cards", "stacks"
