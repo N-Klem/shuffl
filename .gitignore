@@ -19,3 +19,4 @@ no-mistakes/
 *.swo
 *~
 .DS_Store
+*.bak
