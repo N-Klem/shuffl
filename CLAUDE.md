@@ -16,8 +16,9 @@ Credit card aggregator for Gen Z. Helps users find optimal credit card combinati
 - Rails 8 with Propshaft, Importmap, Turbo, Stimulus
 - PostgreSQL
 - Devise (authentication)
-- Bootstrap for CSS framework (planned — CSS is still minimal)
+- Bootstrap 5.3.3 via CDN (`<link>`/`<script>` in the layout — no Sass build, no Node/npm toolchain; views don't use Bootstrap classes yet, just the framework is loaded)
 - No React, no external JS frameworks — everything is server-rendered ERB
+- `app/javascript/application.js` is intentionally minimal (just the two default importmap imports) — no custom JS. Add interactivity via Stimulus controllers under `app/javascript/controllers/`, not inline scripts
 
 ## Le Wagon conventions
 
@@ -32,17 +33,18 @@ This is a Le Wagon bootcamp project (9-week course: HTML/CSS/JS → Ruby on Rail
 
 ## Current state of the codebase
 
-### Database (7 tables)
+### Database (6 tables)
 
 | Table | Purpose |
 |-------|---------|
 | `users` | Devise auth + first_name |
-| `cards` | Credit card data — name, issuer, network, card_type, annual_fee, reward_rate, welcome_bonus, perks, best_for, description, image_url, credit_score_min, foreign_transaction_fee |
+| `cards` | Credit card data — name, issuer, network, card_type, annual_fee, reward_rate, welcome_bonus, perks, best_for, description, credit_score_min, foreign_transaction_fee |
 | `wallet_items` | User ↔ Card join (unique index on user_id + card_id) |
 | `quiz_responses` | Quiz answers (JSON text), top_card_ids (JSON text), completed_at |
-| `messages` | Chat messages with role and optional card reference (not yet wired up) |
 | `stacks` | Pre-made card groupings — name, category, description |
 | `stack_cards` | Stack ↔ Card join with unique index on stack_id + card_id |
+
+The `messages` table/model and `cards.image_url` column were removed as unused legacy-prototype leftovers (migrations `drop_messages` and `remove_image_url_from_cards`).
 
 ### Routes
 
@@ -57,23 +59,24 @@ resources :quiz_responses, only: [:new, :create, :show]
 
 ### What's built and working
 
-- **Auth**: User sign-up / sign-in / sign-out via Devise
-- **Cards**: Browse all cards (`/cards`), view card details (`/cards/:id`)
-- **Stacks**: Browse pre-made stacks (`/stacks`), view stack with ordered card list (`/stacks/:id`)
-- **Wallet**: Add/remove cards to personal wallet, view wallet (`/wallet_items`)
-- **Quiz**: Full 12-question multi-step flow (`/quiz_responses/new`), results page (`/quiz_responses/:id`)
-- **Navigation**: Shared navbar partial
-- **Seeds**: `db/seeds.rb` populates cards from `data/cards.json` and creates pre-made stacks (Traveler, Foodie, Student, etc.)
+- **Auth**: User sign-up / sign-in / sign-out via Devise, with a custom `first_name` field added to the sign-up and account-edit forms (`app/views/devise/registrations/{new,edit}.html.erb`) and permitted via `configure_permitted_parameters` in `ApplicationController`
+- **Cards**: Browse all cards (`/cards`), view full card details (`/cards/:id`)
+- **Stacks**: Browse pre-made stacks (`/stacks`), view stack with ordered card list (`/stacks/:id`); stacks index links to the quiz for users who don't find a fit
+- **Wallet**: Add a card from its show page ("Add to Wallet" button, hidden if signed out or already owned), remove from `/wallet_items`, view wallet (`/wallet_items`)
+- **Quiz**: One-question-per-page wizard (`/quiz_responses/new` → `/quiz_responses/:id`), auth-gated
+- **Navigation**: Shared navbar partial (`shared/_navbar.html.erb`) — Home / Stacks / Cards always, "My Wallet" only when signed in
+- **Homepage**: Links to Browse Stacks / Browse Cards, plus Sign in / Sign up when signed out
+- **Seeds**: `db/seeds.rb` populates cards from `data/cards.json` (idempotent — `find_or_initialize_by` + always-assign, so re-running backfills existing rows) and creates 5 pre-made stacks (Traveler, Foodie, Student, Cashback King, Luxury), each matched to cards by category via `best_for`
 
 ### Quiz implementation
 
-The quiz uses a **weighted scoring** approach — each card is scored independently against the user's answers, avoiding nested if-statements:
+The quiz is a **one-question-per-page wizard** with **weighted scoring** — each card is scored independently against the user's answers, avoiding nested if-statements:
 
-- Questions defined in `Card::QUIZ_QUESTIONS` constant (12 questions, mix of single-select and multi-select)
-- Session-based multi-step flow: `session[:quiz_step]` tracks progress, `session[:quiz_answers]` accumulates answers
-- `QuizResponsesController#new` renders current question, `#create` saves answer and advances or finishes
-- `Card.ranked_for(answers)` sorts all cards by `quiz_score` — top 5 are saved to the QuizResponse
-- Scoring weights: top priority (+3), secondary priorities (+1 each), frequency-based bonuses for dining/travel/driving/streaming, fee fit (+2 or -2), credit score fit (+2 or -3), international travel fit, rewards type preference, welcome bonus importance, student status (+3)
+- Questions defined in `Card::QUIZ_QUESTIONS` constant (12 questions, mix of single-select and one multi-select capped at 3 picks)
+- Session-based flow: `session[:quiz_step]` (integer index into `QUIZ_QUESTIONS`) tracks progress, `session[:quiz_answers]` (hash) accumulates answers across requests
+- `QuizResponsesController#new` renders the current question with a "Question X of 12" progress line; `#create` stores the submitted answer and either redirects to the next question or, on the last one, scores and redirects straight to results
+- On the last question, `Card.ranked_for(session[:quiz_answers])` sorts all cards by `#quiz_score`, top 5 are saved as `QuizResponse#top_card_ids` (JSON), session state is cleared
+- Scoring weights (all in `Card`'s private methods): top priority (+3), secondary priorities (+1 each, up to 3), frequency-based bonuses for dining/travel/driving/streaming (matched against `best_for`), fee fit (+2/-2 vs `annual_fee`), credit score fit (+2/-3 vs `credit_score_min`), international travel fit (vs `foreign_transaction_fee`), cashback-vs-points preference (vs `best_for` containing "Cashback"), welcome bonus importance (vs `welcome_bonus` presence), student status (+3 vs `best_for` containing "Student")
 
 ### Controllers
 
@@ -97,11 +100,10 @@ All views exist under `app/views/`:
 
 ### What's next
 
-- **Frontend/CSS polish** — current CSS is minimal (~22 lines). Need Bootstrap integration, responsive design, card components, color scheme, typography
-- **Home page design** — currently just `<h1>Shuffl</h1>` with a tagline
-- **Pundit authorization** — policies for user-owned resources
-- **Messages/chat feature** — model exists but not wired up
-- **Production deployment** — Heroku app exists, needs PostgreSQL addon + migrate + seed
+- **Frontend/CSS polish** — Bootstrap is loaded but no view uses its classes yet; current custom CSS is still minimal (~22 lines). Need actual styling: responsive layout, card components, color scheme, typography
+- **Home page design** — currently just `<h1>Shuffl</h1>`, tagline, and browse/sign-in links
+- **Pundit authorization** — not yet added; policies for user-owned resources (wallet items, quiz responses) still just rely on `current_user` scoping in controllers
+- **Quiz UX** — no per-question "required" validation (skipping a question just scores 0 for it) and no way to go back a step
 
 ## Data
 
@@ -110,17 +112,28 @@ All views exist under `app/views/`:
 
 ## Key files
 
-- `app/models/card.rb` — Card model with `QUIZ_QUESTIONS`, `ranked_for`, and `quiz_score` methods
-- `app/models/stack.rb` — Stack model with category field
-- `app/models/stack_card.rb` — Join model with uniqueness validation
-- `app/controllers/quiz_responses_controller.rb` — Full session-based quiz flow
-- `db/schema.rb` — current DB structure (7 tables)
-- `db/seeds.rb` — card seeder (reads cards.json) + stack seeder
+- `app/models/card.rb` — Card model with `QUIZ_QUESTIONS` constant, `self.ranked_for`, `#quiz_score`, and the private per-dimension scoring helpers
+- `app/models/stack.rb` — Stack model, `has_many :cards, through: :stack_cards`
+- `app/models/stack_card.rb` — join model, uniqueness of `card_id` scoped to `stack_id`
+- `app/models/wallet_item.rb` — join model, uniqueness of `card_id` scoped to `user_id`
+- `app/controllers/quiz_responses_controller.rb` — session-based one-question-per-page quiz wizard
+- `app/controllers/wallet_items_controller.rb` — auth-gated wallet CRUD (index/create/destroy)
+- `app/controllers/application_controller.rb` — Devise `first_name` param permitting
+- `db/schema.rb` — current DB structure (6 tables)
+- `db/seeds.rb` — idempotent card seeder (reads `cards.json`) + stack seeder
 - `config/routes.rb` — all resource routes wired up
 - `app/views/shared/_navbar.html.erb` — site navigation
-- `app/assets/stylesheets/application.css` — minimal starter (needs work)
+- `app/views/layouts/application.html.erb` — Bootstrap CDN tags + navbar render
+- `app/assets/stylesheets/application.css` — minimal starter (~22 lines, needs work)
+- `app/javascript/application.js` — minimal by design (2 lines); do not add ad-hoc JS here, use Stimulus controllers
+
+## Repo hygiene
+
+- `config/master.key` and `.kamal/secrets` are untracked from git (secrets shouldn't live in version control); `.kamal/secrets` itself only contains the default Kamal template (`RAILS_MASTER_KEY=$(cat config/master.key)`), no literal secret values
+- `.gitignore` covers `graphify-out/`, `.codex/`, `Claude outputs/`, `*.bak`, `.kamal/secrets`, and `/config/*.key` — local tooling output and secrets that shouldn't be committed
+- Legacy prototype artifacts removed: a ~1,600-line vibe-coded `application.js` (client-side quiz/wallet/explore/chat/animations that didn't match any real route), the unused `hello_controller.js` scaffold, the `messages` table/model, and `cards.image_url`
 
 ## GitHub & Deployment
 
-- **Repo**: N-Klem/shuffl
-- **Heroku**: shuffl-c0a9cbc48e06.herokuapp.com
+- **Repo**: N-Klem/shuffl (branch: `master`)
+- **Heroku**: shuffl-c0a9cbc48e06.herokuapp.com — deployed via `git push heroku master`; migrations/seeds must be run manually after a push that changes the schema (`heroku run rails db:migrate`, `heroku run rails db:seed` — seeding is safe to re-run, it's idempotent)
