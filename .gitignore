@@ -24,3 +24,7 @@ graphify-out/
 .kamal/secrets
 .codex/
 Claude outputs/
+
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+
