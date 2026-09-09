@@ -1,28 +1,26 @@
 <h1>Find your stack</h1>
-<p>Answer a few questions and we'll match you with your top 5 cards.</p>
+<p>Question <%= @step %> of <%= @total %></p>
 
 <%= form_with url: quiz_responses_path, method: :post, local: true do %>
-  <% @questions.each_with_index do |question, index| %>
-    <div class="quiz-question">
-      <h3><%= index + 1 %>. <%= question[:prompt] %></h3>
+  <div class="quiz-question">
+    <h3><%= @question[:prompt] %></h3>
 
-      <% question[:options].each do |option| %>
-        <div class="quiz-option">
-          <% if question[:type] == :multi %>
-            <label>
-              <%= check_box_tag "answers[#{question[:key]}][]", option, false, id: nil %>
-              <%= option %>
-            </label>
-          <% else %>
-            <label>
-              <%= radio_button_tag "answers[#{question[:key]}]", option, false, id: nil %>
-              <%= option %>
-            </label>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+    <% @question[:options].each do |option| %>
+      <div class="quiz-option">
+        <% if @question[:type] == :multi %>
+          <label>
+            <%= check_box_tag "answer[]", option, false, id: nil %>
+            <%= option %>
+          </label>
+        <% else %>
+          <label>
+            <%= radio_button_tag "answer", option, false, id: nil %>
+            <%= option %>
+          </label>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 
-  <%= submit_tag "See my results" %>
+  <%= submit_tag(@step == @total ? "See my results" : "Next") %>
 <% end %>

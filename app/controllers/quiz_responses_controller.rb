@@ -1,39 +1,50 @@
 class QuizResponsesController < ApplicationController
   before_action :authenticate_user!
 
+  QUESTIONS = Card::QUIZ_QUESTIONS
+
   def new
-    @questions = Card::QUIZ_QUESTIONS
+    session[:quiz_step] ||= 0
+    session[:quiz_answers] ||= {}
+
+    @question = QUESTIONS[session[:quiz_step]]
+    @step = session[:quiz_step] + 1
+    @total = QUESTIONS.size
   end
 
   def create
-    answers = answers_params.to_h
-    answers["other_priorities"] = Array(answers["other_priorities"]).reject(&:blank?).first(3)
+    question = QUESTIONS[session[:quiz_step].to_i]
+    session[:quiz_answers] ||= {}
 
-    top_cards = Card.ranked_for(answers).first(5)
+    if question[:type] == :multi
+      session[:quiz_answers][question[:key]] = Array(params[:answer]).reject(&:blank?).first(question[:max_select])
+    else
+      session[:quiz_answers][question[:key]] = params[:answer]
+    end
 
-    @quiz_response = current_user.quiz_responses.create!(
-      answers: answers.to_json,
-      top_card_ids: top_cards.map(&:id).to_json,
-      completed_at: Time.current
-    )
+    session[:quiz_step] = session[:quiz_step].to_i + 1
 
-    redirect_to @quiz_response
+    if session[:quiz_step] < QUESTIONS.size
+      redirect_to new_quiz_response_path
+    else
+      top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
+
+      @quiz_response = current_user.quiz_responses.create!(
+        answers: session[:quiz_answers].to_json,
+        top_card_ids: top_cards.map(&:id).to_json,
+        completed_at: Time.current
+      )
+
+      session[:quiz_step] = 0
+      session[:quiz_answers] = {}
+
+      redirect_to @quiz_response
+    end
   end
 
   def show
     @quiz_response = current_user.quiz_responses.find(params[:id])
     ids = JSON.parse(@quiz_response.top_card_ids)
     @cards = ids.map { |id| Card.find(id) }
-  end
-
-  private
-
-  def answers_params
-    params.fetch(:answers, {}).permit(
-      :top_priority, :dining_frequency, :travel_frequency, :annual_fee_tolerance,
-      :international_travel, :credit_score, :rewards_type, :welcome_bonus_importance,
-      :student, :drives_regularly, :streaming_spend,
-      other_priorities: []
-    )
   end
 end
