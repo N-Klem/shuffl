@@ -1,0 +1,15 @@
+<h1>Your personalized stack</h1>
+<p>Based on your answers, here are your top card matches:</p>
+
+<div class="card-list">
+  <% @cards.each do |card| %>
+    <div class="card-row">
+      <h2><%= link_to card.name, card_path(card) %></h2>
+      <p><%= card.issuer %></p>
+      <p>Annual fee: $<%= card.annual_fee %></p>
+      <p>Reward rate: <%= card.reward_rate %>x</p>
+    </div>
+  <% end %>
+</div>
+
+<%= link_to "Retake the quiz", new_quiz_response_path %>

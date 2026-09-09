@@ -24,17 +24,19 @@ cards_data.each do |card|
                 "#{card['annualFee'].to_i.zero? ? 'No annual fee.' : "Annual fee: $#{card['annualFee']}."} " \
                 "#{card['foreignTransactionFee'] ? 'Foreign transaction fee applies.' : 'No foreign transaction fee.'}"
 
-  Card.find_or_create_by!(name: card["name"]) do |c|
-    c.issuer        = card["issuer"]
-    c.network       = card["cardNetwork"]
-    c.card_type     = card["categories"]&.first&.capitalize || "Other"
-    c.annual_fee    = card["annualFee"]
-    c.reward_rate   = max_reward
-    c.welcome_bonus = welcome_bonus
-    c.perks         = card["perks"]&.join(", ")
-    c.best_for      = card["categories"]&.map(&:capitalize)&.join(", ")
-    c.description   = description
-  end
+  c = Card.find_or_initialize_by(name: card["name"])
+  c.issuer                  = card["issuer"]
+  c.network                 = card["cardNetwork"]
+  c.card_type               = card["categories"]&.first&.capitalize || "Other"
+  c.annual_fee               = card["annualFee"]
+  c.reward_rate             = max_reward
+  c.welcome_bonus           = welcome_bonus
+  c.perks                   = card["perks"]&.join(", ")
+  c.best_for                = card["categories"]&.map(&:capitalize)&.join(", ")
+  c.description             = description
+  c.credit_score_min        = card["creditScoreMin"]
+  c.foreign_transaction_fee = card["foreignTransactionFee"] || false
+  c.save!
 end
 
 puts "Seeded #{Card.count} cards."
