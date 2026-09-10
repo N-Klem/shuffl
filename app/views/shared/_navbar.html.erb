@@ -1,8 +1,13 @@
-<nav class="navbar">
-  <%= link_to "Home", root_path %>
-  <%= link_to "Stacks", stacks_path %>
-  <%= link_to "Cards", cards_path %>
-  <% if user_signed_in? %>
-    <%= link_to "My Wallet", wallet_items_path %>
-  <% end %>
+<nav class="site-nav">
+  <div class="container d-flex align-items-center justify-content-between flex-wrap py-3 gap-3">
+    <%= link_to "shuffl", root_path, class: "wordmark" %>
+    <ul class="nav-links">
+      <li><%= link_to "Home", root_path, class: ("active" if current_page?(root_path)) %></li>
+      <li><%= link_to "Quiz", new_quiz_response_path, class: ("active" if current_page?(new_quiz_response_path)) %></li>
+      <% if user_signed_in? %>
+        <li><%= link_to "My Wallet", wallet_items_path, class: ("active" if current_page?(wallet_items_path)) %></li>
+      <% end %>
+      <li><%= link_to "Browse Cards", cards_path, class: ("active" if current_page?(cards_path)) %></li>
+    </ul>
+  </div>
 </nav>

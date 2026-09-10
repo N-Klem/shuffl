@@ -1,14 +1,118 @@
-<h1>Shuffl</h1>
-<p>Find your perfect credit card.</p>
+<section class="hero container">
+  <div class="hero-headline">
+    <h1>find the perfect credit cards for you</h1>
+  </div>
+  <div class="hero-actions">
+    <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary" %>
+    <%= link_to "Browse stacks", stacks_path, class: "btn btn-outline-dark" %>
+  </div>
+</section>
 
-<p>
-  <%= link_to "Browse stacks", stacks_path %> |
-  <%= link_to "Browse cards", cards_path %>
-</p>
+<section class="stacks container">
+  <div class="row g-4">
+
+    <div class="col-md-4 stack-col">
+      <div class="stack-tile" tabindex="0">
+        <div class="stack-fan">
+          <div class="fan-card finish-graphite">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Grocery Starter</span><span class="benefit">3x on groceries</span></div>
+          </div>
+          <div class="fan-card finish-steel">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Starter One</span><span class="benefit">Build credit fast</span></div>
+          </div>
+          <div class="fan-card finish-burgundy">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Student Flex</span><span class="benefit">$0 foreign fees</span></div>
+          </div>
+          <div class="fan-card finish-bone">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Campus Cash</span><span class="benefit">No annual fee</span></div>
+          </div>
+        </div>
+        <div class="stack-tile-footer"><h3>Student</h3></div>
+      </div>
+    </div>
+
+    <div class="col-md-4 stack-col">
+      <div class="stack-tile" tabindex="0">
+        <div class="stack-fan">
+          <div class="fan-card finish-graphite">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Harbor Reserve</span><span class="benefit">Lounge access</span></div>
+          </div>
+          <div class="fan-card finish-bone">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Select Reserve</span><span class="benefit">$300 travel credit</span></div>
+          </div>
+          <div class="fan-card finish-steel">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Venture Path</span><span class="benefit">No foreign fees</span></div>
+          </div>
+          <div class="fan-card finish-burgundy">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Altitude Journey</span><span class="benefit">5x flights &amp; hotels</span></div>
+          </div>
+        </div>
+        <div class="stack-tile-footer"><h3>Traveler</h3></div>
+      </div>
+    </div>
+
+    <div class="col-md-4 stack-col">
+      <div class="stack-tile" tabindex="0">
+        <div class="stack-fan">
+          <div class="fan-card finish-bone">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Dining Plus</span><span class="benefit">4x at restaurants</span></div>
+          </div>
+          <div class="fan-card finish-burgundy">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Gold Table</span><span class="benefit">Tasting event invites</span></div>
+          </div>
+          <div class="fan-card finish-graphite">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Custom Cash</span><span class="benefit">Pick your bonus category</span></div>
+          </div>
+          <div class="fan-card finish-silver">
+            <div class="chip"></div>
+            <span class="card-wordmark">shuffl</span>
+            <div class="card-reveal"><span class="name">Market Max</span><span class="benefit">3x takeout &amp; delivery</span></div>
+          </div>
+        </div>
+        <div class="stack-tile-footer"><h3>Foodie</h3></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="stacks-footer">
+    <p>Explore by what matters to you.</p>
+    <%= link_to "Explore more stacks →", stacks_path, class: "tertiary-link" %>
+  </div>
+</section>
 
 <% unless user_signed_in? %>
-  <p>
-    <%= link_to "Sign in", new_user_session_path %> |
-    <%= link_to "Sign up", new_user_registration_path %>
-  </p>
+  <section class="container home-auth">
+    <p>
+      <%= link_to "Sign in", new_user_session_path %> |
+      <%= link_to "Sign up", new_user_registration_path %>
+    </p>
+  </section>
 <% end %>
+
+<a class="ai-bubble" href="#">
+  <span class="dot"></span>
+  <span class="label">Ask shuffl<span class="sublabel">AI assistant</span></span>
+</a>
