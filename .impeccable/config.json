@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "helvetica",
+        "files": [
+          "app/assets/stylesheets/application.css"
+        ],
+        "createdAt": "2026-09-10T14:50:28.087Z",
+        "reason": "Font stack is DESIGN.md's own explicit spec (Helvetica Now Display primary, Helvetica/Inter Tight as documented web fallbacks) - a pre-existing project design decision, not an arbitrary generic choice"
+      }
+    ]
+  }
+}
