@@ -1,16 +1,25 @@
-<h1><%= @stack.name %></h1>
-<p><%= @stack.description %></p>
+<div class="stacks-show">
+  <div class="stack-header">
+    <h1><%= @stack.name %></h1>
+    <p><%= @stack.description %></p>
+  </div>
 
-<h2>Cards in this stack</h2>
-<ul class="card-list">
-  <% @stack.cards.each do |card| %>
-    <li>
-      <strong><%= card.name %></strong> —
-      <%= card.issuer %>,
-      annual fee: $<%= card.annual_fee %>,
-      reward rate: <%= card.reward_rate %>x
-    </li>
-  <% end %>
-</ul>
+  <div class="stack-cards">
+    <h2>Cards in this stack</h2>
 
-<%= link_to "Back to stacks", stacks_path %>
+    <div class="card-list">
+      <% @stack.cards.each do |card| %>
+        <div class="card-row">
+          <h3><%= card.name %></h3>
+          <p><%= card.issuer %></p>
+          <p>Annual fee: $<%= card.annual_fee %></p>
+          <p>Reward rate: <%= card.reward_rate %>x</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="stack-actions">
+    <%= link_to "Back to stacks", stacks_path %>
+  </div>
+</div>

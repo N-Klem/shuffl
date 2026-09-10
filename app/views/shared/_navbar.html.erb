@@ -1,8 +1,10 @@
 <nav class="navbar">
-  <%= link_to "Home", root_path %>
-  <%= link_to "Stacks", stacks_path %>
-  <%= link_to "Cards", cards_path %>
-  <% if user_signed_in? %>
-    <%= link_to "My Wallet", wallet_items_path %>
-  <% end %>
+  <div class="navbar-links">
+    <%= link_to "Home", root_path %>
+    <%= link_to "Stacks", stacks_path %>
+    <%= link_to "Cards", cards_path %>
+    <% if user_signed_in? %>
+      <%= link_to "My Wallet", wallet_items_path %>
+    <% end %>
+  </div>
 </nav>

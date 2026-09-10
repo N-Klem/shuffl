@@ -1,19 +1,23 @@
-<h1><%= @card.name %></h1>
+<div class="cards-show">
+  <h1><%= @card.name %></h1>
 
-<ul class="card-details">
-  <li><strong>Issuer:</strong> <%= @card.issuer %></li>
-  <li><strong>Network:</strong> <%= @card.network %></li>
-  <li><strong>Card type:</strong> <%= @card.card_type %></li>
-  <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>
-  <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>
-  <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>
-  <li><strong>Perks:</strong> <%= @card.perks %></li>
-  <li><strong>Best for:</strong> <%= @card.best_for %></li>
-  <li><strong>Description:</strong> <%= @card.description %></li>
-</ul>
+  <ul class="card-details">
+    <li><strong>Issuer:</strong> <%= @card.issuer %></li>
+    <li><strong>Network:</strong> <%= @card.network %></li>
+    <li><strong>Card type:</strong> <%= @card.card_type %></li>
+    <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>
+    <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>
+    <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>
+    <li><strong>Perks:</strong> <%= @card.perks %></li>
+    <li><strong>Best for:</strong> <%= @card.best_for %></li>
+    <li><strong>Description:</strong> <%= @card.description %></li>
+  </ul>
 
-<% if user_signed_in? && !current_user.cards.exists?(@card.id) %>
-  <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post %>
-<% end %>
+  <div class="card-actions">
+    <% if user_signed_in? && !current_user.cards.exists?(@card.id) %>
+      <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post %>
+    <% end %>
 
-<%= link_to "Back to cards", cards_path %>
+    <%= link_to "Back to cards", cards_path %>
+  </div>
+</div>

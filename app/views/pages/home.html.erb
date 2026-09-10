@@ -1,14 +1,22 @@
-<h1>Shuffl</h1>
-<p>Find your perfect credit card.</p>
+<div class="home">
+  <div class="home-intro">
+    <h1>Shuffl</h1>
+    <p>Find your perfect credit card.</p>
+  </div>
 
-<p>
-  <%= link_to "Browse stacks", stacks_path %> |
-  <%= link_to "Browse cards", cards_path %>
-</p>
+  <div class="home-links">
+    <p>
+      <%= link_to "Browse stacks", stacks_path %> |
+      <%= link_to "Browse cards", cards_path %>
+    </p>
+  </div>
 
-<% unless user_signed_in? %>
-  <p>
-    <%= link_to "Sign in", new_user_session_path %> |
-    <%= link_to "Sign up", new_user_registration_path %>
-  </p>
-<% end %>
+  <% unless user_signed_in? %>
+    <div class="home-auth">
+      <p>
+        <%= link_to "Sign in", new_user_session_path %> |
+        <%= link_to "Sign up", new_user_registration_path %>
+      </p>
+    </div>
+  <% end %>
+</div>

@@ -1,26 +1,34 @@
-<h1>Find your stack</h1>
-<p>Question <%= @step %> of <%= @total %></p>
-
-<%= form_with url: quiz_responses_path, method: :post, local: true do %>
-  <div class="quiz-question">
-    <h3><%= @question[:prompt] %></h3>
-
-    <% @question[:options].each do |option| %>
-      <div class="quiz-option">
-        <% if @question[:type] == :multi %>
-          <label>
-            <%= check_box_tag "answer[]", option, false, id: nil %>
-            <%= option %>
-          </label>
-        <% else %>
-          <label>
-            <%= radio_button_tag "answer", option, false, id: nil %>
-            <%= option %>
-          </label>
-        <% end %>
-      </div>
-    <% end %>
+<div class="quiz-new">
+  <div class="quiz-header">
+    <h1>Find your stack</h1>
+    <p>Question <%= @step %> of <%= @total %></p>
   </div>
 
-  <%= submit_tag(@step == @total ? "See my results" : "Next") %>
-<% end %>
+  <%= form_with url: quiz_responses_path, method: :post, local: true do %>
+    <div class="quiz-question">
+      <h3><%= @question[:prompt] %></h3>
+
+      <div class="quiz-options">
+        <% @question[:options].each do |option| %>
+          <div class="quiz-option">
+            <% if @question[:type] == :multi %>
+              <label>
+                <%= check_box_tag "answer[]", option, false, id: nil %>
+                <%= option %>
+              </label>
+            <% else %>
+              <label>
+                <%= radio_button_tag "answer", option, false, id: nil %>
+                <%= option %>
+              </label>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="quiz-actions">
+      <%= submit_tag(@step == @total ? "See my results" : "Next") %>
+    </div>
+  <% end %>
+</div>

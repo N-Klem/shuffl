@@ -1,12 +1,16 @@
-<h1>Stacks</h1>
-<p>Don't see one that fits? <%= link_to "Take the personalized quiz", new_quiz_response_path %></p>
+<div class="stacks-index">
+  <div class="stacks-header">
+    <h1>Stacks</h1>
+    <p>Don't see one that fits? <%= link_to "Take the personalized quiz", new_quiz_response_path %></p>
+  </div>
 
-<div class="stacks-list">
-  <% @stacks.each do |stack| %>
-    <div class="stack-card">
-      <h2><%= link_to stack.name, stack_path(stack) %></h2>
-      <p class="stack-category"><%= stack.category %></p>
-      <p><%= stack.description %></p>
-    </div>
-  <% end %>
+  <div class="stacks-list">
+    <% @stacks.each do |stack| %>
+      <div class="stack-card">
+        <h2><%= link_to stack.name, stack_path(stack) %></h2>
+        <p class="stack-category"><%= stack.category %></p>
+        <p><%= stack.description %></p>
+      </div>
+    <% end %>
+  </div>
 </div>

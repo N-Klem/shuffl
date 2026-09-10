@@ -1,11 +1,13 @@
-<h1>Cards</h1>
+<div class="cards-index">
+  <h1>Cards</h1>
 
-<div class="cards-list">
-  <% @cards.each do |card| %>
-    <div class="card-row">
-      <h2><%= link_to card.name, card_path(card) %></h2>
-      <p><%= card.issuer %> — <%= card.network %></p>
-      <p>Annual fee: $<%= card.annual_fee %></p>
-    </div>
-  <% end %>
+  <div class="cards-list">
+    <% @cards.each do |card| %>
+      <div class="card-row">
+        <h2><%= link_to card.name, card_path(card) %></h2>
+        <p><%= card.issuer %> — <%= card.network %></p>
+        <p>Annual fee: $<%= card.annual_fee %></p>
+      </div>
+    <% end %>
+  </div>
 </div>
