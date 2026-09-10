@@ -1,6 +1,4 @@
 class QuizResponsesController < ApplicationController
-  before_action :authenticate_user!
-
   QUESTIONS = Card::QUIZ_QUESTIONS
 
   def new
@@ -29,7 +27,8 @@ class QuizResponsesController < ApplicationController
     else
       top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
 
-      @quiz_response = current_user.quiz_responses.create!(
+      @quiz_response = QuizResponse.create!(
+        user: current_user,
         answers: session[:quiz_answers].to_json,
         top_card_ids: top_cards.map(&:id).to_json,
         completed_at: Time.current
@@ -43,7 +42,7 @@ class QuizResponsesController < ApplicationController
   end
 
   def show
-    @quiz_response = current_user.quiz_responses.find(params[:id])
+    @quiz_response = QuizResponse.find(params[:id])
     ids = JSON.parse(@quiz_response.top_card_ids)
     @cards = ids.map { |id| Card.find(id) }
   end

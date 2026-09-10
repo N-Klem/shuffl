@@ -1,5 +1,5 @@
 class QuizResponse < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
 
   validates :answers, presence: true
   validates :completed_at, presence: true
