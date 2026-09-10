@@ -137,3 +137,23 @@ All views exist under `app/views/`:
 
 - **Repo**: N-Klem/shuffl (branch: `master`)
 - **Heroku**: shuffl-c0a9cbc48e06.herokuapp.com — deployed via `git push heroku master`; migrations/seeds must be run manually after a push that changes the schema (`heroku run rails db:migrate`, `heroku run rails db:seed` — seeding is safe to re-run, it's idempotent)
+
+## Design System
+
+**Read `DESIGN.md` before touching any view, partial, stylesheet, or Stimulus controller.**
+
+Shuffl follows the "Quiet Interface" design language. The three non-negotiable rules:
+
+1. **One family** — every character is set in the same tight grotesque (Helvetica Now Display / Inter Tight fallback). No second typeface.
+2. **One burgundy** (`#7B1622`) — exactly one filled burgundy button per screen, always the primary CTA. Nothing else uses that colour except tertiary text links on hover.
+3. **Nothing at rest** — secondary controls (compare, share, explore links) are hidden by default and revealed only on hover/focus with a 160ms opacity transition. Only show buttons that are 100% necessary.
+
+Key implementation details:
+- All design tokens (colours, spacing, radii, typography) are defined as CSS custom properties in `application.css` — use `var(--token-name)`, never raw hex values
+- No shadows anywhere in the UI
+- Dividers over boxes — don't wrap content in a card just to group it
+- Pence portions of monetary figures drop to `muted` colour — this is a signature detail
+- Hover-revealed controls must be keyboard-accessible (`visibility: hidden` + `opacity: 0`, never `display: none`)
+- Use Bootstrap grid, utilities, and responsive breakpoints as normal — but override Bootstrap's default colours, shadows, and radii with the Shuffl tokens (see DESIGN.md for the full CSS variable block)
+- Don't use Bootstrap colour classes (`.text-primary`, `.bg-info`) with their defaults — they pull in Bootstrap blue/green instead of the Shuffl palette
+- Inter Tight is loaded from Google Fonts as the web fallback font
