@@ -28,7 +28,7 @@
   border-radius: 9px; transform-origin: center;
   border: 1px solid rgb(255 255 255 / 35%);
   box-shadow: inset 0 1px 1px rgb(255 255 255 / 65%), inset 0 -1px 2px rgb(0 0 0 / 24%), 2px 13px 17px -9px rgb(0 0 0 / 38%);
-  transition: transform 850ms var(--ease-in-out);
+  transition: none;
   background-color: var(--metal);
   background-image: repeating-linear-gradient(2deg, transparent 0px, rgb(255 255 255 / 9%) .5px, rgb(0 0 0 / 5%) 1px, transparent 2px), linear-gradient(115deg, rgb(255 255 255 / 24%), transparent 34%, rgb(255 255 255 / 25%) 49%, transparent 70%, rgb(0 0 0 / 12%));
 }
@@ -42,21 +42,17 @@
 .home-page .chip::before { content: ""; position: absolute; inset: -1px 28%; border: 1px solid #777972; border-radius: 5px; background: linear-gradient(110deg, #e6e6df, #c1c1bb); }
 .home-page .chip::after { content: ""; position: absolute; inset: 32% 0; border-block: 1px solid #777972; }
 .home-page .fan-card:nth-child(1) { transform: translate(-35%, -12%) rotate(-25deg); }
-.home-page .fan-card:nth-child(2) { transform: translate(-12%, -10%) rotate(-17deg); transition-delay: 40ms; }
-.home-page .fan-card:nth-child(3) { transform: translate(13%, 0%) rotate(-10deg); transition-delay: 80ms; }
-.home-page .fan-card:nth-child(4) { transform: translate(30%, 20%) rotate(9deg); transition-delay: 120ms; }
-.home-page .stack-tile.is-expanded .stack-fan { height: calc(180cqw + 90px); }
+.home-page .fan-card:nth-child(2) { transform: translate(-12%, -10%) rotate(-17deg); }
+.home-page .fan-card:nth-child(3) { transform: translate(13%, 0%) rotate(-10deg); }
+.home-page .fan-card:nth-child(4) { transform: translate(30%, 20%) rotate(9deg); }
+.home-page .stack-tile.is-expanded .stack-fan { height: clamp(240px, 20vw, 330px); overflow: hidden; }
 
-.home-page .is-expanded .fan-card:nth-child(1) { transform: translateY(0) scale(1.15) rotate(360deg); }
-.home-page .is-expanded .fan-card:nth-child(2) { transform: translateY(130%) scale(1.15) rotate(360deg); }
-.home-page .is-expanded .fan-card:nth-child(3) { transform: translateY(260%) scale(1.15) rotate(360deg); }
-.home-page .is-expanded .fan-card:nth-child(4) { transform: translateY(390%) scale(1.15) rotate(360deg); }
-.home-page .card-reveal { background: none; color: #161616; padding: 0 10% 9%; transition: opacity 200ms ease; }
+.home-page .card-reveal { background: none; color: #161616; padding: 0 10% 7%; transition: opacity 200ms ease; }
 .home-page .finish-burgundy .card-reveal, .home-page .finish-graphite .card-reveal { color: white; }
 .home-page .stack-tile .card-reveal { opacity: 0; }
-.home-page .is-expanded .card-reveal { opacity: 1; transition-delay: 350ms; }
-.home-page .card-reveal .name { font-size: clamp(13px, 1.15vw, 18px); }
-.home-page .card-reveal .benefit { font-size: clamp(11px, .9vw, 14px); }
+.home-page .is-expanded .card-reveal { opacity: 1; transition: opacity 250ms ease; }
+.home-page .card-reveal .name { font-size: clamp(12px, 1vw, 16px); line-height: 1.2; }
+.home-page .card-reveal .benefit { font-size: clamp(10px, .8vw, 12px); line-height: 1.25; margin-top: 4px; }
 .home-page .stack-tile-footer { text-align: center; }
 .home-page .stack-tile-footer h2 { margin: 0; }
 .home-page .stack-tile-footer button { border: 0; background: none; color: inherit; font: inherit; font-size: clamp(25px, 1.9vw, 32px); font-weight: 600; letter-spacing: -.04em; padding: 10px 20px 6px; }
@@ -93,7 +89,7 @@
   .home-page .stack-fan { height: 245px; }
   .home-page .fan-card { width: 58%; }
   .home-page .card-wordmark { font-size: 18px; }
-  .home-page .stack-tile.is-expanded .stack-fan { height: calc(185cqw + 90px); }
+  .home-page .stack-tile.is-expanded .stack-fan { height: 245px; }
   .home-page .stack-hint { opacity: 1; }
   .home-page .stacks-footer { flex-direction: column-reverse; align-items: flex-start; gap: 24px; }
   .home-page .ai-bubble { right: 18px; bottom: 16px; }
@@ -104,3 +100,8 @@
 }
 /* Keep the assistant below navigation links rather than covering them. */
 .home-page .ai-bubble { position: relative; width: max-content; margin: 0 0 20px auto; right: auto; bottom: auto; }
+
+.home-page .stack-fan { touch-action: pan-x; }
+.home-page .is-expanded .fan-card { pointer-events: auto; cursor: pointer; }
+.home-page .is-expanded .fan-card:not([data-current="true"]) .card-reveal { opacity: 0; }
+.home-page .fan-card:focus-visible { outline: 2px solid #651321; outline-offset: 3px; }
