@@ -1,6 +1,7 @@
+<% content_for :body_class, "home-page" %>
 <section class="hero container">
   <div class="hero-headline">
-    <h1>find the perfect credit cards for you</h1>
+    <h1><span>find your cards</span><span>build your wallet</span></h1>
   </div>
   <div class="hero-actions">
     <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary" %>
@@ -12,8 +13,8 @@
   <div class="row g-4">
 
     <div class="col-md-4 stack-col">
-      <div class="stack-tile" tabindex="0">
-        <div class="stack-fan">
+      <div class="stack-tile" data-controller="stack" data-action="mouseenter->stack#preview mouseleave->stack#restore keydown.esc->stack#close">
+        <div class="stack-fan" data-action="click->stack#toggle">
           <div class="fan-card finish-graphite">
             <div class="chip"></div>
             <span class="card-wordmark">shuffl</span>
@@ -35,13 +36,13 @@
             <div class="card-reveal"><span class="name">Campus Cash</span><span class="benefit">No annual fee</span></div>
           </div>
         </div>
-        <div class="stack-tile-footer"><h3>Student</h3></div>
+        <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" data-action="stack#toggle" aria-expanded="false" aria-label="Reveal Student cards">Student<span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
       </div>
     </div>
 
     <div class="col-md-4 stack-col">
-      <div class="stack-tile" tabindex="0">
-        <div class="stack-fan">
+      <div class="stack-tile" data-controller="stack" data-action="mouseenter->stack#preview mouseleave->stack#restore keydown.esc->stack#close">
+        <div class="stack-fan" data-action="click->stack#toggle">
           <div class="fan-card finish-graphite">
             <div class="chip"></div>
             <span class="card-wordmark">shuffl</span>
@@ -63,13 +64,13 @@
             <div class="card-reveal"><span class="name">Altitude Journey</span><span class="benefit">5x flights &amp; hotels</span></div>
           </div>
         </div>
-        <div class="stack-tile-footer"><h3>Traveler</h3></div>
+        <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" data-action="stack#toggle" aria-expanded="false" aria-label="Reveal Traveller cards">Traveller<span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
       </div>
     </div>
 
     <div class="col-md-4 stack-col">
-      <div class="stack-tile" tabindex="0">
-        <div class="stack-fan">
+      <div class="stack-tile" data-controller="stack" data-action="mouseenter->stack#preview mouseleave->stack#restore keydown.esc->stack#close">
+        <div class="stack-fan" data-action="click->stack#toggle">
           <div class="fan-card finish-bone">
             <div class="chip"></div>
             <span class="card-wordmark">shuffl</span>
@@ -91,7 +92,7 @@
             <div class="card-reveal"><span class="name">Market Max</span><span class="benefit">3x takeout &amp; delivery</span></div>
           </div>
         </div>
-        <div class="stack-tile-footer"><h3>Foodie</h3></div>
+        <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" data-action="stack#toggle" aria-expanded="false" aria-label="Reveal Foodie cards">Foodie<span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
       </div>
     </div>
 
@@ -112,7 +113,7 @@
   </section>
 <% end %>
 
-<a class="ai-bubble" href="#">
-  <span class="dot"></span>
+<div class="ai-bubble" title="AI assistant coming soon">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8l-6 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
   <span class="label">Ask shuffl<span class="sublabel">AI assistant</span></span>
-</a>
+</div>

@@ -385,3 +385,63 @@ Load Inter Tight from Google Fonts as the web fallback (add to `application.html
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;700&display=swap"
       rel="stylesheet">
 ```
+
+## Home reference refinement (September 2026)
+
+The supplied `home.png` is the authority for the home surface. Scoped rules live in
+`home.css`: an inset outlined navigation bar, oversized two-line grotesque headline,
+right-aligned burgundy and outline actions, three divided card fans, and bone,
+burgundy, graphite and silver brushed-metal finishes with engraved silver chips.
+Card materials intentionally use burgundy and contact shadows beyond the general
+UI colour/elevation rules above. Other surfaces retain the existing system.
+
+Each home fan uses the Stimulus `stack` controller. Fine-pointer hover previews the
+stack; its category button or artwork toggles a pinned expansion. Cards turn through
+360 degrees into four separated vertical rectangles, revealing the existing sample
+names and benefits. Escape closes it. Transform transitions are interruptible,
+staggered by 40ms, and removed for reduced-motion preferences. Mobile uses a horizontal
+snap rail and button activation. The assistant remains a visual placeholder until
+its backend is implemented.
+
+## Quiz reference implementation (September 2026)
+
+`quiz.css` scopes the supplied quiz reference to `.quiz-page`: the home navigation
+frame, large black question heading, thin divider, two-column outlined answers on
+desktop and one column on mobile. Burgundy marks the selected native radio or
+checkbox and completed progress. No decorative icons or emoji appear in the quiz.
+
+The current 16 questions and their scoring are sourced from `quiz-questions-redesign`.
+The progress track measures answered questions and labels the current question out
+of the total. Selecting an answer advances after 250ms of visible feedback; Back
+restores saved selections, including the ability to choose the same answer again.
+The final answer submits results. The server validates options and question index
+and rejects stale submissions. The shared renderer also supports future bounded
+multiple-choice questions. Without JavaScript, a submit fallback remains available.
+
+Verify the server flow with `RAILS_ENV=test bundle exec ruby test/integration/quiz_flow_test.rb`.
+
+Quiz sizing refinement: headings cap at 58px on desktop and 34px on phones; answer text uses 17–23px on desktop and 16px on phones. Compact spacing keeps all 16 questions within a 375×667 viewport. Seven-answer questions use two columns on short phones, with 58px minimum answer targets. Content remains scrollable for accessibility zoom and unusually small viewports.
+
+Navigation update: the shared navbar is borderless and sticky at the viewport top, with an opaque white background and elevation above page content. This supersedes the outlined navigation frame in the earlier reference notes.
+
+Navigation glass refinement: the sticky navbar floats 12px below the viewport top (8px on mobile), with a translucent neutral surface, 24px backdrop blur, a fine light rim, rounded corners, and a soft shadow. This supersedes the previous opaque borderless treatment. Reduced-transparency preferences and browsers without backdrop blur receive a solid light surface.
+
+Quiz presentation update: content is centred within 880px. Key phrases in each question use burgundy, with a soft burgundy selected-answer tint. Sixteen progress bubbles replace the line: solid bubbles mark completed questions, a double ring marks the current question, and outlined bubbles mark upcoming questions. Progress retains an accessible label and numeric value.
+
+## Results integration (September 2026)
+
+The approved results mockup is integrated into quiz responses. The page uses the
+shared sticky navbar, a 1440px content width, a left value/spending/timeline panel,
+and recommended card boxes on the right. Card artwork flips over 1.15 seconds;
+reduced motion removes the transition. Decimal figures use separate, looser tracking.
+Keep and Swap remain visible; “Why this card?” expands below the artwork.
+The burgundy Save this stack action adds every displayed card to My Wallet.
+
+Results styles are scoped to .results-page. The Stimulus results controller loads
+quiz recommendations and six category sliders from ResultsStack. Category spending
+is assigned once to the highest-rate selected card (ties follow recommendation order).
+Sample-catalogue estimates assume 1 cent per point and exclude welcome bonuses,
+conditional perks and caps. The illustrative signup timeline is retained for now.
+Selections and spending survive sign-in in session storage; authenticated saving is
+atomic and avoids duplicate wallet cards. The original standalone mockup remains
+available for reference.

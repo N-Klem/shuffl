@@ -1,15 +1,16 @@
-<h1>Your personalized stack</h1>
-<p>Based on your answers, here are your top card matches:</p>
-
-<div class="card-list">
-  <% @cards.each do |card| %>
-    <div class="card-row">
-      <h2><%= link_to card.name, card_path(card) %></h2>
-      <p><%= card.issuer %></p>
-      <p>Annual fee: $<%= card.annual_fee %></p>
-      <p>Reward rate: <%= card.reward_rate %>x</p>
-    </div>
-  <% end %>
-</div>
-
-<%= link_to "Retake the quiz", new_quiz_response_path %>
+<% content_for :body_class, "results-page" %>
+<% content_for :title, "Your recommended stack · Shuffl" %>
+<main class="results-main" data-controller="results"
+      data-results-payload-value="<%= @results_payload.to_json %>"
+      data-results-quiz-id-value="<%= @quiz_response.id %>"
+      data-results-save-url-value="<%= save_stack_wallet_items_path %>">
+<div id="results">
+<noscript><p>Enable JavaScript to adjust spending, keep or swap cards, and save this stack.</p></noscript><header><div><h1>Your spending. More rewarding.</h1><p><%= @cards.size %> cards, working together. A stack that fits your everyday.</p></div><div class="save-area"><button id="save-stack" type="button">Save this stack</button><p id="save-status" role="status">Save these cards to My Wallet.</p></div></header><div class="layout">
+<aside class="summary" aria-label="Stack value and signup timeline"><h2>Your stack’s annual value</h2><div class="total" id="total" aria-live="polite"></div><p class="caption">Estimated rewards, after annual fees</p><div class="spend"><div class="label-row"><label for="spend">Your monthly spending</label><output for="spend" id="spend-value"></output></div><input type="range" id="spend" min="0" max="10000" step="1" value="2500"><div class="range-labels"><span>$0</span><span>$10,000</span></div><details class="fine-tune"><summary>Fine-tune your spending</summary><p class="caption">Adjust each category. Your monthly total updates with you.</p><div id="category-sliders"></div><p class="caption">The main slider scales this spending mix.</p></details></div><dl class="breakdown"><div><dt>Yearly rewards</dt><dd id="gross"></dd></div><div><dt>Annual fees</dt><dd id="fees"></dd></div></dl><section class="timeline"><h3>Build your stack, one at a time.</h3><p class="caption">An example signup sequence</p><ol id="timeline"></ol></section><p class="footnote">Timing is illustrative. Review eligibility and each card’s terms before applying.</p></aside>
+<section aria-label="Your recommended cards"><div class="cards-heading"><strong>Your recommended stack</strong><span id="kept-count"></span></div><div id="cards">
+<% @cards.each do |card| %>
+  <article class="recommendation"><div><h2><%= card.name %></h2><p><%= card.issuer %></p><%= link_to "Explore this card", card_path(card) %></div><p>Annual fee: <%= number_to_currency(card.annual_fee) %></p></article>
+<% end %>
+</div><p class="status" id="status" role="status">Keep your favourites. Swap anything that doesn’t feel right.</p><p class="footnote">Spending is shared across your cards, counted only once. Move the slider to see each card’s contribution change.</p></section></div></div>
+<footer class="bottom"><p>Illustrative estimates from Shuffl’s sample catalogue, not live offers. Points are valued at 1¢ each. Excludes welcome bonuses, interest, category caps and conditional perks. Each spending category is counted once, on the highest-rate card in your stack.</p><span>shuffl · Your results</span></footer>
+</main>

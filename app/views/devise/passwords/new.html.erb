@@ -1,16 +1,33 @@
-<h2>Forgot your password?</h2>
+<% content_for :body_class, "auth-page" %>
+<% content_for :title, "Forgot password — Shuffl" %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<main class="auth-shell">
+  <%= render "devise/shared/stack_panel" %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+  <section class="form-side" aria-label="Access your wallet">
+    <div class="auth">
+      <%= link_to "back to sign in", new_user_session_path, class: "back-to-signin" %>
 
-  <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
-  </div>
-<% end %>
+      <h2>forgot your password?</h2>
+      <p class="intro">enter your email and we&rsquo;ll help you get back to your stack.</p>
 
-<%= render "devise/shared/links" %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="field">
+          <%= f.label :email, "email address" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "you@example.com" %>
+        </div>
+
+        <%= f.submit "send reset link", class: "primary" %>
+      <% end %>
+
+      <p class="assurance">your card selections will still be here.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="auth-footer">
+  <span>shuffl</span>
+  <span>a little more rewarding.</span>
+</footer>

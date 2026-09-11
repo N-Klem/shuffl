@@ -1,0 +1,4 @@
+<div class="tabs" role="tablist" aria-label="Account access">
+  <%= link_to "sign in", new_user_session_path, role: "tab", "aria-selected": active == :sign_in %>
+  <%= link_to "create account", new_user_registration_path, role: "tab", "aria-selected": active == :create_account %>
+</div>

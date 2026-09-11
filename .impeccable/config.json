@@ -11,6 +11,15 @@
         ],
         "createdAt": "2026-09-10T14:50:28.087Z",
         "reason": "Font stack is DESIGN.md's own explicit spec (Helvetica Now Display primary, Helvetica/Inter Tight as documented web fallbacks) - a pre-existing project design decision, not an arbitrary generic choice"
+      },
+      {
+        "rule": "overused-font",
+        "value": "helvetica",
+        "files": [
+          "app/assets/stylesheets/login.css"
+        ],
+        "createdAt": "2026-09-11T09:37:38.951Z",
+        "reason": "Same DESIGN.md-mandated font stack (Helvetica Now Display primary, Helvetica/Inter Tight fallbacks) already sanctioned for application.css - login.css uses the identical stack for the auth pages"
       }
     ]
   }

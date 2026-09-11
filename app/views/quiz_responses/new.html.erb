@@ -1,26 +1,48 @@
-<h1>Find your stack</h1>
-<p>Question <%= @step %> of <%= @total %></p>
+<% content_for :body_class, "quiz-page" %>
+<% content_for :title, "Question #{@step} of #{@total} — Shuffl" %>
+<main class="quiz-shell" data-controller="quiz" data-quiz-limit-value="<%= @question[:type] == :multi ? @question[:max_select] : 1 %>">
+  <div class="quiz-progress">
+    <div class="quiz-progress-copy"><span>Question <%= @step %> of <%= @total %></span><span><%= ((@step - 1).fdiv(@total) * 100).round %>% complete</span></div>
+    <div class="quiz-bubbles" role="progressbar" aria-label="Quiz completion" aria-valuemin="0" aria-valuemax="<%= @total %>" aria-valuenow="<%= @step - 1 %>" aria-valuetext="Question <%= @step %> of <%= @total %>; <%= @step - 1 %> completed">
+      <% @total.times do |index| %>
+        <span aria-hidden="true" class="quiz-bubble <%= 'is-complete' if index < @step - 1 %> <%= 'is-current' if index == @step - 1 %>"></span>
+      <% end %>
+    </div>
+  </div>
 
-<%= form_with url: quiz_responses_path, method: :post, local: true do %>
-  <div class="quiz-question">
-    <h3><%= @question[:prompt] %></h3>
+  <header class="quiz-heading">
+    <h1 tabindex="-1" data-quiz-target="heading"><%= quiz_question_heading(@question) %></h1>
+    <p><%= link_to "Why are we asking this?", "/how-our-quiz-works?#{ { question: @question[:key] }.to_query }", class: "quiz-explanation-link" %></p>
+  </header>
 
-    <% @question[:options].each do |option| %>
-      <div class="quiz-option">
-        <% if @question[:type] == :multi %>
-          <label>
-            <%= check_box_tag "answer[]", option, false, id: nil %>
-            <%= option %>
-          </label>
-        <% else %>
-          <label>
-            <%= radio_button_tag "answer", option, false, id: nil %>
-            <%= option %>
+  <%= form_with url: quiz_responses_path, method: :post, data: { quiz_target: "form", action: "submit->quiz#submitting turbo:submit-end->quiz#finished" } do %>
+    <%= hidden_field_tag :step, @step - 1 %>
+    <fieldset aria-describedby="quiz-status">
+      <legend class="visually-hidden"><%= @question[:prompt] %></legend>
+      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %>">
+        <% @question[:options].each_with_index do |option, index| %>
+          <label class="quiz-answer" for="quiz-answer-<%= index %>">
+            <% if @question[:type] == :multi %>
+              <%= check_box_tag "answer[]", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", action: "change->quiz#choose" } %>
+            <% else %>
+              <%= radio_button_tag "answer", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", action: "change->quiz#choose click->quiz#reselect" } %>
+            <% end %>
+            <span><%= option %></span>
           </label>
         <% end %>
       </div>
-    <% end %>
-  </div>
-
-  <%= submit_tag(@step == @total ? "See my results" : "Next") %>
-<% end %>
+    </fieldset>
+    <p class="quiz-status" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
+    <div class="quiz-controls">
+      <% if @step > 1 %>
+        <%= link_to "Back", new_quiz_response_path(step: @step - 2), class: "quiz-back", data: { action: "click->quiz#cancel" } %>
+      <% else %>
+        <%= link_to "Back", root_path, class: "quiz-back", data: { action: "click->quiz#cancel" } %>
+      <% end %>
+      <% if @question[:type] == :multi %>
+        <button class="btn btn-primary quiz-done" type="submit" data-quiz-target="done">Done selecting</button>
+      <% end %>
+      <noscript><button class="btn btn-primary" type="submit">Continue</button></noscript>
+    </div>
+  <% end %>
+</main>

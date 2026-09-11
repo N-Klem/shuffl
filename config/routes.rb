@@ -4,7 +4,9 @@ Rails.application.routes.draw do
 
   resources :stacks, only: [ :index, :show ]
   resources :cards, only: [ :index, :show ]
-  resources :wallet_items, only: [ :index, :create, :destroy ]
+  resources :wallet_items, only: [ :index, :create, :destroy ] do
+    post :save_stack, on: :collection
+  end
   resources :quiz_responses, only: [ :new, :create, :show ]
 
   get "up" => "rails/health#show", as: :rails_health_check

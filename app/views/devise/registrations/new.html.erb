@@ -1,34 +1,54 @@
-<h2>Sign up</h2>
+<% content_for :body_class, "auth-page" %>
+<% content_for :title, "Create account — Shuffl" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<main class="auth-shell">
+  <%= render "devise/shared/stack_panel" %>
 
-  <div class="field">
-    <p><%= f.label :first_name %></p>
-    <p><%= f.text_field :first_name, autofocus: true %></p>
-  </div>
+  <section class="form-side" aria-label="Access your wallet">
+    <div class="auth">
+      <%= render "devise/shared/auth_tabs", active: :create_account %>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autocomplete: "email" %></p>
-  </div>
+      <h2>make room for rewards.</h2>
+      <p class="intro">create your account to keep your cards together in my wallet.</p>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
-    <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-  </div>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
+        <div class="field">
+          <%= f.label :first_name, "first name" %>
+          <%= f.text_field :first_name, autofocus: true, placeholder: "your first name" %>
+        </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+        <div class="field">
+          <%= f.label :email, "email address" %>
+          <%= f.email_field :email, autocomplete: "email", placeholder: "you@example.com" %>
+        </div>
 
-<%= render "devise/shared/links" %>
+        <div class="field" data-controller="password-visibility">
+          <%= f.label :password, "password" %>
+          <div class="password-wrap">
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: "enter your password", data: { "password-visibility-target": "input" } %>
+            <button class="show-password" type="button" data-password-visibility-target="toggle" data-action="password-visibility#toggle" aria-label="Show password" aria-pressed="false">show</button>
+          </div>
+          <% if @minimum_password_length %>
+            <p class="helper">use at least <%= @minimum_password_length %> characters.</p>
+          <% end %>
+        </div>
+
+        <div class="field">
+          <%= f.label :password_confirmation, "confirm password" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "re-enter your password" %>
+        </div>
+
+        <%= f.submit "create account & save my stack", class: "primary" %>
+      <% end %>
+
+      <p class="assurance">this only saves your picks — no card applications are submitted.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="auth-footer">
+  <span>shuffl</span>
+  <span>a little more rewarding.</span>
+</footer>

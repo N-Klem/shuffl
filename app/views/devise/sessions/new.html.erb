@@ -1,26 +1,50 @@
-<h2>Log in</h2>
+<% content_for :body_class, "auth-page" %>
+<% content_for :title, "Sign in — Shuffl" %>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
-  </div>
+<main class="auth-shell">
+  <%= render "devise/shared/stack_panel" %>
 
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <p><%= f.password_field :password, autocomplete: "current-password" %></p>
-  </div>
+  <section class="form-side" aria-label="Access your wallet">
+    <div class="auth">
+      <%= render "devise/shared/auth_tabs", active: :sign_in %>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <p><%= f.check_box :remember_me %></p>
-      <p><%= f.label :remember_me %></p>
+      <h2>welcome back.</h2>
+      <p class="intro">sign in to add your selected cards to my wallet.</p>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <div class="field">
+          <%= f.label :email, "email address" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "you@example.com" %>
+        </div>
+
+        <div class="field" data-controller="password-visibility">
+          <%= f.label :password, "password" %>
+          <div class="password-wrap">
+            <%= f.password_field :password, autocomplete: "current-password", placeholder: "enter your password", data: { "password-visibility-target": "input" } %>
+            <button class="show-password" type="button" data-password-visibility-target="toggle" data-action="password-visibility#toggle" aria-label="Show password" aria-pressed="false">show</button>
+          </div>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="options">
+            <label class="remember">
+              <%= f.check_box :remember_me %> remember me
+            </label>
+            <%= link_to "forgot password?", new_user_password_path %>
+          </div>
+        <% end %>
+
+        <%= f.submit "sign in & save my stack", class: "primary" %>
+      <% end %>
+
+      <p class="assurance">this only saves your picks — no card applications are submitted.</p>
     </div>
-  <% end %>
+  </section>
+</main>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+<footer class="auth-footer">
+  <span>shuffl</span>
+  <span>a little more rewarding.</span>
+</footer>
