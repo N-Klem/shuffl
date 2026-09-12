@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_123402) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_12_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -68,13 +68,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_123402) do
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.datetime "updated_at", null: false
+    t.jsonb "wallet_preferences", default: {}, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   create_table "wallet_items", force: :cascade do |t|
+    t.date "apply_on"
+    t.date "bonus_deadline"
+    t.decimal "bonus_spend", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "bonus_target", precision: 12, scale: 2
     t.bigint "card_id", null: false
     t.datetime "created_at", null: false
+    t.date "opened_on"
+    t.boolean "paid", default: false, null: false
+    t.date "payment_due_on"
+    t.decimal "statement_balance", precision: 12, scale: 2
+    t.string "status", default: "planned", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["card_id"], name: "index_wallet_items_on_card_id"
