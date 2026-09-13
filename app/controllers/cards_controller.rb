@@ -1,6 +1,6 @@
 class CardsController < ApplicationController
   def index
-    @cards = Card.all
+    @browse_payload = BrowseCatalogue.new.payload
   end
 
   def show

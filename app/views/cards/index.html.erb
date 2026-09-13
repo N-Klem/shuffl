@@ -1,11 +1,8 @@
-<h1>Cards</h1>
-
-<div class="cards-list">
-  <% @cards.each do |card| %>
-    <div class="card-row">
-      <h2><%= link_to card.name, card_path(card) %></h2>
-      <p><%= card.issuer %> — <%= card.network %></p>
-      <p>Annual fee: $<%= card.annual_fee %></p>
-    </div>
-  <% end %>
+<% content_for :body_class, "browse-page" %>
+<% content_for :title, "Browse Cards & Stacks · Shuffl" %>
+<div class="browse-app" data-controller="browse" data-browse-payload-value="<%= @browse_payload.to_json %>">
+  <div id="stage" class="browse-stage"><noscript>Enable JavaScript to search and compare cards.</noscript></div>
+  <div class="tray" id="tray" hidden></div>
+  <dialog id="modal"></dialog>
+  <div class="toast" role="status" id="toast"></div>
 </div>

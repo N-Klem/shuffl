@@ -1,6 +1,6 @@
 class StacksController < ApplicationController
   def index
-    @stacks = Stack.all
+    redirect_to cards_path(tab: "stacks")
   end
 
   def show

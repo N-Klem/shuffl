@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :cards, only: [ :index, :show ]
   resources :wallet_items, only: [ :index, :create, :update, :destroy ] do
     patch :preferences, on: :collection
+    post :save_browse, on: :collection
     post :save_stack, on: :collection
   end
   resources :quiz_responses, only: [ :new, :create, :show ]

@@ -1,5 +1,5 @@
 class WalletItemsController < ApplicationController
-  before_action :authenticate_user!, except: :save_stack
+  before_action :authenticate_user!, except: [:save_stack, :save_browse]
 
   def index
     @wallet_payload = WalletDashboard.new(current_user).payload
@@ -45,6 +45,22 @@ class WalletItemsController < ApplicationController
       current_user.update!(wallet_preferences: current_user.wallet_preferences.merge(settings.to_h))
     end
     render json: WalletDashboard.new(current_user).payload
+  end
+
+  def save_browse
+    unless user_signed_in?
+      store_location_for(:user, cards_path)
+      return render json: { sign_in_url: new_user_session_path }, status: :unauthorized
+    end
+    ids = Array(params[:card_ids]).map(&:to_s).uniq
+    cards = Card.where(id: ids)
+    unless ids.size.between?(1, 10) && cards.size == ids.size
+      return render json: { error: "Choose available cards." }, status: :unprocessable_entity
+    end
+    current_user.with_lock do
+      cards.each { |card| current_user.wallet_items.find_or_create_by!(card: card) }
+    end
+    render json: { wallet_url: wallet_items_path }
   end
 
   def save_stack
