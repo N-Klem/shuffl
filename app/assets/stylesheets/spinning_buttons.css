@@ -1,0 +1,84 @@
+/* Shared spinning-border treatment for native Rails and client-rendered actions.
+   The masked ring leaves existing surfaces, text, icons and click targets intact. */
+@property --shuffl-button-angle {
+  syntax: "<angle>";
+  initial-value: 90deg;
+  inherits: false;
+}
+@keyframes shuffl-button-spin {
+  to { --shuffl-button-angle: 450deg; }
+}
+:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]) {
+  position: relative;
+  isolation: isolate;
+  border-radius: 999px !important;
+}
+:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"])::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from var(--shuffl-button-angle), transparent 0%, transparent 65%, #bc7782 80%, #7b1622 93%, #f0ced3 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease-out;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):not(:disabled, [aria-disabled="true"]):hover::before {
+    opacity: 1;
+    animation: shuffl-button-spin 3s linear infinite;
+  }
+}
+:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):focus-visible::before { opacity:1; }
+@media (prefers-reduced-motion: reduce) {
+  :where(button, a)::before { animation:none !important; transition:none !important; }
+}
+:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]) {
+  transition: translate 300ms ease-out, box-shadow 300ms ease-out;
+}
+@media (hover:hover) and (pointer:fine) {
+  :where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):not(:disabled, [aria-disabled="true"]):hover {
+    translate:0 -2px;
+    box-shadow:0 4px 18px rgba(123,22,34,.10);
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  :where(button, a):hover { translate:none !important; }
+}
+
+/* Text actions retain their shape: a rose highlight travels along an underline. */
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]) {
+  position: relative;
+}
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"])::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #7b1622 0%, #7b1622 35%, #f0ced3 50%, #bc7782 55%, #7b1622 65%, #7b1622 100%);
+  background-size: 250% 100%;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+@keyframes shuffl-underline-light {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
+    opacity: 1;
+    animation: shuffl-underline-light 1.5s ease-in-out infinite alternate;
+  }
+}
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]):focus-visible::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"])::after { animation: none !important; transition: none; }
+}

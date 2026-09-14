@@ -2,12 +2,23 @@
   <div class="container nav-inner">
     <%= link_to "shuffl.", root_path, class: "wordmark" %>
     <div class="nav-right">
+      <details class="mobile-navigation">
+        <summary aria-label="Open navigation"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></summary>
+        <div class="mobile-navigation-menu">
+          <%= link_to "Quiz", new_quiz_response_path %>
+          <%= link_to "My Wallet", wallet_items_path %>
+          <%= link_to "Browse", cards_path %>
+        </div>
+      </details>
       <ul class="nav-links">
-        <li><%= link_to "Home", root_path, class: ("active" if current_page?(root_path)) %></li>
         <li><%= link_to "Quiz", new_quiz_response_path, class: ("active" if controller_name == "quiz_responses") %></li>
         <li><%= link_to "My Wallet", wallet_items_path, class: ("active" if controller_name == "wallet_items") %></li>
         <li><%= link_to "Browse", cards_path, class: ("active" if %w[cards stacks].include?(controller_name)) %></li>
       </ul>
+      <button type="button" class="theme-toggle" data-controller="theme" data-action="theme#toggle" aria-label="Switch to dark mode" aria-pressed="false">
+        <svg class="theme-moon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg>
+        <svg class="theme-sun" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+      </button>
       <div class="dropdown nav-account">
         <button class="account-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<%= user_signed_in? ? "Account menu for #{current_user.first_name}" : "Account menu, signed out" %>">
           <% if user_signed_in? %>

@@ -1,0 +1,23 @@
+.home-page .product-hero{display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:6%;padding-block:65px 55px}
+.home-page .product-hero h1{font-size:clamp(44px,6.2vw,100px);line-height:.96}
+.home-page .hero-description{font-size:clamp(16px,1.5vw,22px);line-height:1.5;color:#666;margin:26px 0}
+.home-page .product-hero .hero-actions{display:flex;flex-direction:row;gap:12px;width:auto;margin-top:28px}
+.home-page .product-hero .hero-actions .btn{font-size:16px;padding:13px 22px;letter-spacing:-.02em}
+.hero-carousel{min-width:0;overflow:hidden;padding:28px 0 10px}
+.hero-wheel{height:300px;position:relative;display:grid;place-items:center}
+.home-page .hero-wheel .hero-card{width:clamp(170px,21vw,310px);top:auto;left:auto;transform:translate(0,0);opacity:1;transition:none;border-radius:9px!important;cursor:pointer}
+.hero-card-name{position:absolute;left:10%;bottom:12%;font-size:13px}.hero-card.finish-burgundy,.hero-card.finish-graphite{color:white}
+.hero-carousel-footer{display:flex;justify-content:center;align-items:center;gap:25px;margin-top:18px;color:#666;font-size:13px;min-height:42px}
+.quiz-finish-overlay{position:fixed;inset:0;z-index:1100;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.finish-wordmark{font:700 44px/1.2 "Helvetica Neue",sans-serif;letter-spacing:-.06em;z-index:1}
+.quiz-finish-overlay>p{position:absolute;top:calc(50% + 190px);color:#777;font-size:14px}
+.finish-orbit{position:absolute;width:300px;height:300px;animation:finish-orbit 3s linear infinite}
+.orbit-position{position:absolute;left:calc(50% - 28px);top:calc(50% - 18px);transform:rotate(calc(var(--orbit-index)*45deg)) translateY(-137px)}
+.orbit-card{display:block;width:56px;height:36px;border-radius:4px;background:linear-gradient(115deg,#ffffff40,transparent),#681522;box-shadow:0 4px 9px #0002;transform:rotate(-20deg)}
+.orbit-position:nth-child(even) .orbit-card{background:linear-gradient(115deg,#ffffff50,transparent),#aaaead}
+.orbit-card>span{position:absolute;width:9px;height:7px;left:7px;top:12px;background:#d6d0bc;border-radius:2px}
+@keyframes finish-orbit{to{transform:rotate(360deg)}}
+@media(max-width:767px){.home-page .product-hero{grid-template-columns:1fr;gap:12px;padding-block:40px 25px}.home-page .product-hero .hero-actions{flex-wrap:wrap}.hero-wheel{height:225px}.home-page .hero-wheel .hero-card{width:220px}.hero-carousel-footer{margin-top:0}.hero-carousel{padding-top:0}}
+@media(prefers-reduced-motion:reduce){.home-page .hero-wheel .hero-card{transition:none}.finish-orbit{animation:none}}
+::view-transition-group(shuffl-selected-card){animation-duration:550ms;animation-timing-function:cubic-bezier(.23,1,.32,1)}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*){animation-duration:0s}}

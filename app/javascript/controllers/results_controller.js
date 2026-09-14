@@ -1,3 +1,4 @@
+import { gatherCards } from "controllers/motion_helpers"
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
@@ -44,7 +45,7 @@ root.querySelector('#save-stack').addEventListener('click',async()=>{
     const response=await fetch(saveUrl,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','X-CSRF-Token':window.document.querySelector('meta[name="csrf-token"]').content},body:JSON.stringify({quiz_response_id:quizId,card_ids:selected.map(i=>catalog[i].id)})});
     const result=await response.json();
     if(response.status===401){root.querySelector('#save-status').innerHTML='<a href="'+result.sign_in_url+'">Sign in to save this stack</a>. Your choices will be here when you return.';button.textContent='Save this stack';}
-    else if(response.ok){savedSnapshot=state;syncSave();if(state===snapshot())root.querySelector('#save-status').innerHTML='Saved. <a href="'+result.wallet_url+'">View My Wallet</a>';}
+    else if(response.ok){await gatherCards(root.querySelectorAll('.card-link'),button);savedSnapshot=state;syncSave();if(state===snapshot())root.querySelector('#save-status').innerHTML='Saved. <a href="'+result.wallet_url+'">View My Wallet</a>';}
     else throw new Error(result.error||'Could not save this stack.');
   }catch{root.querySelector('#save-status').textContent='Could not save this stack. Please try again.';button.textContent='Save this stack';}
   finally{button.disabled=false;}

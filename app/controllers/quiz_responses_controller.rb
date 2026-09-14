@@ -46,12 +46,15 @@ class QuizResponsesController < ApplicationController
       # Remembered so card pages can show how each card ranks for this visitor,
       # and so the result can be attached to their account if they sign up later.
       session[:last_quiz_response_id] = @quiz_response.id
+      session[:quiz_finish_id] = @quiz_response.id
       redirect_to @quiz_response, status: :see_other
     end
   end
 
   def show
     @quiz_response = QuizResponse.find(params[:id])
+    @show_quiz_finish = session[:quiz_finish_id].to_s == @quiz_response.id.to_s
+    session.delete(:quiz_finish_id) if @show_quiz_finish
     ids = JSON.parse(@quiz_response.top_card_ids)
     @cards = ids.filter_map { |id| Card.find_by(id: id) }
     @results_payload = ResultsStack.new(@quiz_response).payload

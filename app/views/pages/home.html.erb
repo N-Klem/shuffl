@@ -1,12 +1,27 @@
 <% content_for :body_class, "home-page" %>
-<section class="hero container">
-  <div class="hero-headline">
-    <h1><span>find your cards</span><span>build your wallet</span></h1>
+<section class="hero container product-hero">
+  <div class="hero-copy">
+    <div class="hero-headline"><h1><span>find your cards</span><span>build your wallet</span></h1></div>
+    <p class="hero-description">Find the cards that fit your life.<br>Build a stack that works better together.</p>
+    <div class="hero-actions">
+      <%= link_to "Find my cards", new_quiz_response_path, class: "btn btn-primary" %>
+      <%= link_to "Browse cards & stacks", cards_path, class: "btn btn-outline-dark" %>
+    </div>
   </div>
-  <div class="hero-actions">
-    <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary" %>
-    <%= link_to "Browse stacks", stacks_path, class: "btn btn-outline-dark" %>
-  </div>
+  <% hero_cards = @featured_stacks.flat_map { |stack| stack.cards.first(2) }.uniq.first(5) %>
+  <% if hero_cards.any? %>
+    <div class="hero-carousel" data-controller="hero-carousel" aria-label="Explore cards for your stack" aria-roledescription="carousel">
+      <div class="hero-wheel">
+        <% hero_cards.each_with_index do |card, index| %>
+          <button type="button" class="fan-card hero-card <%= card_finish(card) %>" data-hero-carousel-target="card" data-action="hero-carousel#select" data-index="<%= index %>" data-caption="<%= card_benefit(card) %>" aria-label="Bring <%= card.name %> forward">
+            <span class="chip"></span><span class="card-wordmark">shuffl.</span>
+            <span class="hero-card-name"><%= card.name %></span>
+          </button>
+        <% end %>
+      </div>
+      <div class="hero-carousel-footer"><span data-hero-carousel-target="caption"><%= card_benefit(hero_cards.first) %></span></div>
+    </div>
+  <% end %>
 </section>
 
 <section class="stacks container">
@@ -34,37 +49,3 @@
     <%= link_to "Explore more stacks →", stacks_path, class: "tertiary-link" %>
   </div>
 </section>
-
-<% if user_signed_in? %>
-  <section class="container home-continue">
-    <p class="home-continue-greeting">Welcome back, <%= current_user.first_name %>.</p>
-    <p class="home-continue-actions">
-      <% if current_user.wallet_items.exists? %>
-        <%= link_to "Open My Wallet →", wallet_items_path, class: "tertiary-link" %>
-        <% if latest_quiz_response %><span class="home-continue-sep">·</span> <%= link_to "View your results", quiz_response_path(latest_quiz_response) %><% end %>
-      <% elsif latest_quiz_response %>
-        <%= link_to "View your recommended stack →", quiz_response_path(latest_quiz_response), class: "tertiary-link" %>
-      <% else %>
-        <%= link_to "Take the quiz →", new_quiz_response_path, class: "tertiary-link" %>
-      <% end %>
-    </p>
-  </section>
-<% end %>
-
-<div data-controller="dialog">
-  <button type="button" class="ai-bubble" data-action="dialog#open" aria-haspopup="dialog">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8l-6 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
-    <span class="label">Ask shuffl.<span class="sublabel">AI assistant</span></span>
-  </button>
-  <dialog class="ai-dialog" data-dialog-target="dialog" data-action="click->dialog#backdrop" aria-labelledby="ai-dialog-title">
-    <div class="ai-dialog-body">
-      <p class="eyebrow">Coming soon</p>
-      <h2 id="ai-dialog-title">Ask shuffl. is on its way.</h2>
-      <p>Until it lands, the quiz is the fastest route to a card that fits: <%= Card::QUIZ_QUESTIONS.size %> questions, about two minutes, and every one of our <%= Card.count %> cards ranked against how you spend.</p>
-      <div class="ai-dialog-actions">
-        <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary" %>
-        <button type="button" class="btn btn-outline-dark" data-action="dialog#close">Not now</button>
-      </div>
-    </div>
-  </dialog>
-</div>

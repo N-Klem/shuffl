@@ -1,0 +1,11 @@
+<div class="floating-assistant" data-controller="assistant" data-action="keydown.esc@window->assistant#close resize@window->assistant#resize">
+  <button type="button" class="assistant-orb" data-assistant-target="orb" data-action="pointerdown->assistant#start pointermove->assistant#move pointerup->assistant#end pointercancel->assistant#cancel click->assistant#toggle keydown->assistant#keyboard" aria-label="Ask shuffl. Drag to move, or use arrow keys when focused." aria-expanded="false" aria-controls="assistant-panel">
+    <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"/><path d="M7 9h10M7 13h6"/></svg>
+  </button>
+  <section id="assistant-panel" class="assistant-panel" data-assistant-target="panel" role="region" aria-labelledby="assistant-title" hidden>
+    <header><h2 id="assistant-title">Ask shuffl.</h2><button type="button" class="assistant-close" data-action="assistant#close" aria-label="Close assistant">×</button></header>
+    <span class="assistant-status">Coming soon</span>
+    <p>A little help finding your next card. Our AI assistant is on its way.</p>
+    <%= link_to "Find my cards →", new_quiz_response_path, class: "tertiary-link" %>
+  </section>
+</div>

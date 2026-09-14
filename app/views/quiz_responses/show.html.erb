@@ -1,7 +1,7 @@
 <% content_for :body_class, "results-page" %>
 <% content_for :title, "Your recommended stack · Shuffl" %>
 <% content_for :meta_description, "#{@cards.size} cards chosen from #{Card.count}, matched to how you spend. See the stack and what it earns." %>
-<main class="results-main" data-controller="results"
+<main class="results-main" data-controller="results quiz-finish" data-quiz-finish-enabled-value="<%= @show_quiz_finish %>"
       data-results-payload-value="<%= @results_payload.to_json %>"
       data-results-quiz-id-value="<%= @quiz_response.id %>"
       data-results-save-url-value="<%= save_stack_wallet_items_path %>">
@@ -15,3 +15,12 @@
 </div><p class="status" id="status" role="status">Keep your favourites. Swap anything that doesn’t feel right.</p><p class="footnote">Spending is shared across your cards, counted only once. Move the slider to see each card’s contribution change.</p></section></div></div>
 <footer class="bottom"><p>Illustrative estimates from Shuffl’s sample catalogue, not live offers. Points are valued at 1¢ each. Excludes welcome bonuses, interest, category caps and conditional perks. Each spending category is counted once, on the highest-rate card in your stack.</p><span>shuffl. · Your results</span></footer>
 </main>
+
+<template id="quiz-finish-template">
+  <div class="quiz-finish-overlay" role="status" aria-live="polite">
+    <div class="finish-orbit" aria-hidden="true">
+      <% 8.times do |index| %><span class="orbit-position" style="--orbit-index:<%= index %>"><span class="orbit-card"><span></span></span></span><% end %>
+    </div>
+    <div class="finish-wordmark">shuffl.</div><p>Your stack is ready.</p>
+  </div>
+</template>

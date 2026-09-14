@@ -15,7 +15,7 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
   test "results retain recommendations and initialize spending from quiz" do
     get quiz_response_path(@quiz)
     assert_response :success
-    assert_select '[data-controller="results"]'
+    assert_select '[data-controller~="results"]'
     assert_select 'nav.site-nav'
     payload = ResultsStack.new(@quiz).payload
     assert_equal @card.id, payload[:cards][payload[:selected].first][:id]

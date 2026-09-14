@@ -36,6 +36,10 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
       end
     end
     assert_select "h2", text: card.name
+    assert_select '[data-quiz-finish-enabled-value="true"]'
+    get quiz_response_path(QuizResponse.order(:id).last)
+    assert_select '[data-quiz-finish-enabled-value="false"]'
+
     saved = JSON.parse(QuizResponse.order(:id).last.answers)
     assert_equal 16, saved.size
     assert_equal first[:options].last, saved[first[:key]]

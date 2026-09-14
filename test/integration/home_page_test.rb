@@ -34,18 +34,19 @@ class HomePageTest < ActionDispatch::IntegrationTest
     assert_select ".home-continue", count: 0
   end
 
-  test "a signed-in visitor with no history is pointed at the quiz" do
+  test "a signed-in visitor with no history sees the clean homepage" do
     sign_in User.create!(first_name: "Newbie", email: "newbie@example.com", password: "password123")
     get root_path
-    assert_select ".home-continue-greeting", text: /Welcome back, Newbie/
-    assert_select ".home-continue-actions a", text: /Take the quiz/
+    assert_select ".home-continue", count: 0
+    assert_select ".mobile-navigation a[href=?]", new_quiz_response_path
   end
 
-  test "a signed-in visitor with saved cards is pointed at their wallet" do
+  test "a signed-in visitor with saved cards can access the wallet through navigation" do
     user = User.create!(first_name: "Saver", email: "saver@example.com", password: "password123")
     user.wallet_items.create!(card: @card)
     sign_in user
     get root_path
-    assert_select ".home-continue-actions a[href=?]", wallet_items_path, text: /Open My Wallet/
+    assert_select ".home-continue", count: 0
+    assert_select ".mobile-navigation a[href=?]", wallet_items_path
   end
 end

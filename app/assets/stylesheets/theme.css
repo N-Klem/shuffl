@@ -1,0 +1,37 @@
+/* Theme surfaces leave credit-card artwork and burgundy primary actions intact. */
+.theme-toggle { display:grid; place-items:center; flex-shrink:0; width:38px; height:38px; padding:0; border:0; border-radius:50%; background:transparent; color:var(--ink); cursor:pointer; }
+.theme-toggle:hover { background:color-mix(in srgb, var(--ink) 8%, transparent); }
+.theme-toggle:focus-visible { outline:2px solid #bc7782; outline-offset:3px; }
+.theme-sun { display:none; }
+html[data-theme="dark"] .theme-moon { display:none; }
+html[data-theme="dark"] .theme-sun { display:block; }
+html[data-theme="dark"] {
+  color-scheme:dark;
+  --ink:#f2eeee; --body-color:#d2cbcd; --muted:#afa5a8; --hairline:#443b3f; --surface:#191619;
+  --bs-body-bg:#191619; --bs-body-color:#d2cbcd; --bs-border-color:#443b3f; --bs-link-color:#f2eeee; --bs-link-hover-color:#e5a6b1;
+}
+html[data-theme="dark"] body { background:#191619; color:#d2cbcd; }
+html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { background:#191619; color:#f2eeee; --ink:#f2eeee; --muted:#afa5a8; }
+html[data-theme="dark"] .site-nav { background:rgba(30,25,29,.94); border-color:#443b3f; box-shadow:0 8px 32px #0003; }
+html[data-theme="dark"] :is(.wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color:#f2eeee; }
+html[data-theme="dark"] :is(.hero-description,.hero-carousel-footer,.eyebrow,.muted,.perks,.issuer,.note,.stack-names,.list-head,.results-top,.summary small,.metrics small,.detail-layout p,.hero p,.heading p,.home-continue p) { color:#afa5a8; }
+html[data-theme="dark"] :is(dialog,.account-menu,.summary,.shelf,.detail,.allocation,.tray,.toolbar,.filter-extra,.quiz-answer,.login-panel,.auth-panel,.quiz-finish-overlay,.ai-dialog,.ai-bubble) { background:#211c20; color:#f2eeee; border-color:#443b3f; }
+html[data-theme="dark"] :is(input:not([type="range"],[type="checkbox"],[type="radio"]),select,textarea,.account-toggle) { background:#282227; color:#f2eeee; border-color:#574a51; }
+html[data-theme="dark"] input::placeholder { color:#a99da3; }
+html[data-theme="dark"] :is(.btn-outline-dark,button:not(.primary,.btn-primary,.credit,.fan-card,.art,.theme-toggle)) { color:#f2eeee; border-color:#574a51; }
+html[data-theme="dark"] :is(.actions button:not(.primary,.btn-primary),.toolbar button,.chips button,button.keep,button[data-swap],button[data-act="paid"],dialog button:not(.primary)) { background:#282227; }
+html[data-theme="dark"] :is(.btn-primary,.primary) { background:#7b1622; color:#fff; border-color:#a14151; }
+html[data-theme="dark"] :is(.reward,.reward-value) { color:#79d3a6; }
+html[data-theme="dark"] .fee { color:#f28d9b; }
+html[data-theme="dark"] :is(.product,.timeline,.section,.steps,.step,.rates,.list-head,.toolbar,.filter-extra,td,th,.stack-col,.stack-tile,.stacks-footer) { border-color:#443b3f; }
+html[data-theme="dark"] :is(.tertiary-link,.text,.link) { color:#e5ccd2; }
+html[data-theme="dark"] .dropdown-item:hover { background:#382b32; }
+html[data-theme="dark"] .nav-links a.active { border-bottom-color:#e5ccd2; }
+html[data-theme="dark"] .progress { background:#443b3f; }
+html[data-theme="dark"] :is(.wallet-app,.browse-app,.auth-page,.quiz-page) { background:#191619; color:#f2eeee; --ink:#f2eeee; --muted:#afa5a8; }
+html[data-theme="dark"] .auth-page .stack-panel { background:#211c20; }
+html[data-theme="dark"] :is(.auth-page .stack-panel > p,.auth-page .stack-caption p,.auth-page .tabs a,.auth-page label,.quiz-page label,.wallet-app p,.results-page p) { color:#c3b8be; }
+html[data-theme="dark"] .auth-page .tabs a.active { color:#f2eeee; border-color:#e5a6b1; }
+html[data-theme="dark"] .quiz-answer:has(input:checked),html[data-theme="dark"] .quiz-answer:hover:not(:has(input:disabled)) { background:#38232d; border-color:#bc7782; }
+html[data-theme="dark"] .quiz-answer input:checked { box-shadow:inset 0 0 0 5px #211c20; }
+html[data-theme="dark"] .quiz-finish { background:#191619; color:#f2eeee; }
