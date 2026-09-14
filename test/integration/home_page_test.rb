@@ -3,6 +3,8 @@ require_relative "../../config/environment"
 require "rails/test_help"
 
 class HomePageTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @card = Card.create!(name: "Home Feature Card", issuer: "Test", network: "Visa", card_type: "Credit",
                          annual_fee: 0, reward_rate: 3, best_for: "Dining", perks: "Standout home perk")
@@ -25,5 +27,25 @@ class HomePageTest < ActionDispatch::IntegrationTest
     assert_select "meta[name='description']"
     assert_select "meta[property='og:title']"
     assert_select "meta[property='og:image']"
+  end
+
+  test "signed-out visitors see no continuity strip" do
+    get root_path
+    assert_select ".home-continue", count: 0
+  end
+
+  test "a signed-in visitor with no history is pointed at the quiz" do
+    sign_in User.create!(first_name: "Newbie", email: "newbie@example.com", password: "password123")
+    get root_path
+    assert_select ".home-continue-greeting", text: /Welcome back, Newbie/
+    assert_select ".home-continue-actions a", text: /Take the quiz/
+  end
+
+  test "a signed-in visitor with saved cards is pointed at their wallet" do
+    user = User.create!(first_name: "Saver", email: "saver@example.com", password: "password123")
+    user.wallet_items.create!(card: @card)
+    sign_in user
+    get root_path
+    assert_select ".home-continue-actions a[href=?]", wallet_items_path, text: /Open My Wallet/
   end
 end

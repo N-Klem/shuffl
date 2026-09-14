@@ -35,6 +35,22 @@
   </div>
 </section>
 
+<% if user_signed_in? %>
+  <section class="container home-continue">
+    <p class="home-continue-greeting">Welcome back, <%= current_user.first_name %>.</p>
+    <p class="home-continue-actions">
+      <% if current_user.wallet_items.exists? %>
+        <%= link_to "Open My Wallet →", wallet_items_path, class: "tertiary-link" %>
+        <% if latest_quiz_response %><span class="home-continue-sep">·</span> <%= link_to "View your results", quiz_response_path(latest_quiz_response) %><% end %>
+      <% elsif latest_quiz_response %>
+        <%= link_to "View your recommended stack →", quiz_response_path(latest_quiz_response), class: "tertiary-link" %>
+      <% else %>
+        <%= link_to "Take the quiz →", new_quiz_response_path, class: "tertiary-link" %>
+      <% end %>
+    </p>
+  </section>
+<% end %>
+
 <div data-controller="dialog">
   <button type="button" class="ai-bubble" data-action="dialog#open" aria-haspopup="dialog">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8l-6 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
