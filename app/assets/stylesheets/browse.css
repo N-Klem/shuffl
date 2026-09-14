@@ -13,8 +13,6 @@
     color: var(--ink);
     background: var(--surface);
     font: var(--text-dense)/1.5 var(--font-sans);
-    --ink: #0a0a0a;
-    --muted: #6b6b6b;
   }
   button,
   input,
@@ -123,7 +121,7 @@
     padding: 12px 14px 12px 38px;
     border: 1px solid var(--hairline-strong);
     border-radius: 5px;
-    background: #fafafa;
+    background: var(--surface-field);
   }
   .search span {
     position: absolute;
@@ -728,7 +726,7 @@
   }
   .browse-tabs button[aria-selected="true"] {
     color: var(--ink);
-    border-bottom-color: #111;
+    border-bottom-color: var(--ink);
   }
   .stack-names {
     font-size: 11px;
@@ -845,5 +843,5 @@
   top: 0;
   z-index: 20;
   background: var(--surface);
-  box-shadow: 0 1px 0 #ccc;
+  box-shadow: 0 1px 0 var(--hairline-strong);
 }
