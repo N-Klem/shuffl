@@ -2,7 +2,7 @@
    stack context on the left, matching public/login-mockup.html. */
 .auth-page { background: #fff; color: #0a0a0a; font-family: var(--font-sans); }
 .auth-page ::selection { background: #ead7da; }
-.auth-page :focus-visible { outline: 2px solid var(--burgundy); outline-offset: 4px; }
+.auth-page :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
 .auth-shell { max-width: 1440px; margin: auto; display: grid; grid-template-columns: 1.05fr 1fr; min-height: calc(100svh - 170px); padding: 28px clamp(24px, 3vw, 48px); gap: clamp(40px, 6vw, 100px); }
 

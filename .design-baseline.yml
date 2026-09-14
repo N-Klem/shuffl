@@ -1,9 +1,9 @@
 ---
 application.css:
-  hex: 41
+  hex: 43
   fonts: 0
 assistant.css:
-  hex: 6
+  hex: 5
   fonts: 0
 browse.css:
   hex: 29
@@ -33,11 +33,11 @@ spinning_buttons.css:
   hex: 8
   fonts: 0
 theme.css:
-  hex: 53
+  hex: 31
   fonts: 0
 wallet.css:
   hex: 29
   fonts: 0
 z_mobile.css:
-  hex: 2
+  hex: 1
   fonts: 0

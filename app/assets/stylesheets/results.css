@@ -270,8 +270,7 @@
     border-radius: 9px;
     backface-visibility: hidden;
     overflow: hidden;
-    background:
-      linear-gradient(
+    background: linear-gradient(
         115deg,
         #ffffff25,
         transparent 40%,

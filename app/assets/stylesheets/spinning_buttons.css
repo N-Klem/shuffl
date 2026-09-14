@@ -34,21 +34,21 @@
     animation: shuffl-button-spin 3s linear infinite;
   }
 }
-:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):focus-visible::before { opacity:1; }
+:where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):focus-visible::before { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  :where(button, a)::before { animation:none !important; transition:none !important; }
+  :where(button, a)::before { animation: none !important; transition: none !important; }
 }
 :where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]) {
   transition: translate 300ms ease-out, box-shadow 300ms ease-out;
 }
 @media (hover:hover) and (pointer:fine) {
   :where(.btn:not(.btn-link), .btn-wallet, button.primary, .actions > button:not(.text, .link), .toolbar > button, .chips button, button.keep, button[data-swap], button[data-act="paid"]):not(:disabled, [aria-disabled="true"]):hover {
-    translate:0 -2px;
-    box-shadow:0 4px 18px rgba(123,22,34,.10);
+    translate: 0 -2px;
+    box-shadow: 0 4px 18px rgba(123,22,34,.10);
   }
 }
 @media(prefers-reduced-motion:reduce) {
-  :where(button, a):hover { translate:none !important; }
+  :where(button, a):hover { translate: none !important; }
 }
 
 /* Text actions retain their shape: a rose highlight travels along an underline. */

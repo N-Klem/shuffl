@@ -36,7 +36,7 @@
   a:focus-visible,
   input:focus-visible,
   select:focus-visible {
-    outline: 2px solid var(--burgundy);
+    outline: 2px solid var(--focus-ring);
     outline-offset: 4px;
   }
   a {
@@ -204,8 +204,7 @@
     overflow: hidden;
     background-color: var(--metal);
     color: var(--fg);
-    background-image:
-      repeating-linear-gradient(
+    background-image: repeating-linear-gradient(
         2deg,
         transparent 0px,
         #ffffff12 0.5px,
@@ -220,8 +219,7 @@
         transparent 70%,
         #00000022
       );
-    box-shadow:
-      inset 0 1px 1px #fff8,
+    box-shadow: inset 0 1px 1px #fff8,
       0 17px 23px -14px #0007;
     transform: rotate(-6deg);
     transition: transform 550ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -648,8 +646,7 @@
     font-size: 12px;
     opacity: 0;
     transform: translateY(5px);
-    transition:
-      opacity 250ms ease,
+    transition: opacity 250ms ease,
       transform 450ms cubic-bezier(0.23, 1, 0.32, 1);
     color: #333;
     text-decoration: underline;
@@ -783,8 +780,7 @@
     letter-spacing: 0;
     box-shadow: 0 4px 14px #00000016;
     opacity: 0;
-    transition:
-      opacity 350ms ease,
+    transition: opacity 350ms ease,
       transform 450ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .stack-product .art:hover .stack-art,
