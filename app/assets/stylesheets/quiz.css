@@ -67,3 +67,25 @@
 
 .quiz-explanation-link { color: var(--burgundy); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .quiz-explanation-link:hover { color: #8a263b; }
+
+/* Ranked question: the number carries the answer, so it has to read clearly at
+   a glance and stay legible once the row is selected. */
+.quiz-page .quiz-rank {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--surface);
+  background: var(--burgundy);
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.quiz-page .quiz-answer.is-ranked { border-color: var(--burgundy); }
+.quiz-page .quiz-answer.is-ranked .quiz-rank { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .quiz-page .quiz-rank { transition: none; } }

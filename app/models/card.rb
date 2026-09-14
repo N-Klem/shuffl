@@ -15,7 +15,11 @@ class Card < ApplicationRecord
     "Rent or bills", "Travel", "Entertainment & subscriptions"
   ].freeze
 
-  QUIZ_QUESTIONS = [
+  # The quiz is in two parts. CORE runs before results; REFINE is offered on the
+  # results page for anyone who wants a sharper answer. Both feed the same scorer,
+  # and every scoring method treats a missing answer as zero, so a visitor who
+  # never refines still gets a complete ranking from the core ten.
+  CORE_QUESTIONS = [
     {
       key: "credit_score",
       type: :single,
@@ -23,16 +27,10 @@ class Card < ApplicationRecord
       options: [ "No credit history", "Building (300–579)", "Fair (580–669)", "Good (670–739)", "Excellent (740+)", "I don't know" ]
     },
     {
-      key: "open_credit_cards",
+      key: "pays_in_full",
       type: :single,
-      prompt: "Do you currently have any open credit cards?",
-      options: [ "No, this would be my first", "1–2", "3–5", "6+" ]
-    },
-    {
-      key: "annual_income",
-      type: :single,
-      prompt: "What's your annual income?",
-      options: [ "Under $20k", "$20k–$40k", "$40k–$75k", "$75k–$100k", "$100k–$150k", "$150k+" ]
+      prompt: "Do you pay your balance off in full each month?",
+      options: [ "Yes, always", "Usually", "Sometimes I carry a balance", "I carry a balance most months" ]
     },
     {
       key: "employment_status",
@@ -41,46 +39,23 @@ class Card < ApplicationRecord
       options: [ "Student", "Employed full-time", "Employed part-time", "Self-employed or freelance", "Unemployed" ]
     },
     {
-      key: "documented_income",
+      key: "annual_income",
       type: :single,
-      prompt: "Do you have a regular source of income you can document?",
-      options: [ "Yes, steady paycheck", "Yes, but it varies", "I have savings but no regular income", "No" ]
+      prompt: "What's your annual income?",
+      options: [ "Under $20k", "$20k–$40k", "$40k–$75k", "$75k–$100k", "$100k–$150k", "$150k+" ]
     },
     {
-      key: "biggest_expense",
+      key: "open_credit_cards",
       type: :single,
-      prompt: "What's your biggest monthly expense category?",
-      options: EXPENSE_OPTIONS
+      prompt: "How many credit cards do you already have?",
+      options: [ "None, this would be my first", "1–2", "3–5", "6+" ]
     },
     {
-      key: "monthly_card_spend",
-      type: :single,
-      prompt: "How much do you spend per month on your card(s) roughly?",
-      options: [ "Under $500", "$500–$1,000", "$1,000–$2,500", "$2,500–$5,000", "$5,000+" ]
-    },
-    {
-      key: "second_expense",
-      type: :single,
-      prompt: "What's your second-biggest spending category?",
-      options: EXPENSE_OPTIONS
-    },
-    {
-      key: "rewards_type",
-      type: :single,
-      prompt: "What kind of rewards do you care about most?",
-      options: [ "Cashback", "Travel points & miles", "Dining & food credits", "Statement credits or discounts", "I don't know yet" ]
-    },
-    {
-      key: "perks_interest",
-      type: :single,
-      prompt: "Would you use perks like purchase protection, extended warranty, or cell phone insurance?",
-      options: [ "Yes, that's a big deal for me", "Nice to have", "Wouldn't think about it" ]
-    },
-    {
-      key: "signup_bonus_interest",
-      type: :single,
-      prompt: "Are you interested in sign-up bonuses?",
-      options: [ "Yes, I'd spend enough to hit a bonus target", "Maybe, depends on the requirement", "No, I want long-term value over one-time bonuses" ]
+      key: "spending_priorities",
+      type: :ranked,
+      max_select: 3,
+      prompt: "Where does most of your money go? Pick your top three, in order.",
+      options: [ "Groceries", "Dining out", "Travel", "Gas & transport", "Online shopping", "Entertainment & subscriptions", "Rent or bills" ]
     },
     {
       key: "annual_fee_tolerance",
@@ -94,30 +69,75 @@ class Card < ApplicationRecord
       ]
     },
     {
+      key: "top_priority",
+      type: :single,
+      prompt: "What's your #1 priority in a credit card?",
+      options: [ "Building credit", "Earning rewards", "Low fees", "Low interest rate", "Premium perks & status" ]
+    },
+    {
+      key: "rewards_type",
+      type: :single,
+      # Only meaningful once someone has said rewards are the point. Asking a
+      # credit-builder which points currency they prefer wastes a screen.
+      depends_on: { key: "top_priority", value: "Earning rewards" },
+      prompt: "What kind of rewards do you care about most?",
+      options: [ "Cashback", "Travel points & miles", "Dining & food credits", "Statement credits or discounts" ]
+    },
+    {
       key: "international_travel",
       type: :single,
       prompt: "How often do you travel internationally?",
       options: [ "Never", "Once a year", "2–4 times a year", "Monthly or more" ]
+    }
+  ].freeze
+
+  # Offered after results, for anyone who wants to refine. Cut from the core set
+  # because each is either low-variance (nearly everyone answers the same way) or
+  # redundant with a core question.
+  REFINE_QUESTIONS = [
+    {
+      key: "monthly_card_spend",
+      type: :single,
+      prompt: "How much do you spend per month on your card(s), roughly?",
+      options: [ "Under $500", "$500–$1,000", "$1,000–$2,500", "$2,500–$5,000", "$5,000+" ]
     },
     {
-      key: "loyalty_program",
+      key: "signup_bonus_interest",
       type: :single,
-      prompt: "Do you have a preferred airline or hotel chain?",
-      options: [ "Yes — I'm loyal to one brand", "I use a few but no strong loyalty", "No, I go wherever's cheapest" ]
+      prompt: "Are you interested in sign-up bonuses?",
+      options: [
+        "Yes, I'd spend enough to hit a bonus target",
+        "Maybe, depends on the requirement",
+        "No, I want long-term value over one-time bonuses"
+      ]
+    },
+    {
+      key: "perks_interest",
+      type: :single,
+      prompt: "Would you use perks like purchase protection, extended warranty, or cell phone insurance?",
+      options: [ "Yes, that's a big deal for me", "Nice to have", "Wouldn't think about it" ]
+    },
+    {
+      key: "documented_income",
+      type: :single,
+      prompt: "Do you have a regular source of income you can document?",
+      options: [ "Yes, steady paycheck", "Yes, but it varies", "I have savings but no regular income", "No" ]
     },
     {
       key: "online_shopping",
       type: :single,
       prompt: "Do you shop a lot online?",
-      options: [ "Yes, most of my purchases", "Some, but I shop in-store too", "Mostly in-store" ]
+      options: [ "Yes, most of my purchases", "Some, but I shop in-store too", "Rarely" ]
     },
     {
-      key: "top_priority",
+      key: "loyalty_program",
       type: :single,
-      prompt: "What's your #1 priority in a credit card?",
-      options: [ "Building credit", "Earning rewards", "Low fees", "Low interest rate", "Premium perks & status" ]
+      prompt: "Do you have a preferred airline or hotel chain?",
+      options: [ "Yes — I'm loyal to one brand", "I have a slight preference", "No, whatever is cheapest" ]
     }
   ].freeze
+
+  QUIZ_QUESTIONS = (CORE_QUESTIONS + REFINE_QUESTIONS).freeze
 
   def self.ranked_for(answers)
     all.sort_by { |card| -card.quiz_score(answers) }
@@ -133,9 +153,9 @@ class Card < ApplicationRecord
     score += employment_bonus(answers["employment_status"], cats)
     score += documented_income_bonus(answers["documented_income"])
 
-    multiplier = spend_multiplier(answers["monthly_card_spend"])
-    score += (3 * multiplier).round if cats.include?(category_for_expense(answers["biggest_expense"]))
-    score += (1 * multiplier).round if cats.include?(category_for_expense(answers["second_expense"]))
+    score += spending_priorities_score(answers["spending_priorities"], cats,
+                                       spend_multiplier(answers["monthly_card_spend"]))
+    score += interest_priority_score(answers["pays_in_full"])
 
     score += rewards_type_score(answers["rewards_type"], cats)
     score += perks_interest_score(answers["perks_interest"])
@@ -150,6 +170,34 @@ class Card < ApplicationRecord
   end
 
   private
+
+  # A ranked top three, weighted 3 / 2 / 1 by position. This replaces the old
+  # biggest_expense + second_expense pair: one question, more signal, and the
+  # ordering maps straight onto the shape of a two- or three-card stack.
+  # monthly_card_spend is a refine-only question now, so the multiplier is 1.0
+  # for anyone who has not refined.
+  def spending_priorities_score(answer, cats, multiplier)
+    ranked = Array(answer)
+    return 0 if ranked.empty?
+
+    ranked.first(3).each_with_index.sum do |expense, index|
+      category = category_for_expense(expense)
+      next 0 unless category && cats.include?(category)
+      ((3 - index) * multiplier).round
+    end
+  end
+
+  # Someone who carries a balance pays more in interest than any realistic
+  # rewards rate returns, so rewards-heavy cards stop being the right answer.
+  # There is no APR field on Card yet, so this currently only steers toward
+  # no-fee cards; when real interest-rate data lands this is where it goes.
+  def interest_priority_score(answer)
+    case answer
+    when "Sometimes I carry a balance" then annual_fee.to_i.zero? ? 1 : -1
+    when "I carry a balance most months" then annual_fee.to_i.zero? ? 2 : -3
+    else 0
+    end
+  end
 
   def category_for_expense(expense)
     {
