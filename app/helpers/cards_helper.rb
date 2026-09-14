@@ -8,6 +8,11 @@ module CardsHelper
     FINISHES[Digest::MD5.hexdigest(card.name.to_s).to_i(16) % FINISHES.size]
   end
 
+  # A short line for a card in a fan/tile: its first perk, or its headline rate.
+  def card_benefit(card)
+    card.perks.to_s.split(",").map(&:strip).find(&:present?) || "#{card.reward_rate}x rewards"
+  end
+
   # DESIGN.md: the pence drop to muted so figures line up and read as one number.
   def figure_with_pence(amount)
     whole, pence = number_to_currency(amount).split(".")
