@@ -342,44 +342,24 @@ a {
   .site-nav { top: 8px; border-radius: 16px; }
 }
 
-/* ---------- Navbar: account state ---------- */
-/* Sign in / Create account when signed out; name + sign out when signed in.
-   Previously the only sign-in link lived at the bottom of the home page. */
-.nav-account {
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 1.8vw, 24px);
-  font-size: clamp(15px, 1.2vw, 18px);
-}
-.nav-account a,
-.nav-account .nav-user {
-  color: var(--ink);
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-}
-.nav-account a:hover { border-bottom-color: var(--muted); }
-.nav-account a.active { border-bottom-color: var(--ink); }
-.nav-account .nav-user { color: var(--muted); }
-.nav-account form { margin: 0; }
-.nav-account .nav-signout {
-  font: inherit;
-  color: var(--ink);
-  background: none;
-  border: 0;
-  padding: 0 0 4px;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-}
-.nav-account .nav-signout:hover { border-bottom-color: var(--muted); }
-.nav-account .nav-cta {
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-button);
-  padding: 8px 14px;
-}
-.nav-account .nav-cta:hover { background: var(--ink); color: var(--surface); border-bottom-color: var(--ink); }
-@media (max-width: 640px) {
-  .nav-account .nav-cta { display: none; }
+/* ---------- Navbar: account menu ---------- */
+.nav-inner { display:flex; align-items:center; justify-content:space-between; gap:24px; padding-block:16px; }
+.nav-right { display:flex; align-items:center; justify-content:flex-end; gap:clamp(20px,2.8vw,36px); margin-left:auto; }
+.nav-links a { white-space:nowrap; }
+.account-toggle { display:grid; place-items:center; width:42px; height:42px; border-radius:50%; border:1px solid #c7c7cb; background:#f0eff0; color:var(--ink); font:500 17px/1 inherit; padding:0; }
+.account-toggle:hover,.account-toggle[aria-expanded=true] { background:#e5e2e3; border-color:#777; }
+.account-toggle:focus-visible { outline:2px solid var(--burgundy); outline-offset:4px; }
+.account-menu { min-width:190px; padding:8px; border:1px solid var(--hairline); border-radius:12px; box-shadow:0 12px 30px #00000014; margin-top:12px!important; }
+.account-menu .dropdown-item { border-radius:6px; padding:10px 12px; font-size:15px; }
+.account-menu .dropdown-item:active { background:var(--burgundy); color:white; }
+.account-menu form { margin:0; }
+.account-menu .dropdown-header { white-space:normal; }
+@media(max-width:640px) {
+  .nav-inner { gap:10px; flex-wrap:wrap; padding-block:12px; }
+  .nav-right { gap:14px; flex:1; }
+  .nav-right .nav-links { gap:12px; flex-wrap:wrap; justify-content:flex-end; }
+  .nav-right .nav-links a { font-size:14px; }
+  .account-toggle { width:36px; height:36px; }
 }
 
 /* ---------- Flash messages ---------- */

@@ -72,14 +72,21 @@ class CardDetailTest < ActionDispatch::IntegrationTest
   test "navbar reflects sign-in state and shows flash messages" do
     get root_path
     assert_select ".nav-account a", text: "Sign in"
-    assert_select ".nav-signout", count: 0
+    assert_select '.account-toggle[aria-expanded="false"]'
+    assert_select '.account-menu a', text: "Create account"
+    assert_select '.nav-links a', text: "Browse"
+    assert_select '.nav-links a', text: "Cards", count: 0
+    assert_select '.nav-links a', text: "Stacks", count: 0
+    assert_select '.wordmark', text: "shuffl."
 
     user = User.create!(first_name: "Nav", email: "nav-test@example.com", password: "password123")
     sign_in user
     post wallet_items_path, params: { card_id: @card.id }
     follow_redirect!
-    assert_select ".nav-user", text: /Hi, Nav/
-    assert_select "button.nav-signout", text: "Sign out"
+    assert_select '.account-toggle[aria-label="Account menu for Nav"]'
+    assert_select '.account-menu .dropdown-header', text: "Signed in as Nav"
+    assert_select '.account-menu button', text: "Sign out"
+    assert_select '.account-menu a', text: "Sign in", count: 0
     assert_select ".flash", text: /Card added to your wallet/
   end
 
