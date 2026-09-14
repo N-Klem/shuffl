@@ -25,6 +25,7 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select ".detail-facts .value", text: /\$95/   # the fee is demoted into the facts
     assert_select ".detail-perks li", count: 2
     assert_select ".detail-tags li", count: 2
+    assert_select ".detail-tags a[href=?]", cards_path(category: "Travel")  # tags are filter links
     assert_select ".detail-stacks a", text: /Test stack/
     assert_select ".mini-cards li", count: 1
     assert_select ".mini-cards .name", "Similar test"

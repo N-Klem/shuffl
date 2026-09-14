@@ -66,7 +66,7 @@
           <h2>Best for</h2>
           <ul class="detail-tags">
             <% categories.each do |category| %>
-              <li><%= category %></li>
+              <li><%= link_to category, cards_path(category: category), "aria-label": "Browse #{category} cards" %></li>
             <% end %>
           </ul>
         </div>
