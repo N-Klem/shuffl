@@ -15,13 +15,13 @@ html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { backgroun
 html[data-theme="dark"] .site-nav { background:rgba(30,25,29,.94); border-color:#443b3f; box-shadow:0 8px 32px #0003; }
 html[data-theme="dark"] :is(.site-nav .wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color:#f2eeee; }
 html[data-theme="dark"] :is(.hero-description,.hero-carousel-footer,.eyebrow,.muted,.perks,.issuer,.note,.stack-names,.list-head,.results-top,.summary small,.metrics small,.detail-layout p,.hero p,.heading p,.home-continue p) { color:#afa5a8; }
-html[data-theme="dark"] :is(dialog,.account-menu,.summary,.shelf,.detail,.allocation,.tray,.toolbar,.filter-extra,.quiz-answer,.login-panel,.auth-panel,.quiz-finish-overlay,.ai-dialog,.ai-bubble) { background:#211c20; color:#f2eeee; border-color:#443b3f; }
+html[data-theme="dark"] :is(dialog,.account-menu,.summary,.shelf,.detail,.allocation,.tray,.toolbar,.filter-extra,.quiz-answer,.quiz-finish-overlay) { background:#211c20; color:#f2eeee; border-color:#443b3f; }
 html[data-theme="dark"] :is(input:not([type="range"],[type="checkbox"],[type="radio"]),select,textarea,.account-toggle) { background:#282227; color:#f2eeee; border-color:#574a51; }
 html[data-theme="dark"] input::placeholder { color:#a99da3; }
 html[data-theme="dark"] :is(.btn-outline-dark,button:not(.primary,.btn-primary,.credit,.fan-card,.art,.theme-toggle)) { color:#f2eeee; border-color:#574a51; }
 html[data-theme="dark"] :is(.actions button:not(.primary,.btn-primary),.toolbar button,.chips button,button.keep,button[data-swap],button[data-act="paid"],dialog button:not(.primary)) { background:#282227; }
 html[data-theme="dark"] :is(.btn-primary,.primary) { background:var(--burgundy); color:#fff; border-color:#a14151; }
-html[data-theme="dark"] :is(.reward,.reward-value) { color:#79d3a6; }
+html[data-theme="dark"] :is(.reward) { color:#79d3a6; }
 html[data-theme="dark"] .fee { color:#f28d9b; }
 html[data-theme="dark"] :is(.product,.timeline,.section,.steps,.step,.rates,.list-head,.toolbar,.filter-extra,td,th,.stack-col,.stack-tile,.stacks-footer) { border-color:#443b3f; }
 html[data-theme="dark"] :is(.tertiary-link,.text,.link) { color:#e5ccd2; }

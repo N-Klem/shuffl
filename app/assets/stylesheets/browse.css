@@ -43,16 +43,6 @@
     color: inherit;
     text-decoration: none;
   }
-  .nav-container {
-    max-width: 1320px;
-    padding: 16px clamp(16px, 3.5vw, 56px);
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
   .primary {
     background: var(--burgundy);
     border-color: var(--burgundy);
@@ -845,10 +835,6 @@
 .browse-app .list .results {
   display: block;
 }
-.browse-app .nav-container {
-  display: none;
-}
-
 /* ── Browse: pinned controls ────────────────────────────────────────────────
    The page used to be locked to 100dvh with overflow:hidden so that only
    .results scrolled; at 1440x820 that left a 251px window for a 9,666px list

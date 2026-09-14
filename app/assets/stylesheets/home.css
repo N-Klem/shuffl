@@ -61,11 +61,6 @@
 .home-page .stacks-footer { margin-top: 22px; align-items: flex-end; }
 .home-page .stacks-footer p { color: #17191e; font-size: 17px; }
 .home-page .tertiary-link { font-size: 21px; letter-spacing: -.035em; border-color: #252525; }
-.home-page .home-auth { padding-bottom: 20px; }
-.home-page .home-auth p { font-size: 12px; }
-.home-page .ai-bubble { right: 2.4vw; bottom: 20px; border-color: #b9bdc3; border-radius: 14px; padding: 12px 16px; }
-.home-page .ai-bubble .label { font-size: 18px; }
-.home-page .ai-bubble .sublabel { font-size: 12px; }
 @media (min-width: 1600px) { .home-page .hero { padding-block: 80px; } }
 @media (max-width: 1050px) {
   .home-page .hero { flex-wrap: wrap; padding-block: 48px; }
@@ -92,14 +87,12 @@
   .home-page .stack-tile.is-expanded .stack-fan { height: 245px; }
   .home-page .stack-hint { opacity: 1; }
   .home-page .stacks-footer { flex-direction: column-reverse; align-items: flex-start; gap: 24px; }
-  .home-page .ai-bubble { right: 18px; bottom: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .home-page .fan-card { transition: none !important; }
   .home-page .card-reveal { transition: opacity 150ms ease !important; }
 }
 /* Keep the assistant below navigation links rather than covering them. */
-.home-page .ai-bubble { position: relative; width: max-content; margin: 0 0 20px auto; right: auto; bottom: auto; }
 
 .home-page .stack-fan { touch-action: pan-x; }
 .home-page .is-expanded .fan-card { pointer-events: auto; cursor: pointer; }

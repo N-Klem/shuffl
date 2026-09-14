@@ -31,6 +31,12 @@
       "skillPath": "skills/ask-sonner/SKILL.md",
       "computedHash": "23f724e97247b2003ccc479f3a9b3af8e4191a0e133b94ee6b73f8405349687f"
     },
+    "brandkit": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/brandkit/SKILL.md",
+      "computedHash": "b63012f3c3d21197e0185d3e9cc7ec40c589fb10e0b5a32a561739de31aa3f20"
+    },
     "emil-design-eng": {
       "source": "emilkowalski/skills",
       "sourceType": "github",

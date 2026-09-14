@@ -52,10 +52,10 @@
 }
 
 /* Text actions retain their shape: a rose highlight travels along an underline. */
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]) {
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]) {
   position: relative;
 }
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"])::after {
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"])::after {
   content: "";
   position: absolute;
   left: 0;
@@ -73,12 +73,12 @@
   to { background-position: 100% 50%; }
 }
 @media (hover: hover) and (pointer: fine) {
-  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
     opacity: 1;
     animation: shuffl-underline-light 1.5s ease-in-out infinite alternate;
   }
 }
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"]):focus-visible::after { opacity: 1; }
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]):focus-visible::after { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, .auth-tabs button, [role="tab"])::after { animation: none !important; transition: none; }
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"])::after { animation: none !important; transition: none; }
 }

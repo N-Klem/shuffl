@@ -57,11 +57,6 @@
     margin: 0;
     font-size: 18px;
   }
-  .edit {
-    font-size: 14px;
-    white-space: nowrap;
-    margin-bottom: 4px;
-  }
   .layout {
     display: grid;
     grid-template-columns: 380px minmax(0, 1fr);
@@ -346,12 +341,6 @@
     inset: 7px 0;
     border-block: 1px solid #777;
   }
-  .art-note {
-    margin: 11px 0 0;
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
-  }
   .role {
     font-size: 12px;
     color: var(--muted);
@@ -520,10 +509,6 @@
     header p {
       font-size: 16px;
       max-width: 300px;
-    }
-    .edit {
-      display: inline-block;
-      margin-top: 16px;
     }
     h1 {
       font-size: 43px;

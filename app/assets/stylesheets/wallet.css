@@ -46,19 +46,6 @@
     text-decoration: underline;
     text-underline-offset: 5px;
   }
-  .unused-header {
-    height: 76px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 4%;
-    border-bottom: 1px solid #ccc;
-  }
-  .logo {
-    font-size: 35px;
-    font-weight: 650;
-    letter-spacing: -2px;
-  }
   header nav {
     display: flex;
     gap: 30px;
@@ -444,9 +431,6 @@
     pointer-events: none;
     margin: 0 !important;
   }
-  .details-& {
-    animation: enter 250ms ease-out;
-  }
   .demo {
     font-size: 11px;
     color: #888;
@@ -554,10 +538,6 @@
   .wallet-error {
     color: var(--brick);
     margin: 12px 0;
-  }
-  .wallet-tabs {
-    display: flex;
-    gap: 12px;
   }
   .row {
     margin: 0;
