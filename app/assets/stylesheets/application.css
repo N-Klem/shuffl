@@ -22,6 +22,11 @@
   --surface-raised: #FFFFFF;
   --surface-field: #FFFFFF;
   --focus-ring: var(--burgundy);
+
+  /* Two reading sizes. 18px is prose; 16px is dense listing chrome
+     (browse, results, wallet). See DESIGN.md > Typography. */
+  --text-body: 18px;
+  --text-dense: 16px;
   --pine: #16624B;
   --pine-pence: #3F7A65;
   --brick: #A12A36;
@@ -45,7 +50,7 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 18px;
+  font-size: var(--text-body);
   line-height: 1.55;
 }
 

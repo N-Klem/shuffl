@@ -13,7 +13,7 @@
     margin: 0;
     background: white;
     color: var(--ink);
-    font: 16px/1.5 var(--font-sans);
+    font: var(--text-dense)/1.5 var(--font-sans);
   }
   a {
     color: inherit;

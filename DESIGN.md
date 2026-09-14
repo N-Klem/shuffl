@@ -102,7 +102,20 @@ Geist (Google Fonts) is the face. It is loaded in the layout and exposed as the 
 token. Never name a font family directly in a stylesheet — that is how six sheets ended up
 pinned to Helvetica and silently missed the last face change. Always reference the token.
 
-The font stack above is **binding**. The scale below is **open** — see *Open decisions*.
+The font stack above is **binding**, and so are the two reading sizes below. The heading
+scale is still **open** — see *Open decisions*.
+
+**Two reading sizes, both tokens.** `--text-body` (18px) is prose: the home page, detail pages,
+the quiz, auth. `--text-dense` (16px) is listing chrome: browse, results and wallet, where the
+page is a table of records rather than something you read top to bottom. Nothing else is a base
+size, and neither number appears as a literal anywhere.
+
+Those three pages previously ran at 15px, 16px and 14px — three arbitrary answers to a question
+nobody had asked. Moving them onto one number turned out to be almost invisible: row height on
+browse is set by the fixed card artwork, and everything with visual weight (card name 23px,
+reward 22px, fee 22px, issuer 11px) carries an explicit size. The base only governs secondary
+chrome — the search placeholder, the result count, the compare labels — which is exactly why
+18px looked wrong there: it let supporting text compete with the data.
 
 Two separate things are wrong with it. No stylesheet implements a single one of these steps:
 `clamp(40px, 8.4vw, 104px)` does not appear anywhere in the codebase, and neither does any other
@@ -553,8 +566,9 @@ Binding rules the code does not yet follow. These are debt, not precedent — ne
 justify another.
 
 **Six stylesheets are self-contained design systems.** `browse.css`, `wallet.css`, `login.css`,
-`results.css`, `home.css` and `quiz.css` each carry their own CSS reset, their own base font size
-and their own colour literals rather than building on `application.css`. This is the root cause of
+`results.css`, `home.css` and `quiz.css` each carry their own CSS reset and their own colour
+literals rather than building fully on `application.css`. The base font sizes are no longer part
+of this — all three now use `--text-dense`. This is the root cause of
 almost everything else in this list, and unpicking it is the single highest-value piece of frontend
 work outstanding. `results.css` still aliases `--wine` to the burgundy token rather than using it
 directly.
@@ -612,16 +626,21 @@ reader whose OS is in dark mode gets the light theme until they find the control
 Nobody has decided these. Until one is settled, **do not invent an answer** — match whatever the
 surrounding file already does. Settle one by editing this document in its own commit.
 
-**1. The type scale for Geist.** This is the only one left, and it is the only one that could not
-be settled by deferring to the code — because the code has no answer to defer to. Every heading in
-the project uses a `clamp()` that appears exactly once; there is no scale, just twenty-odd
-independent decisions. The table under *Typography* is not it either: those values were tuned for
-Helvetica Now Display and appear in no stylesheet.
+**1. The heading scale for Geist.** The base reading sizes are now settled (`--text-body` and
+`--text-dense`, above). What remains open is everything above them: Display, Hero figure, Title,
+Section head, Subhead — their sizes and especially their tracking.
+
+This is the one question that could not be settled by deferring to the code, because the code has
+no answer to defer to. Every heading in the project uses a `clamp()` that appears exactly once;
+there is no scale, just twenty-odd independent decisions. The table under *Typography* is not it
+either — those values were tuned for Helvetica Now Display and appear in no stylesheet, and Geist
+sets tighter, so applying them as written runs the type too close. That is the same fault that
+made the wordmark read as a capital L.
 
 Settling it means choosing tracking and size relationships for Geist at each step, then migrating
-the pages onto them. The wordmark was settled by looking at candidates at their real sizes rather
-than reasoning about numbers, and the scale deserves the same treatment. Until then, match the
-file you are working in. *Owner: Noah.*
+the pages onto them. The wordmark and the base sizes were both settled by looking at the real
+thing at real sizes rather than reasoning about numbers, and the heading scale deserves the same.
+Until then, match the file you are working in. *Owner: Noah.*
 
 ---
 

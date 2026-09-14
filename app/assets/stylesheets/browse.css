@@ -12,7 +12,7 @@
     margin: 0;
     color: var(--ink);
     background: var(--surface);
-    font: 15px/1.5 var(--font-sans);
+    font: var(--text-dense)/1.5 var(--font-sans);
     --ink: #0a0a0a;
     --muted: #6b6b6b;
   }

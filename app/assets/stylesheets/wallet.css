@@ -6,7 +6,7 @@
     margin: 0;
     background: var(--surface);
     color: var(--ink);
-    font: 14px/1.5 var(--font-sans);
+    font: var(--text-dense)/1.5 var(--font-sans);
   }
   button,
   input,
