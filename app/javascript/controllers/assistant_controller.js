@@ -19,14 +19,25 @@ export default class extends Controller {
     this.x = Math.max(12, Math.min(this.x, innerWidth - 72))
     this.y = Math.max(12, Math.min(this.y, innerHeight - 72))
     this.orbTarget.style.left = `${this.x}px`
-    this.orbTarget.style.top = `${this.y}px`
+    const top = this.parkedY()
+    this.orbTarget.style.top = `${top}px`
     if (!this.panelTarget.hidden) {
       const width = this.panelTarget.offsetWidth
       const height = this.panelTarget.offsetHeight
       const left = this.x + 72 + width <= innerWidth - 12 ? this.x + 72 : this.x - width - 12
       this.panelTarget.style.left = `${Math.max(12, Math.min(left, innerWidth - width - 12))}px`
-      this.panelTarget.style.top = `${Math.max(12, Math.min(this.y, innerHeight - height - 12))}px`
+      this.panelTarget.style.top = `${Math.max(12, Math.min(top, innerHeight - height - 12))}px`
     }
+  }
+
+  // The orb is fixed to the viewport, so at the end of a page it would sit on
+  // top of the footer with no way to scroll it clear. Let the footer push it up
+  // rather than cover content. The dragged position is kept, not overwritten.
+  parkedY() {
+    const footer = document.querySelector(".site-footer")
+    if (!footer) return this.y
+    const ceiling = footer.getBoundingClientRect().top - this.orbTarget.offsetHeight - 16
+    return Math.max(12, Math.min(this.y, ceiling))
   }
 
   start(event) {

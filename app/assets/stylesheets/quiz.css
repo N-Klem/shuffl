@@ -1,5 +1,5 @@
 /* Quiz: the same outlined frame and expressive type as the approved home. */
-.quiz-page { color: #0a0a0a; background: #fff; font-family: "Helvetica Neue", Helvetica, "Inter Tight", sans-serif; }
+.quiz-page { color: #0a0a0a; background: #fff; font-family: var(--font-sans); }
 .quiz-page ::selection { background: #601020; color: #fff; }
 .quiz-page :focus-visible { outline: 2px solid #601020; outline-offset: 5px; }
 /* Gutter and vertical rhythm live on the shell, not on body, so they never touch the shared navbar's position. */

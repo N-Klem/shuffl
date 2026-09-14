@@ -1,6 +1,6 @@
 /* Auth pages (sign in, create account, forgot password): split panel with the
    stack context on the left, matching public/login-mockup.html. */
-.auth-page { background: #fff; color: #0a0a0a; font-family: "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif; }
+.auth-page { background: #fff; color: #0a0a0a; font-family: var(--font-sans); }
 .auth-page ::selection { background: #ead7da; }
 .auth-page :focus-visible { outline: 2px solid #7b1622; outline-offset: 4px; }
 

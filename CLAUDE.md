@@ -5,7 +5,7 @@ Credit card aggregator for Gen Z. Helps users find optimal credit card combinati
 ## What the app does
 
 - **Pre-made stacks**: Curated groups of 3–5 credit cards optimized for a lifestyle (e.g. Traveler, Student, Foodie). Users browse stacks and view which cards are in each.
-- **Personalized quiz**: 12-question questionnaire about spending habits, travel, dining, subscriptions, etc. Uses weighted scoring to produce a ranked list of top 5 cards.
+- **Personalized quiz**: 16-question questionnaire about spending habits, travel, dining, subscriptions, etc. Uses weighted scoring to produce a ranked list of top 5 cards.
 - **Results page**: Shows the user's recommended cards from quiz results with details on each card.
 - **My Wallet**: Users save cards they like and manage their collection. Add/remove from any card view.
 - **Card browsing**: Browse all 54 cards, view individual card details (annual fee, reward rates, perks, sign-up bonus).
@@ -72,7 +72,7 @@ resources :quiz_responses, only: [:new, :create, :show]
 
 The quiz is a **one-question-per-page wizard** with **weighted scoring** — each card is scored independently against the user's answers, avoiding nested if-statements:
 
-- Questions defined in `Card::QUIZ_QUESTIONS` constant (12 questions, mix of single-select and one multi-select capped at 3 picks)
+- Questions defined in `Card::QUIZ_QUESTIONS` constant (16 questions, mix of single-select and one multi-select capped at 3 picks)
 - Session-based flow: `session[:quiz_step]` (integer index into `QUIZ_QUESTIONS`) tracks progress, `session[:quiz_answers]` (hash) accumulates answers across requests
 - `QuizResponsesController#new` renders the current question with a "Question X of 12" progress line; `#create` stores the submitted answer and either redirects to the next question or, on the last one, scores and redirects straight to results
 - On the last question, `Card.ranked_for(session[:quiz_answers])` sorts all cards by `#quiz_score`, top 5 are saved as `QuizResponse#top_card_ids` (JSON), session state is cleared
@@ -144,7 +144,7 @@ All views exist under `app/views/`:
 
 Shuffl follows the "Quiet Interface" design language. The three non-negotiable rules:
 
-1. **One family** — every character is set in the same tight grotesque (Helvetica Now Display / Inter Tight fallback). No second typeface.
+1. **One family** — every character is set in Geist, referenced through the `--font-sans` token. No second typeface, and no stylesheet names a font family directly.
 2. **One burgundy** (`#7B1622`) — exactly one filled burgundy button per screen, always the primary CTA. Nothing else uses that colour except tertiary text links on hover.
 3. **Nothing at rest** — secondary controls (compare, share, explore links) are hidden by default and revealed only on hover/focus with a 160ms opacity transition. Only show buttons that are 100% necessary.
 
@@ -156,4 +156,5 @@ Key implementation details:
 - Hover-revealed controls must be keyboard-accessible (`visibility: hidden` + `opacity: 0`, never `display: none`)
 - Use Bootstrap grid, utilities, and responsive breakpoints as normal — but override Bootstrap's default colours, shadows, and radii with the Shuffl tokens (see DESIGN.md for the full CSS variable block)
 - Don't use Bootstrap colour classes (`.text-primary`, `.bg-info`) with their defaults — they pull in Bootstrap blue/green instead of the Shuffl palette
-- Inter Tight is loaded from Google Fonts as the web fallback font
+- Geist is loaded from Google Fonts in the layout; every stylesheet reaches it via `var(--font-sans)`
+- The `shuffl.` wordmark is a partial (`shared/_wordmark.html.erb`) whose full stop is a drawn circle, not a typed period — never hand-write the mark, and see DESIGN.md for why

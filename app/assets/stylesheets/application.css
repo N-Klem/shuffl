@@ -8,8 +8,8 @@
   --bs-border-color: #E5E5E5;
   --bs-link-color: #0A0A0A;
   --bs-link-hover-color: #7B1622;
-  --bs-body-font-family: "Helvetica Now Display", "Helvetica Neue", Helvetica,
-    "Inter Tight", Arial, sans-serif;
+  --font-sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bs-body-font-family: var(--font-sans);
   --bs-border-radius: 6px;
 
   /* Shuffl tokens */
@@ -36,6 +36,7 @@
 
 body {
   margin: 0;
+  font-family: var(--font-sans);
   font-size: 18px;
   line-height: 1.55;
 }
@@ -100,11 +101,32 @@ a {
     0 0 0 1px rgba(25, 30, 40, 0.06);
 }
 
+/* ---------- Wordmark ---------- */
+/* The dot is drawn, not typed. Geist's period is square, and its default
+   sidebearing puts it inside the l's optical space so the pair reads as a
+   capital L. Shape and spacing live here; size is set per context. */
+
+.wordmark {
+  font-family: var(--font-sans);
+  letter-spacing: -0.054em;
+  white-space: nowrap;
+}
+
+.wordmark-dot {
+  display: inline-block;
+  width: 0.189em;
+  height: 0.189em;
+  margin-left: 0.125em;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: baseline;
+  letter-spacing: 0;
+}
+
 .site-nav .wordmark {
-  font-weight: 700;
   font-size: clamp(32px, 3.2vw, 52px);
+  font-weight: 700;
   line-height: 1.2;
-  letter-spacing: -0.06em;
   color: var(--ink);
 }
 

@@ -13,7 +13,7 @@
   <article class="recommendation"><div><h2><%= card.name %></h2><p><%= card.issuer %></p><%= link_to "Explore this card", card_path(card) %></div><p>Annual fee: <%= number_to_currency(card.annual_fee) %></p></article>
 <% end %>
 </div><p class="status" id="status" role="status">Keep your favourites. Swap anything that doesn’t feel right.</p><p class="footnote">Spending is shared across your cards, counted only once. Move the slider to see each card’s contribution change.</p></section></div></div>
-<footer class="bottom"><p>Illustrative estimates from Shuffl’s sample catalogue, not live offers. Points are valued at 1¢ each. Excludes welcome bonuses, interest, category caps and conditional perks. Each spending category is counted once, on the highest-rate card in your stack.</p><span>shuffl. · Your results</span></footer>
+<footer class="bottom"><p>Illustrative estimates from Shuffl’s sample catalogue, not live offers. Points are valued at 1¢ each. Excludes welcome bonuses, interest, category caps and conditional perks. Each spending category is counted once, on the highest-rate card in your stack.</p><span><%= render "shared/wordmark", link: false %> · Your results</span></footer>
 </main>
 
 <template id="quiz-finish-template">
@@ -21,6 +21,6 @@
     <div class="finish-orbit" aria-hidden="true">
       <% 8.times do |index| %><span class="orbit-position" style="--orbit-index:<%= index %>"><span class="orbit-card"><span></span></span></span><% end %>
     </div>
-    <div class="finish-wordmark">shuffl.</div><p>Your stack is ready.</p>
+    <%= render "shared/wordmark", class: "finish-wordmark", link: false %><p>Your stack is ready.</p>
   </div>
 </template>

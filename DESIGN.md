@@ -44,10 +44,15 @@ that is one button plus the wordmark rule. Pine and amber appear only on figures
 
 ### Typography
 
-**Font stack:** `"Helvetica Now Display", "Helvetica Neue", Helvetica, "Inter Tight", Arial, sans-serif`
+**Font stack:** `--font-sans` → `"Geist", "Helvetica Neue", Helvetica, Arial, sans-serif`
 
-Helvetica Now Display is the intended face. Inter Tight (Google Fonts) is the web fallback for
-non-Apple platforms — closest freely-licensed match for the tight, closed-aperture grotesque.
+Geist (Google Fonts) is the face. It is loaded in the layout and exposed as the `--font-sans`
+token. Never name a font family directly in a stylesheet — that is how six sheets ended up
+pinned to Helvetica and silently missed the last face change. Always reference the token.
+
+Geist sits tighter than the Helvetica stack it replaced, so the tracking values in the scale
+below still carry the old face's tuning and run a little close. Retuning them is outstanding.
+The wordmark has already been done — see below.
 
 | Step          | Size                       | Weight | Tracking   | Line-height | Use                            |
 |---------------|----------------------------|--------|------------|-------------|--------------------------------|
@@ -64,6 +69,24 @@ non-Apple platforms — closest freely-licensed match for the tight, closed-aper
 
 **Rule:** tracking closes up as size grows. Nothing above 40px is looser than −0.04em; nothing
 at or below 18px is tracked at all.
+
+### Wordmark
+
+The full stop in `shuffl.` is a **drawn circle, not a typed period**. Geist's period is square,
+and its default sidebearing puts it inside the `l`'s optical space, so at display sizes the pair
+closes up and reads as a capital `L`. Drawing it as a span fixes the shape and the spacing at once.
+
+Never hand-write the mark. Render the partial:
+
+```erb
+<%= render "shared/wordmark" %>                           <%# links home %>
+<%= render "shared/wordmark", class: "footer-wordmark" %> <%# sized by context %>
+<%= render "shared/wordmark", link: false %>              <%# plain span, no link %>
+```
+
+`.wordmark` owns shape only — family, tracking (−0.054em) and the dot geometry. Weight, colour
+and size belong to the context that uses it, so the mark can sit at 12px inside running text
+without turning bold and black. The dot is `currentColor`, so dark mode needs no extra rule.
 
 ### Numerics
 
@@ -103,7 +126,7 @@ at or below 18px is tracked at all.
 ### Navbar
 
 Present on every page. Format from the prototype:
-- Left: **shuffl** wordmark (bold, tight tracking −0.045em)
+- Left: the **shuffl.** wordmark — render `shared/_wordmark.html.erb`, never hand-write it (see Wordmark above)
 - Right: `Home | Quiz | My Wallet | Browse Cards` as text links
 - Active page has an underline
 - Clean white background with a `1px solid #E5E5E5` bottom border
@@ -333,8 +356,8 @@ In `app/assets/stylesheets/application.css`, override Bootstrap's theme and add 
   --bs-border-color: #E5E5E5;
   --bs-link-color: #0A0A0A;
   --bs-link-hover-color: #7B1622;
-  --bs-body-font-family: "Helvetica Now Display", "Helvetica Neue", Helvetica,
-    "Inter Tight", Arial, sans-serif;
+  --font-sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --bs-body-font-family: var(--font-sans);
 
   /* Shuffl colour tokens */
   --ink: #0A0A0A;
@@ -378,11 +401,11 @@ In `app/assets/stylesheets/application.css`, override Bootstrap's theme and add 
   with their default Bootstrap meanings — they'll pull in Bootstrap blue/green/cyan instead
   of the Shuffl palette. Either override them in CSS or use Shuffl token classes instead.
 
-Load Inter Tight from Google Fonts as the web fallback (add to `application.html.erb` layout):
+Load Geist from Google Fonts (in the `application.html.erb` layout):
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;600;700&display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap"
       rel="stylesheet">
 ```
 

@@ -9,7 +9,7 @@
 .hero-card-name{position:absolute;left:10%;bottom:12%;font-size:13px}.hero-card.finish-burgundy,.hero-card.finish-graphite{color:white}
 .hero-carousel-footer{display:flex;justify-content:center;align-items:center;gap:25px;margin-top:18px;color:#666;font-size:13px;min-height:42px}
 .quiz-finish-overlay{position:fixed;inset:0;z-index:1100;background:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.finish-wordmark{font:700 44px/1.2 "Helvetica Neue",sans-serif;letter-spacing:-.06em;z-index:1}
+.finish-wordmark{display:block;font-size:44px;font-weight:700;line-height:1.2;z-index:1}
 .quiz-finish-overlay>p{position:absolute;top:calc(50% + 190px);color:#777;font-size:14px}
 .finish-orbit{position:absolute;width:300px;height:300px;animation:finish-orbit 3s linear infinite}
 .orbit-position{position:absolute;left:calc(50% - 28px);top:calc(50% - 18px);transform:rotate(calc(var(--orbit-index)*45deg)) translateY(-137px)}

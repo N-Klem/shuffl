@@ -13,7 +13,7 @@ html[data-theme="dark"] {
 html[data-theme="dark"] body { background:#191619; color:#d2cbcd; }
 html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { background:#191619; color:#f2eeee; --ink:#f2eeee; --muted:#afa5a8; }
 html[data-theme="dark"] .site-nav { background:rgba(30,25,29,.94); border-color:#443b3f; box-shadow:0 8px 32px #0003; }
-html[data-theme="dark"] :is(.wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color:#f2eeee; }
+html[data-theme="dark"] :is(.site-nav .wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color:#f2eeee; }
 html[data-theme="dark"] :is(.hero-description,.hero-carousel-footer,.eyebrow,.muted,.perks,.issuer,.note,.stack-names,.list-head,.results-top,.summary small,.metrics small,.detail-layout p,.hero p,.heading p,.home-continue p) { color:#afa5a8; }
 html[data-theme="dark"] :is(dialog,.account-menu,.summary,.shelf,.detail,.allocation,.tray,.toolbar,.filter-extra,.quiz-answer,.login-panel,.auth-panel,.quiz-finish-overlay,.ai-dialog,.ai-bubble) { background:#211c20; color:#f2eeee; border-color:#443b3f; }
 html[data-theme="dark"] :is(input:not([type="range"],[type="checkbox"],[type="radio"]),select,textarea,.account-toggle) { background:#282227; color:#f2eeee; border-color:#574a51; }

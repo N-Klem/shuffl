@@ -1,7 +1,7 @@
 .site-footer { margin-top:64px; border-top:1px solid var(--hairline); background:var(--surface); color:var(--ink); }
 .footer-inner { max-width:1450px; padding:58px clamp(24px,4vw,64px) 28px; margin:auto; }
 .footer-main { display:grid; grid-template-columns:1.6fr 1fr 1.25fr 1fr; gap:40px; padding-bottom:50px; }
-.site-footer .footer-wordmark { display:inline-block; font-size:42px; font-weight:700; line-height:1; letter-spacing:-3px; color:var(--ink); }
+.site-footer .footer-wordmark { display:inline-block; font-size:42px; font-weight:700; line-height:1; color:var(--ink); }
 .footer-brand p { margin:18px 0 22px; color:var(--muted); font-size:15px; line-height:1.6; }
 .site-footer .footer-group h2 { margin:4px 0 20px; font-size:12px; font-weight:600; letter-spacing:1.3px; text-transform:uppercase; color:var(--ink); }
 .footer-group ul { list-style:none; padding:0; margin:0; display:grid; gap:13px; }
