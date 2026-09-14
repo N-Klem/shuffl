@@ -104,16 +104,20 @@
   </div>
 </section>
 
-<% unless user_signed_in? %>
-  <section class="container home-auth">
-    <p>
-      <%= link_to "Sign in", new_user_session_path %> |
-      <%= link_to "Sign up", new_user_registration_path %>
-    </p>
-  </section>
-<% end %>
-
-<div class="ai-bubble" title="AI assistant coming soon">
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8l-6 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
-  <span class="label">Ask shuffl<span class="sublabel">AI assistant</span></span>
+<div data-controller="dialog">
+  <button type="button" class="ai-bubble" data-action="dialog#open" aria-haspopup="dialog">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-8l-6 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/></svg>
+    <span class="label">Ask shuffl<span class="sublabel">AI assistant</span></span>
+  </button>
+  <dialog class="ai-dialog" data-dialog-target="dialog" data-action="click->dialog#backdrop" aria-labelledby="ai-dialog-title">
+    <div class="ai-dialog-body">
+      <p class="eyebrow">Coming soon</p>
+      <h2 id="ai-dialog-title">Ask shuffl is on its way.</h2>
+      <p>Until it lands, the quiz is the fastest route to a card that fits: <%= Card::QUIZ_QUESTIONS.size %> questions, about two minutes, and every one of our <%= Card.count %> cards ranked against how you spend.</p>
+      <div class="ai-dialog-actions">
+        <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary" %>
+        <button type="button" class="btn btn-outline-dark" data-action="dialog#close">Not now</button>
+      </div>
+    </div>
+  </dialog>
 </div>

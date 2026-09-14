@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="graphite" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#46464A"/><stop offset="1" stop-color="#232326"/></linearGradient>
+    <linearGradient id="burgundy" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A1B29"/><stop offset="1" stop-color="#5C0F19"/></linearGradient>
+    <linearGradient id="bone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7F3EC"/><stop offset="1" stop-color="#E9E2D4"/></linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  <text x="80" y="150" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="88" font-weight="700" letter-spacing="-5" fill="#0A0A0A">shuffl</text>
+  <text x="80" y="290" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-2.5" fill="#0A0A0A">find your cards.</text>
+  <text x="80" y="356" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-2.5" fill="#0A0A0A">build your wallet.</text>
+  <text x="80" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="26" fill="#6B6B6B">a little more rewarding.</text>
+  <g transform="translate(900 330)">
+    <g transform="rotate(-18)"><rect x="-150" y="-95" width="300" height="190" rx="18" fill="url(#graphite)" stroke="#FFFFFF" stroke-opacity="0.4"/><text x="118" y="-56" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="-1" fill="#FFFFFF">shuffl</text></g>
+    <g transform="translate(40 -20) rotate(-4)"><rect x="-150" y="-95" width="300" height="190" rx="18" fill="url(#bone)" stroke="#E5E5E5"/><text x="118" y="-56" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="-1" fill="#0A0A0A">shuffl</text></g>
+    <g transform="translate(80 -40) rotate(10)"><rect x="-150" y="-95" width="300" height="190" rx="18" fill="url(#burgundy)" stroke="#FFFFFF" stroke-opacity="0.4"/><rect x="-112" y="-30" width="44" height="32" rx="6" fill="#C9A85C"/><text x="118" y="-56" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="-1" fill="#FFFFFF">shuffl</text></g>
+  </g>
+</svg>
