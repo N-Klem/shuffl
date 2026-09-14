@@ -90,7 +90,8 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select '.nav-links a', text: "Browse"
     assert_select '.nav-links a', text: "Cards", count: 0
     assert_select '.nav-links a', text: "Stacks", count: 0
-    assert_select '.wordmark', text: "shuffl."
+    assert_select ".wordmark", text: "shuffl"
+    assert_select ".wordmark .wordmark-dot"
 
     user = User.create!(first_name: "Nav", email: "nav-test@example.com", password: "password123")
     sign_in user
