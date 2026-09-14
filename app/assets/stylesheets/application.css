@@ -153,7 +153,10 @@ a {
 }
 
 .nav-links a {
-  font-size: clamp(17px, 1.5vw, 24px);
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 600;
+  text-transform: lowercase;
+  letter-spacing: -0.04em;
   color: var(--ink);
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
@@ -161,6 +164,47 @@ a {
 
 .nav-links a.active { border-bottom-color: var(--ink); }
 .nav-links a:hover { border-bottom-color: var(--muted); }
+
+/* ---------- Nav-roll: staggered letter hover ---------- */
+
+.nav-roll {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  line-height: 1.1;
+  white-space: pre;
+  letter-spacing: -0.04em;
+}
+
+.nav-roll-line { display: block; }
+.nav-roll-line + .nav-roll-line { position: absolute; inset: 0; }
+
+.nav-roll-letter {
+  display: inline-block;
+  transition: transform 300ms ease-in-out;
+  transition-delay: var(--delay);
+}
+
+/* On hover or keyboard focus the top line leaves, the bottom line enters */
+.nav-roll-line + .nav-roll-line .nav-roll-letter {
+  transform: translateY(110%);
+}
+a:hover .nav-roll-line:first-child .nav-roll-letter,
+a:focus-visible .nav-roll-line:first-child .nav-roll-letter {
+  transform: translateY(-110%);
+}
+a:hover .nav-roll-line + .nav-roll-line .nav-roll-letter,
+a:focus-visible .nav-roll-line + .nav-roll-line .nav-roll-letter {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-roll-letter { transition: none !important; }
+  .nav-roll-line + .nav-roll-line { display: none; }
+  a:hover .nav-roll-line:first-child .nav-roll-letter,
+  a:focus-visible .nav-roll-line:first-child .nav-roll-letter { transform: none; }
+}
+
 
 /* ---------- Hero ---------- */
 
@@ -360,7 +404,7 @@ a {
   .nav-inner { gap: 10px; flex-wrap: wrap; padding-block: 12px; }
   .nav-right { gap: 14px; flex: 1; }
   .nav-right .nav-links { gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
-  .nav-right .nav-links a { font-size: 14px; }
+  .nav-right .nav-links a { font-size: 16px; }
   .account-toggle { width: 36px; height: 36px; }
 }
 
