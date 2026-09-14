@@ -4,3 +4,6 @@
 .reward{color:#16624b}.fee{color:#a12a36}.progress span{background:#16624b}.perks .perk{color:#16624b}.ledger .fan .credit{transition:transform 650ms cubic-bezier(.25,.46,.45,.94),opacity 650ms ease}.shelf .fan{height:calc(190px + var(--extra,0)*24px)}.empty{padding:40px 0;color:#777}.wallet-error{color:#a12a36;margin:12px 0}.wallet-tabs{display:flex;gap:12px}.row{margin:0}.row>*{width:auto;padding:0}.allocation input{width:110px}button:disabled{opacity:.5;cursor:default}.timeline .steps{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px}.timeline button{font-size:12px}.detail-top .name{max-width:80%}.detail a{color:inherit}.credit:focus-visible{z-index:20}.notice-list{margin-bottom:24px;background:#faf7f3;padding:18px}.notice-list p{margin:4px 0}@media(prefers-reduced-motion:reduce){.ledger .fan .credit{transition:none}}
 
 }
+
+/* Pence dropped to muted on exact figures (statement balance) — DESIGN.md signature. */
+.wallet-page .pence{color:var(--muted)}
