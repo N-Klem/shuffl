@@ -33,13 +33,11 @@ export default class extends Controller {
     const benefit=current.dataset.cardBenefit||'';
     const fee=current.dataset.cardFee||'';
     infoPanel.innerHTML='<strong>'+name+'</strong><dl><div><dt>Top benefit</dt><dd>'+benefit+'</dd></div><div><dt>Annual fee</dt><dd>'+fee+'</dd></div></dl><span class="stack-card-disclosure">Sample catalogue \u00b7 Not a live offer</span>';
-    infoPanel.hidden=false;
     requestAnimationFrame(()=>requestAnimationFrame(()=>infoPanel.classList.add('is-visible')));
    } else {
+    // The panel keeps its reserved space (see .stack-card-info min-height) and
+    // only fades out, so the heading and link below it never move.
     infoPanel.classList.remove('is-visible');
-    const onEnd=()=>{infoPanel.hidden=true;infoPanel.removeEventListener('transitionend',onEnd)};
-    if(getComputedStyle(infoPanel).transitionDuration!=='0s')infoPanel.addEventListener('transitionend',onEnd);
-    else infoPanel.hidden=true;
    }
   }
  }

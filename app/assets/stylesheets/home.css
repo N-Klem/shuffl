@@ -149,6 +149,10 @@
   padding: 14px 16px 10px;
   margin: -4px auto 0;
   max-width: 280px;
+  /* Reserve the panel's space permanently so the heading and link below it
+     stay put — it fades in/out (opacity) rather than being added to and
+     removed from the flow, which is what pushed the layout down on hover. */
+  min-height: 116px;
   border: 1px solid var(--hairline);
   border-radius: 10px;
   background: var(--surface-raised);
@@ -167,7 +171,7 @@
 .stack-card-info dl { margin: 8px 0 4px; display: grid; gap: 4px; }
 .stack-card-info dl > div { display: flex; justify-content: space-between; gap: 8px; }
 .stack-card-info dt { font-weight: 400; color: var(--muted); }
-.stack-card-info dd { margin: 0; text-align: right; }
+.stack-card-info dd { margin: 0; text-align: right; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .stack-card-info .stack-card-disclosure { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
 @media (prefers-reduced-motion: reduce) {
   .stack-card-info { transition: none; }
