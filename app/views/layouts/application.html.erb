@@ -2,9 +2,15 @@
 <html lang="en">
   <head>
     <script>
+      // Inline and synchronous so the theme is set before first paint; moving this
+      // into the bundle reintroduces a flash of the wrong theme on every load.
       (() => {
-        let theme = "light";
-        try { theme = localStorage.getItem("shuffl-theme") === "dark" ? "dark" : "light"; } catch (_) {}
+        let stored = null;
+        try { stored = localStorage.getItem("shuffl-theme"); } catch (_) {}
+        // An explicit choice wins. Otherwise follow the operating system.
+        const theme = (stored === "dark" || stored === "light")
+          ? stored
+          : (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         document.documentElement.dataset.theme = theme;
         document.documentElement.dataset.bsTheme = theme;
       })();
