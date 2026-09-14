@@ -21,7 +21,13 @@ export default class extends Controller {
   button.setAttribute('aria-expanded',expanded);
   if(expanded){hint.textContent=(index+1)+' / '+cards.length+' · Scroll to explore';fan.setAttribute('aria-label',cards[index].textContent.trim().replace(/\s+/g,' ')+'. '+(index+1)+' of '+cards.length)}
   else {hint.innerHTML=originalHint;fan.setAttribute('aria-label',button.getAttribute('aria-label'))}
-  cards.forEach((c,i)=>{c.dataset.current=String(i===index);c.setAttribute('aria-hidden',!expanded);c.tabIndex=expanded?0:-1;c.setAttribute('aria-label',(i===index?'Current card: ':'Bring to front: ')+c.querySelector('.name').textContent)});
+  cards.forEach((c,i)=>{
+   c.dataset.current=String(i===index);c.setAttribute('aria-hidden',!expanded);c.tabIndex=expanded?0:-1;
+   const details=c.querySelector('.stack-card-details');
+   const showingDetails=expanded&&i===index&&details;
+   details?.setAttribute('aria-hidden',!showingDetails);
+   c.setAttribute('aria-label',(i===index?'Current card: ':'Bring to front: ')+(showingDetails?details.textContent.trim().replace(/\s+/g,' '):c.querySelector('.name').textContent));
+  });
  }
  function draw(){
   cards.forEach((c,i)=>{

@@ -2,66 +2,81 @@
 <section class="hero container product-hero">
   <div class="hero-copy">
     <div class="hero-headline"><h1><span>find your cards</span><span>build your wallet</span></h1></div>
-    <p class="hero-description">Find the cards that fit your life.<br>Build a stack that works better together.</p>
+    <p class="hero-description">Compare credit cards for how you spend.<br>Find a few that work together, in one wallet.</p>
     <div class="hero-actions">
-      <%= link_to "Find my cards", new_quiz_response_path, class: "btn btn-primary" %>
+      <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary", aria: { describedby: "quiz-expectations" } %>
       <%= link_to "Browse cards & stacks", cards_path, class: "btn btn-outline-dark" %>
     </div>
+    <p class="home-caption" id="quiz-expectations">Up to <%= Card::CORE_QUESTIONS.size %> questions. No account needed to see your results. Save and finish later if you need a break.</p>
   </div>
-  <% hero_cards = @featured_stacks.flat_map { |stack| stack.cards.first(2) }.uniq.first(5) %>
-  <% if hero_cards.any? %>
-    <div class="hero-carousel" data-controller="hero-carousel" aria-label="Explore cards for your stack" aria-roledescription="carousel">
-      <div class="hero-wheel">
-        <% hero_cards.each_with_index do |card, index| %>
-          <button type="button" class="fan-card hero-card <%= card_finish(card) %>" data-hero-carousel-target="card" data-action="hero-carousel#select" data-index="<%= index %>" data-caption="<%= card_benefit(card) %>" aria-label="Bring <%= card.name %> forward">
-            <span class="chip"></span><span class="card-wordmark">shuffl.</span>
-            <span class="hero-card-name"><%= card.name %></span>
-          </button>
-        <% end %>
-      </div>
-      <div class="hero-carousel-footer"><span data-hero-carousel-target="caption"><%= card_benefit(hero_cards.first) %></span></div>
-    </div>
-  <% end %>
-</section>
-
-<section class="stacks container">
-  <div class="row g-4">
-    <% @featured_stacks.each do |stack| %>
-      <div class="col-md-4 stack-col">
+  <div class="hero-stacks" data-controller="hero-stacks" role="region" aria-roledescription="carousel" aria-label="Featured stacks">
+    <% @featured_stacks.each_with_index do |stack, index| %>
+      <div id="hero-stack-<%= index %>" data-hero-stacks-target="panel" data-label="Stack <%= index + 1 %> of <%= @featured_stacks.size %> · <%= stack.name %>" <%= "hidden" unless index.zero? %>>
         <div class="stack-tile" data-controller="stack">
           <div class="stack-fan">
             <% stack.cards.first(4).each do |card| %>
               <div class="fan-card <%= card_finish(card) %>">
-                <div class="chip"></div>
-                <span class="card-wordmark">shuffl.</span>
-                <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= card_benefit(card) %></span></div>
+                <div class="stack-card-front" aria-hidden="true">
+                  <div class="chip"></div>
+                  <span class="card-wordmark">shuffl.</span>
+                  <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= card_benefit(card) %></span></div>
+                </div>
+                <div class="stack-card-details">
+                  <strong><%= card.name %></strong>
+                  <dl>
+                    <div><dt>Top benefit</dt><dd><%= card_benefit(card) %></dd></div>
+                    <div><dt>Annual rewards</dt><dd>Depends on spending</dd></div>
+                    <div><dt>Annual fee</dt><dd><%= number_to_currency(card.annual_fee, precision: 0) %></dd></div>
+                  </dl>
+                  <span class="stack-card-disclosure">Sample catalogue · Not a live offer</span>
+                </div>
               </div>
             <% end %>
           </div>
           <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" aria-expanded="false" aria-label="Reveal <%= stack.name %> cards"><%= stack.name %><span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
         </div>
+        <%= link_to "View #{stack.name} stack →", stack_path(stack), class: "hero-stack-link" %>
       </div>
     <% end %>
-  </div>
-
-  <div class="stacks-footer">
-    <p>Explore by what matters to you.</p>
-    <%= link_to "Explore more stacks →", stacks_path, class: "tertiary-link" %>
+    <div id="hero-stack-more" class="hero-stacks-more" data-hero-stacks-target="panel" data-label="Explore more stacks" <%= "hidden" if @featured_stacks.any? %>>
+      <div class="ghost-stack" aria-hidden="true">
+        <% 4.times do %><span class="ghost-card"><span class="ghost-chip"></span><span class="ghost-wordmark"><%= render "shared/wordmark", link: false %></span></span><% end %>
+      </div>
+      <%= link_to stacks_path, class: "ghost-stack-link tertiary-link" do %>
+        <span>Explore more stacks</span><span aria-hidden="true">↗</span>
+      <% end %>
+    </div>
+    <div class="hero-stacks-controls">
+      <div class="hero-stacks-rail" style="--stack-count: <%= @featured_stacks.size + 1 %>" aria-label="Choose a stack">
+        <% @featured_stacks.each_with_index do |stack, index| %>
+          <button type="button" data-hero-stacks-target="selector" data-action="hero-stacks#select" data-index="<%= index %>" aria-controls="hero-stack-<%= index %>" aria-label="Show <%= stack.name %> stack" aria-pressed="<%= index.zero? %>"></button>
+        <% end %>
+        <button type="button" data-hero-stacks-target="selector" data-action="hero-stacks#select" data-index="<%= @featured_stacks.size %>" aria-controls="hero-stack-more" aria-label="Show explore more stacks" aria-pressed="<%= @featured_stacks.empty? %>"></button>
+      </div>
+      <div class="hero-stacks-position">
+        <span data-hero-stacks-target="status" aria-live="polite"></span>
+        <div class="hero-stacks-arrows">
+          <button type="button" data-action="hero-stacks#previous" aria-label="Previous stack">←</button>
+          <button type="button" data-action="hero-stacks#next" aria-label="Next stack">→</button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<% if user_signed_in? %>
-  <section class="container home-continue">
-    <p class="home-continue-greeting">Welcome back, <%= current_user.first_name %>.</p>
-    <p class="home-continue-actions">
-      <% if current_user.wallet_items.exists? %>
-        <%= link_to "Open My Wallet →", wallet_items_path, class: "tertiary-link" %>
-        <% if latest_quiz_response %><span class="home-continue-sep">·</span> <%= link_to "View your results", quiz_response_path(latest_quiz_response) %><% end %>
-      <% elsif latest_quiz_response %>
-        <%= link_to "View your recommended stack →", quiz_response_path(latest_quiz_response), class: "tertiary-link" %>
-      <% else %>
-        <%= link_to "Take the quiz →", new_quiz_response_path, class: "tertiary-link" %>
-      <% end %>
-    </p>
-  </section>
-<% end %>
+<section class="container home-explainer" aria-labelledby="how-it-works-title">
+  <div class="row g-4">
+    <div class="col-md-6">
+      <h2 id="how-it-works-title">one wallet. different jobs.</h2>
+      <p>One card for groceries. Another for travel. A stack brings cards with different strengths into one wallet.</p>
+      <p>Your stack is a shortlist, not a to-do list. Keep what fits — there’s no need to apply for every card.</p>
+    </div>
+    <div class="col-md-6">
+      <ol class="home-steps">
+        <li><h3>Tell us what matters</h3><p>Your spending. Your priorities. Your comfort with fees.</p></li>
+        <li><h3>Explore your matches</h3><p>Compare benefits and fees. Swap cards to find your fit.</p></li>
+        <li><h3>Keep your shortlist</h3><p>Save your picks with an account. No applications submitted.</p></li>
+      </ol>
+    </div>
+  </div>
+</section>

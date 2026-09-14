@@ -34,7 +34,7 @@ class HomePageTest < ActionDispatch::IntegrationTest
     assert_select ".home-continue", count: 0
   end
 
-  test "a signed-in visitor with no history sees the clean homepage" do
+  test "a signed-in visitor with no history sees no continuity strip" do
     sign_in User.create!(first_name: "Newbie", email: "newbie@example.com", password: "password123")
     get root_path
     assert_select ".home-continue", count: 0

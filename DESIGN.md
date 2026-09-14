@@ -401,6 +401,30 @@ Every page must have a bottom; none may end in empty white.
 
 ### Home
 
+- Fourth-panel refinement: use lighter Shuffl card faces, with a burgundy tertiary
+  link directly over them and the shared moving underline. No box behind the link.
+- Card benefits and annual fees now live on the reverse of the active hero card,
+  revealed by expanding the stack through hover, tap or keyboard. Keep the vertical
+  wheel. Annual rewards must say “Depends on spending” until a spending basis exists.
+  Remove the separate sample comparison section; retain only the stack explanation.
+- The fourth hero panel has four translucent decorative card silhouettes behind
+  an “Explore more stacks” link. Keep the link fully opaque and readable.
+- Keep the stack explanation brief; the following catalogue example is a visual
+  strip of card benefits and fees, not another two-column essay. The continuity
+  partial is retained for reuse but is not rendered on the homepage (Noah's choice).
+- The hero showcases one featured stack at a time using the existing fan-to-vertical
+  wheel interaction. A clickable four-position rail selects three stacks and a final
+  “Explore more stacks” panel. Its active quarter is burgundy, an explicit exception
+  to the action-only colour rule requested by Noah. No automatic horizontal carousel.
+- Show the stack explanation below the hero, then the sample benefits/fees preview.
+  The featured stacks live in the hero rather than a repeated row further down.
+- Explain the product before asking visitors to commit: define a stack as a group of
+  cards for different spending needs, and state the quiz's maximum question count
+  from `Card::CORE_QUESTIONS`. Results require no account; saving a wallet does.
+- Below the hero, use a short editorial explanation and a clearly labelled sample
+  stack from the catalogue to preview card benefits and annual fees. This is not a
+  personalised recommendation. Disclose the sample catalogue; do not invent savings,
+  testimonials or live offers. Use existing heading treatments and shared colour tokens.
 - Display headline: "find the perfect credit cards for you"
 - Two CTAs: "Take the quiz" (burgundy primary), "Browse stacks" (secondary)
 - Below: three card-stack fan images for Student / Traveller / Foodie categories

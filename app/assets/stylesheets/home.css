@@ -105,3 +105,111 @@
 .home-continue-greeting { font-size: 15px; color: var(--muted); margin: 24px 0 6px; }
 .home-continue-actions { font-size: 18px; margin: 0; }
 .home-continue-sep { color: var(--hairline); margin: 0 8px; }
+
+/* Product explanation uses the existing home heading treatment and role tokens. */
+.home-page .home-explainer {
+  padding-block: 40px;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink);
+}
+.home-page .home-explainer h2 {
+  font-size: clamp(25px, 1.9vw, 32px);
+  font-weight: 600;
+  letter-spacing: -.04em;
+  margin: 0 0 24px;
+}
+.home-page .home-explainer h3 {
+  font-size: var(--text-body);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.home-page .home-explainer p {
+  color: var(--body-color);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  max-width: 54ch;
+}
+.home-page p.home-caption {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 60ch;
+  margin: 16px 0 0;
+}
+.home-steps { margin: 0; padding: 0; list-style: none; counter-reset: home-step; }
+.home-steps li { position: relative; padding: 16px 0 16px 48px; border-top: 1px solid var(--hairline); counter-increment: home-step; }
+.home-steps li::before { content: "0" counter(home-step); position: absolute; left: 0; top: 16px; color: var(--muted); font-size: 14px; }
+.home-page .home-steps p { margin: 0; font-size: var(--text-dense); }
+
+/* Featured stacks retain their fan-to-vertical-wheel interaction in the hero. */
+.hero-stacks { min-width: 0; color: var(--ink); }
+.home-page .hero-stacks .fan-card { perspective: 1000px; }
+.stack-card-front, .stack-card-details {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transition: transform 260ms ease;
+}
+.stack-card-front { transform: rotateY(0); }
+.stack-card-details {
+  transform: rotateY(-180deg);
+  background: var(--surface-raised);
+  color: var(--ink);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--hairline-strong);
+  border-radius: inherit;
+}
+.home-page .is-expanded .fan-card[data-current="true"] .stack-card-front { transform: rotateY(180deg); }
+.home-page .is-expanded .fan-card[data-current="true"] .stack-card-details { transform: rotateY(0); }
+.stack-card-details strong { font-size: 14px; line-height: 1.2; }
+.stack-card-details dl { margin: 8px 0; display: grid; gap: 6px; }
+.stack-card-details dl > div { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; line-height: 1.2; }
+.stack-card-details dt { font-weight: 400; color: var(--muted); flex-shrink: 0; }
+.stack-card-details dd { margin: 0; text-align: right; }
+.stack-card-disclosure { color: var(--muted); font-size: 10px; line-height: 1.2; }
+@media (prefers-reduced-motion: reduce) {
+  .stack-card-front, .stack-card-details { transition: none; }
+}
+.hero-stacks [hidden] { display: none !important; }
+.hero-stacks > [data-hero-stacks-target="panel"] { min-height: 448px; }
+.home-page .hero-stacks .stack-fan,
+.home-page .hero-stacks .stack-tile.is-expanded .stack-fan { height: 320px; }
+.home-page .hero-stacks .fan-card { width: 54%; top: 64px; }
+.home-page .hero-stacks .stack-hint { opacity: 1; color: var(--muted); }
+.hero-stack-link { display: block; width: fit-content; margin: 8px auto 0; color: var(--ink); font-size: 14px; text-underline-offset: 4px; }
+.hero-stacks-controls { margin-top: 24px; }
+.hero-stacks-rail { display: grid; grid-template-columns: repeat(var(--stack-count), 1fr); gap: 4px; }
+.hero-stacks-rail button { position: relative; min-height: 44px; padding: 0; border: 0; background: none; }
+.hero-stacks-rail button::after { content: ""; position: absolute; inset: 20px 0; background: var(--hairline-strong); }
+.hero-stacks-rail button[aria-pressed="true"]::after { background: var(--burgundy); inset-block: 18px; }
+.hero-stacks-position { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--muted); }
+.hero-stacks-arrows { display: flex; gap: 8px; }
+.hero-stacks-arrows button { min-width: 44px; min-height: 44px; border: 1px solid var(--hairline); border-radius: var(--radius-button); background: none; color: var(--ink); }
+.hero-stacks-more { min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.hero-stacks-more h2 { font-size: clamp(25px, 1.9vw, 32px); font-weight: 600; letter-spacing: -.04em; }
+.hero-stacks-more { position: relative; isolation: isolate; }
+.ghost-stack { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.ghost-card { position: absolute; width: 58%; aspect-ratio: 1.586; border-radius: var(--radius-card); border: 1px solid var(--hairline-strong); background: var(--finish-silver); opacity: .8; }
+.ghost-wordmark { position: absolute; right: 10%; top: 12%; color: var(--burgundy); opacity: .55; font-size: 18px; font-weight: 600; }
+.ghost-card:nth-child(1) { transform: translate(-18%, -26%) rotate(-22deg); }
+.ghost-card:nth-child(2) { transform: translate(-6%, -12%) rotate(-10deg); }
+.ghost-card:nth-child(3) { transform: translate(6%, 4%) rotate(3deg); }
+.ghost-card:nth-child(4) { transform: translate(18%, 20%) rotate(16deg); }
+.ghost-chip { position: absolute; top: 35%; left: 10%; width: 13%; height: 17%; border: 1px solid var(--muted); opacity: .5; border-radius: 4px; background: var(--finish-steel); }
+.home-page .hero-stacks .ghost-stack-link { position: relative; z-index: 1; display: flex; align-items: center; gap: 16px; padding: 0 0 4px; color: var(--burgundy); background: none; border-radius: 0; border-color: var(--burgundy); font-size: clamp(25px, 1.9vw, 32px); font-weight: 600; letter-spacing: -.04em; text-decoration: none; }
+@media (max-width: 767px) {
+  .ghost-stack-link { font-size: 25px; padding: 16px; gap: 8px; }
+  .hero-stacks > [data-hero-stacks-target="panel"] { min-height: 388px; }
+  .home-page .hero-stacks .stack-fan,
+  .home-page .hero-stacks .stack-tile.is-expanded .stack-fan { height: 260px; }
+  .home-page .hero-stacks .fan-card { top: 48px; width: 58%; }
+  .home-page .hero-stacks .fan-card:has(.stack-card-details) { width: 70%; }
+  .stack-card-details { padding: 8px 12px; }
+  .stack-card-details dl { gap: 4px; margin: 6px 0; }
+  .stack-card-details dl > div { font-size: 11px; }
+  .hero-stacks-more { min-height: 340px; }
+  .hero-stacks-controls { margin-top: 8px; }
+}
