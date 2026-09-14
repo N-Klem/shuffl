@@ -6,8 +6,8 @@
   color: #080808;
   font-family: var(--font-sans);
 }
-.home-page ::selection { background: #651321; color: white; }
-.home-page :focus-visible { outline: 2px solid #651321; outline-offset: 6px; }
+.home-page ::selection { background: var(--burgundy); color: white; }
+.home-page :focus-visible { outline: 2px solid var(--burgundy); outline-offset: 6px; }
 /* Content gutter lives here, not on body, so it never touches the shared navbar's position. */
 .home-page section.container { width: 100%; max-width: none; padding-inline: 2.4vw; }
 .home-page .hero { padding: 65px 0 56px; align-items: flex-start; flex-wrap: nowrap; gap: 24px; }
@@ -97,7 +97,7 @@
 .home-page .stack-fan { touch-action: pan-x; }
 .home-page .is-expanded .fan-card { pointer-events: auto; cursor: pointer; }
 .home-page .is-expanded .fan-card:not([data-current="true"]) .card-reveal { opacity: 0; }
-.home-page .fan-card:focus-visible { outline: 2px solid #651321; outline-offset: 3px; }
+.home-page .fan-card:focus-visible { outline: 2px solid var(--burgundy); outline-offset: 3px; }
 
 /* Signed-in continuity: a quiet "pick up where you left off" line at the foot
    of the home page (logged-out visitors get sign-in/create in the navbar). */

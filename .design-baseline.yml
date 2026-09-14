@@ -1,12 +1,12 @@
 ---
 application.css:
-  hex: 40
+  hex: 41
   fonts: 0
 assistant.css:
   hex: 6
   fonts: 0
 browse.css:
-  hex: 59
+  hex: 29
   fonts: 0
 detail.css:
   hex: 7
@@ -15,7 +15,7 @@ footer.css:
   hex: 0
   fonts: 0
 home.css:
-  hex: 25
+  hex: 22
   fonts: 0
 login.css:
   hex: 44
@@ -27,7 +27,7 @@ quiz.css:
   hex: 18
   fonts: 0
 results.css:
-  hex: 33
+  hex: 28
   fonts: 0
 spinning_buttons.css:
   hex: 8
@@ -36,7 +36,7 @@ theme.css:
   hex: 53
   fonts: 0
 wallet.css:
-  hex: 52
+  hex: 29
   fonts: 0
 z_mobile.css:
   hex: 2
