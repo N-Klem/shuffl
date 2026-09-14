@@ -56,7 +56,11 @@ export default class extends Controller {
   const dt=last?Math.min((now-last)/1000,.05):.016;last=now;
   const destination=expanded?1:0;
   phase+=(target-phase)*(reduce.matches?1:1-Math.exp(-dt/.23));
-  blend+=(destination-blend)*(reduce.matches?1:1-Math.exp(-dt/.22));
+  // Collapse quicker than it opens (.10 vs .22). The wheel reveals leisurely,
+  // but on the way back the transient pale card behind the front one shouldn't
+  // hang over the fan for a second — snap the morph closed decisively instead.
+  const blendTau=destination<blend?.10:.22;
+  blend+=(destination-blend)*(reduce.matches?1:1-Math.exp(-dt/blendTau));
   draw();
   if(Math.abs(target-phase)>.0005||Math.abs(destination-blend)>.0005)raf=requestAnimationFrame(tick);
   else {phase=target;blend=destination;draw();raf=0;last=0;if(!expanded){tile.classList.remove('is-expanded');cards.forEach(c=>{c.style.transform='';c.style.opacity='';c.style.zIndex=''})}}
