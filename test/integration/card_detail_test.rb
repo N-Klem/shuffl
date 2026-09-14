@@ -21,7 +21,8 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     get card_path(@card)
     assert_response :success
     assert_select "h1", "Detail test"
-    assert_select ".detail-figure", /\$95/
+    assert_select ".detail-figure", /4x/                 # leads with value (reward rate), not the fee
+    assert_select ".detail-facts .value", text: /\$95/   # the fee is demoted into the facts
     assert_select ".detail-perks li", count: 2
     assert_select ".detail-tags li", count: 2
     assert_select ".detail-stacks a", text: /Test stack/
