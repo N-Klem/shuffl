@@ -143,35 +143,34 @@
 
 /* Featured stacks retain their fan-to-vertical-wheel interaction in the hero. */
 .hero-stacks { min-width: 0; color: var(--ink); }
-.home-page .hero-stacks .fan-card { perspective: 1000px; }
-.stack-card-front, .stack-card-details {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  transition: transform 260ms ease;
-}
-.stack-card-front { transform: rotateY(0); }
-.stack-card-details {
-  transform: rotateY(-180deg);
+/* Card info panel: appears below the fan when a card is current */
+.stack-card-info {
+  text-align: center;
+  padding: 14px 16px 10px;
+  margin: -4px auto 0;
+  max-width: 280px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
   background: var(--surface-raised);
   color: var(--ink);
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid var(--hairline-strong);
-  border-radius: inherit;
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 200ms ease, transform 200ms ease;
 }
-.home-page .is-expanded .fan-card[data-current="true"] .stack-card-front { transform: rotateY(180deg); }
-.home-page .is-expanded .fan-card[data-current="true"] .stack-card-details { transform: rotateY(0); }
-.stack-card-details strong { font-size: 14px; line-height: 1.2; }
-.stack-card-details dl { margin: 8px 0; display: grid; gap: 6px; }
-.stack-card-details dl > div { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; line-height: 1.2; }
-.stack-card-details dt { font-weight: 400; color: var(--muted); flex-shrink: 0; }
-.stack-card-details dd { margin: 0; text-align: right; }
-.stack-card-disclosure { color: var(--muted); font-size: 10px; line-height: 1.2; }
+.stack-card-info.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stack-card-info strong { display: block; font-size: 15px; font-weight: 600; letter-spacing: -.02em; }
+.stack-card-info dl { margin: 8px 0 4px; display: grid; gap: 4px; }
+.stack-card-info dl > div { display: flex; justify-content: space-between; gap: 8px; }
+.stack-card-info dt { font-weight: 400; color: var(--muted); }
+.stack-card-info dd { margin: 0; text-align: right; }
+.stack-card-info .stack-card-disclosure { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
 @media (prefers-reduced-motion: reduce) {
-  .stack-card-front, .stack-card-details { transition: none; }
+  .stack-card-info { transition: none; }
 }
 .hero-stacks [hidden] { display: none !important; }
 .hero-stacks > [data-hero-stacks-target="panel"] { min-height: 448px; }
@@ -206,10 +205,7 @@
   .home-page .hero-stacks .stack-fan,
   .home-page .hero-stacks .stack-tile.is-expanded .stack-fan { height: 260px; }
   .home-page .hero-stacks .fan-card { top: 48px; width: 58%; }
-  .home-page .hero-stacks .fan-card:has(.stack-card-details) { width: 70%; }
-  .stack-card-details { padding: 8px 12px; }
-  .stack-card-details dl { gap: 4px; margin: 6px 0; }
-  .stack-card-details dl > div { font-size: 11px; }
+  .stack-card-info { max-width: 240px; font-size: 12px; padding: 10px 12px; }
   .hero-stacks-more { min-height: 340px; }
   .hero-stacks-controls { margin-top: 8px; }
 }

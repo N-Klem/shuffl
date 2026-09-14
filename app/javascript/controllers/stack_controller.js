@@ -23,11 +23,25 @@ export default class extends Controller {
   else {hint.innerHTML=originalHint;fan.setAttribute('aria-label',button.getAttribute('aria-label'))}
   cards.forEach((c,i)=>{
    c.dataset.current=String(i===index);c.setAttribute('aria-hidden',!expanded);c.tabIndex=expanded?0:-1;
-   const details=c.querySelector('.stack-card-details');
-   const showingDetails=expanded&&i===index&&details;
-   details?.setAttribute('aria-hidden',!showingDetails);
-   c.setAttribute('aria-label',(i===index?'Current card: ':'Bring to front: ')+(showingDetails?details.textContent.trim().replace(/\s+/g,' '):c.querySelector('.name').textContent));
+   c.setAttribute('aria-label',(i===index?'Current card: ':'Bring to front: ')+c.querySelector('.name').textContent);
   });
+  const infoPanel=tile.querySelector('.stack-card-info');
+  if(infoPanel){
+   const current=cards[index];
+   if(expanded&&current){
+    const name=current.dataset.cardName||'';
+    const benefit=current.dataset.cardBenefit||'';
+    const fee=current.dataset.cardFee||'';
+    infoPanel.innerHTML='<strong>'+name+'</strong><dl><div><dt>Top benefit</dt><dd>'+benefit+'</dd></div><div><dt>Annual fee</dt><dd>'+fee+'</dd></div></dl><span class="stack-card-disclosure">Sample catalogue \u00b7 Not a live offer</span>';
+    infoPanel.hidden=false;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>infoPanel.classList.add('is-visible')));
+   } else {
+    infoPanel.classList.remove('is-visible');
+    const onEnd=()=>{infoPanel.hidden=true;infoPanel.removeEventListener('transitionend',onEnd)};
+    if(getComputedStyle(infoPanel).transitionDuration!=='0s')infoPanel.addEventListener('transitionend',onEnd);
+    else infoPanel.hidden=true;
+   }
+  }
  }
  function draw(){
   cards.forEach((c,i)=>{

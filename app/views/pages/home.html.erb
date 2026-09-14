@@ -15,24 +15,14 @@
         <div class="stack-tile" data-controller="stack">
           <div class="stack-fan">
             <% stack.cards.first(4).each do |card| %>
-              <div class="fan-card <%= card_finish(card) %>">
-                <div class="stack-card-front" aria-hidden="true">
-                  <div class="chip"></div>
-                  <span class="card-wordmark">shuffl.</span>
-                  <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= card_benefit(card) %></span></div>
-                </div>
-                <div class="stack-card-details">
-                  <strong><%= card.name %></strong>
-                  <dl>
-                    <div><dt>Top benefit</dt><dd><%= card_benefit(card) %></dd></div>
-                    <div><dt>Annual rewards</dt><dd>Depends on spending</dd></div>
-                    <div><dt>Annual fee</dt><dd><%= number_to_currency(card.annual_fee, precision: 0) %></dd></div>
-                  </dl>
-                  <span class="stack-card-disclosure">Sample catalogue · Not a live offer</span>
-                </div>
+              <div class="fan-card <%= card_finish(card) %>" data-card-name="<%= card.name %>" data-card-benefit="<%= card_benefit(card) %>" data-card-fee="<%= number_to_currency(card.annual_fee, precision: 0) %>">
+                <div class="chip"></div>
+                <span class="card-wordmark">shuffl.</span>
+                <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= card_benefit(card) %></span></div>
               </div>
             <% end %>
           </div>
+          <div class="stack-card-info" aria-live="polite" hidden></div>
           <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" aria-expanded="false" aria-label="Reveal <%= stack.name %> cards"><%= stack.name %><span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
         </div>
         <%= link_to "View #{stack.name} stack →", stack_path(stack), class: "hero-stack-link" %>
