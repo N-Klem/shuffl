@@ -2,12 +2,12 @@
 
 :root {
   /* Bootstrap theme overrides — see DESIGN.md's CSS Implementation Notes */
-  --bs-primary: #7B1622;
+  --bs-primary: var(--burgundy);
   --bs-body-color: #4A4A4A;
   --bs-body-bg: #FFFFFF;
   --bs-border-color: #E5E5E5;
   --bs-link-color: #0A0A0A;
-  --bs-link-hover-color: #7B1622;
+  --bs-link-hover-color: var(--burgundy);
   --font-sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --bs-body-font-family: var(--font-sans);
   --bs-border-radius: 6px;
@@ -17,9 +17,12 @@
   --body-color: #4A4A4A;
   --muted: #6B6B6B;
   --hairline: #E5E5E5;
+  --hairline-soft: #F0F0F0;
+  --pine: #16624B;
+  --pine-pence: #3F7A65;
   --surface: #FFFFFF;
-  --burgundy: #7B1622;
-  --burgundy-hover: #63111B;
+  --burgundy: #601020;
+  --burgundy-hover: #4C0D1A;
   --overlay-from: rgba(10, 10, 10, 0);
   --overlay-to: rgba(10, 10, 10, 0.74);
 

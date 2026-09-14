@@ -13,7 +13,7 @@
 .quiz-finish-overlay>p{position:absolute;top:calc(50% + 190px);color:#777;font-size:14px}
 .finish-orbit{position:absolute;width:300px;height:300px;animation:finish-orbit 3s linear infinite}
 .orbit-position{position:absolute;left:calc(50% - 28px);top:calc(50% - 18px);transform:rotate(calc(var(--orbit-index)*45deg)) translateY(-137px)}
-.orbit-card{display:block;width:56px;height:36px;border-radius:4px;background:linear-gradient(115deg,#ffffff40,transparent),#681522;box-shadow:0 4px 9px #0002;transform:rotate(-20deg)}
+.orbit-card{display:block;width:56px;height:36px;border-radius:4px;background:linear-gradient(115deg,#ffffff40,transparent),var(--burgundy);box-shadow:0 4px 9px #0002;transform:rotate(-20deg)}
 .orbit-position:nth-child(even) .orbit-card{background:linear-gradient(115deg,#ffffff50,transparent),#aaaead}
 .orbit-card>span{position:absolute;width:9px;height:7px;left:7px;top:12px;background:#d6d0bc;border-radius:2px}
 @keyframes finish-orbit{to{transform:rotate(360deg)}}

@@ -13,35 +13,67 @@ export default class extends Controller {
       }
     } catch (_) {}
     this.resize()
+
+    // Layout is rarely final when a controller connects: browse and wallet render
+    // client-side, and web fonts and card art land later. Until it settles the
+    // footer sits near the top of a short document and the orb parks against it,
+    // so re-park on the next frame, once everything has loaded, and whenever the
+    // page changes size afterwards (filtering a list, opening a disclosure).
+    this.repark = () => this.resize()
+    requestAnimationFrame(this.repark)
+    if (document.readyState !== "complete") {
+      addEventListener("load", this.repark, { once: true })
+    }
+    if ("ResizeObserver" in window) {
+      this.pageObserver = new ResizeObserver(this.repark)
+      this.pageObserver.observe(document.body)
+    }
   }
 
+  disconnect() {
+    if (this.pageObserver) this.pageObserver.disconnect()
+    removeEventListener("load", this.repark)
+  }
+
+  // this.x/this.y are where the user put the orb. They are never overwritten by
+  // layout: clamping happens at render time only. Clamping the stored value
+  // instead meant one brief narrow viewport moved the orb permanently, because
+  // the clamp can only ever shrink it and nothing restores it when space returns.
   resize() {
-    this.x = Math.max(12, Math.min(this.x, innerWidth - 72))
-    this.y = Math.max(12, Math.min(this.y, innerHeight - 72))
-    this.orbTarget.style.left = `${this.x}px`
+    this.orbTarget.style.left = `${this.parkedX()}px`
     const top = this.parkedY()
     this.orbTarget.style.top = `${top}px`
     if (!this.panelTarget.hidden) {
       const width = this.panelTarget.offsetWidth
       const height = this.panelTarget.offsetHeight
-      const left = this.x + 72 + width <= innerWidth - 12 ? this.x + 72 : this.x - width - 12
+      const anchor = this.parkedX()
+      const left = anchor + 72 + width <= innerWidth - 12 ? anchor + 72 : anchor - width - 12
       this.panelTarget.style.left = `${Math.max(12, Math.min(left, innerWidth - width - 12))}px`
       this.panelTarget.style.top = `${Math.max(12, Math.min(top, innerHeight - height - 12))}px`
     }
   }
 
+  parkedX() {
+    return Math.max(12, Math.min(this.x, innerWidth - 72))
+  }
+
   // The orb is fixed to the viewport, so at the end of a page it would sit on
   // top of the footer with no way to scroll it clear. Let the footer push it up
-  // rather than cover content. The dragged position is kept, not overwritten.
+  // rather than cover content.
   parkedY() {
+    let y = Math.max(12, Math.min(this.y, innerHeight - 72))
     const footer = document.querySelector(".site-footer")
-    if (!footer) return this.y
-    const ceiling = footer.getBoundingClientRect().top - this.orbTarget.offsetHeight - 16
-    return Math.max(12, Math.min(this.y, ceiling))
+    if (footer) {
+      const ceiling = footer.getBoundingClientRect().top - this.orbTarget.offsetHeight - 16
+      y = Math.max(12, Math.min(y, ceiling))
+    }
+    return y
   }
 
   start(event) {
     if (event.button !== 0 || !event.isPrimary) return
+    this.x = this.parkedX()
+    this.y = this.parkedY()
     this.drag = { id: event.pointerId, x: event.clientX, y: event.clientY, left: this.x, top: this.y }
     this.moved = false
     this.orbTarget.setPointerCapture(event.pointerId)

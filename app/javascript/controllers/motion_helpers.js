@@ -29,7 +29,7 @@ export async function gatherCards(elements, button) {
     const style = getComputedStyle(element)
     Object.assign(card.style, {
       position:'fixed',left:start.left+'px',top:start.top+'px',width:start.width+'px',height:start.height+'px',
-      borderRadius:'9px',background:style.getPropertyValue('--metal') || style.getPropertyValue('--card-ink') || '#681522',
+      borderRadius:'9px',background:style.getPropertyValue('--metal') || style.getPropertyValue('--card-ink') || '#601020',
       border:'1px solid #ffffff88',boxShadow:'0 8px 20px #0002',pointerEvents:'none',zIndex:1200
     })
     card.setAttribute('aria-hidden','true')

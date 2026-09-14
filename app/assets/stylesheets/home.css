@@ -16,7 +16,7 @@
 .home-page .hero-headline h1 span { display: block; white-space: nowrap; }
 .home-page .hero-actions { margin-top: 22px; min-width: 0; width: 14.8%; }
 .home-page .hero-actions .btn { font-size: clamp(16px, 1.6vw, 26px); padding: 14px 12px; letter-spacing: -.035em; white-space: nowrap; }
-.home-page .btn-primary { --bs-btn-bg: #601020; --bs-btn-border-color: #601020; }
+.home-page .btn-primary { --bs-btn-bg: var(--burgundy); --bs-btn-border-color: var(--burgundy); }
 .home-page .btn-outline-dark { --bs-btn-border-color: #a9adb4; }
 .home-page .stacks { border-color: #93979e; padding-top: 44px; padding-bottom: 20px; }
 .home-page .stacks > .row { margin: 0; --bs-gutter-x: 0; --bs-gutter-y: 0; }

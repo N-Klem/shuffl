@@ -1,0 +1,43 @@
+---
+application.css:
+  hex: 40
+  fonts: 0
+assistant.css:
+  hex: 6
+  fonts: 0
+browse.css:
+  hex: 60
+  fonts: 0
+detail.css:
+  hex: 7
+  fonts: 0
+footer.css:
+  hex: 0
+  fonts: 0
+home.css:
+  hex: 26
+  fonts: 0
+login.css:
+  hex: 44
+  fonts: 0
+product_motion.css:
+  hex: 9
+  fonts: 0
+quiz.css:
+  hex: 18
+  fonts: 0
+results.css:
+  hex: 33
+  fonts: 0
+spinning_buttons.css:
+  hex: 8
+  fonts: 0
+theme.css:
+  hex: 53
+  fonts: 0
+wallet.css:
+  hex: 55
+  fonts: 0
+z_mobile.css:
+  hex: 2
+  fonts: 0

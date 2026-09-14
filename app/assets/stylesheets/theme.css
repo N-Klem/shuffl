@@ -20,7 +20,7 @@ html[data-theme="dark"] :is(input:not([type="range"],[type="checkbox"],[type="ra
 html[data-theme="dark"] input::placeholder { color:#a99da3; }
 html[data-theme="dark"] :is(.btn-outline-dark,button:not(.primary,.btn-primary,.credit,.fan-card,.art,.theme-toggle)) { color:#f2eeee; border-color:#574a51; }
 html[data-theme="dark"] :is(.actions button:not(.primary,.btn-primary),.toolbar button,.chips button,button.keep,button[data-swap],button[data-act="paid"],dialog button:not(.primary)) { background:#282227; }
-html[data-theme="dark"] :is(.btn-primary,.primary) { background:#7b1622; color:#fff; border-color:#a14151; }
+html[data-theme="dark"] :is(.btn-primary,.primary) { background:var(--burgundy); color:#fff; border-color:#a14151; }
 html[data-theme="dark"] :is(.reward,.reward-value) { color:#79d3a6; }
 html[data-theme="dark"] .fee { color:#f28d9b; }
 html[data-theme="dark"] :is(.product,.timeline,.section,.steps,.step,.rates,.list-head,.toolbar,.filter-extra,td,th,.stack-col,.stack-tile,.stacks-footer) { border-color:#443b3f; }

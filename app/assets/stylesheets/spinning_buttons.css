@@ -19,7 +19,7 @@
   inset: -1px;
   border-radius: inherit;
   padding: 2px;
-  background: conic-gradient(from var(--shuffl-button-angle), transparent 0%, transparent 65%, #bc7782 80%, #7b1622 93%, #f0ced3 100%);
+  background: conic-gradient(from var(--shuffl-button-angle), transparent 0%, transparent 65%, #bc7782 80%, var(--burgundy) 93%, #f0ced3 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -63,7 +63,7 @@
   bottom: -2px;
   height: 2px;
   pointer-events: none;
-  background: linear-gradient(90deg, #7b1622 0%, #7b1622 35%, #f0ced3 50%, #bc7782 55%, #7b1622 65%, #7b1622 100%);
+  background: linear-gradient(90deg, var(--burgundy) 0%, var(--burgundy) 35%, #f0ced3 50%, #bc7782 55%, var(--burgundy) 65%, var(--burgundy) 100%);
   background-size: 250% 100%;
   opacity: 0;
   transition: opacity 200ms ease-out;

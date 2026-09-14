@@ -53,7 +53,11 @@ devise_for :users
 root "pages#home"
 resources :stacks, only: [:index, :show]
 resources :cards, only: [:index, :show]
-resources :wallet_items, only: [:index, :create, :destroy]
+resources :wallet_items, only: [:index, :create, :update, :destroy] do
+  patch :preferences, on: :collection
+  post  :save_browse, on: :collection
+  post  :save_stack,  on: :collection
+end
 resources :quiz_responses, only: [:new, :create, :show]
 ```
 
@@ -82,28 +86,59 @@ The quiz is a **one-question-per-page wizard** with **weighted scoring** — eac
 
 | Controller | Actions | Status |
 |------------|---------|--------|
-| `PagesController` | `home` | Working — placeholder view |
+| `PagesController` | `home` | Working — fully designed |
 | `CardsController` | `index`, `show` | Working |
 | `StacksController` | `index`, `show` | Working |
-| `WalletItemsController` | `index`, `create`, `destroy` | Working |
+| `WalletItemsController` | `index`, `create`, `update`, `destroy`, plus `preferences`, `save_browse`, `save_stack` on the collection | Working |
 | `QuizResponsesController` | `new`, `create`, `show` | Working |
 
 ### Views
 
-All views exist under `app/views/`:
-- `pages/home.html.erb` — placeholder (needs design)
-- `cards/index.html.erb`, `cards/show.html.erb`
+Under `app/views/`. Every surface is designed — none of these are placeholders.
+
+- `pages/home.html.erb`
+- `cards/index.html.erb` (client-rendered from `@browse_payload`), `cards/show.html.erb`
 - `stacks/index.html.erb`, `stacks/show.html.erb`
 - `wallet_items/index.html.erb`
 - `quiz_responses/new.html.erb`, `quiz_responses/show.html.erb`
-- `shared/_navbar.html.erb`
+- `shared/` — `_navbar`, `_footer`, `_wordmark`, `_flash`, `_assistant`
+- `devise/` — custom `sessions/new`, `registrations/new`, `registrations/edit`, `passwords/*`,
+  plus `devise/shared/_auth_tabs`, `_stack_panel`, `_error_messages`
+
+### Front-end assets
+
+Fourteen stylesheets in `app/assets/stylesheets/`:
+
+`application` (tokens + shared chrome), `theme` (dark mode), `footer`, `assistant`, `z_mobile`,
+`product_motion`, `spinning_buttons`, `detail`, and six page-scoped sheets: `home`, `quiz`,
+`browse`, `results`, `login`, `wallet`.
+
+> The six page-scoped sheets each carry their own CSS reset and colour literals instead of
+> building on `application.css`. This is the largest piece of frontend debt in the project and it
+> is recorded under *Known violations* in DESIGN.md. Do not add a seventh.
+
+Twelve Stimulus controllers in `app/javascript/controllers/`:
+
+`assistant`, `browse`, `dialog`, `hero_carousel`, `password_visibility`, `quiz`, `quiz_finish`,
+`results`, `share`, `stack`, `theme`, `wallet`, plus a shared `motion_helpers.js`.
+`app/javascript/application.js` stays minimal — add behaviour as a Stimulus controller, never
+as an inline script or ad-hoc JS in that file.
 
 ### What's next
 
-- **Frontend/CSS polish** — Bootstrap is loaded but no view uses its classes yet; current custom CSS is still minimal (~22 lines). Need actual styling: responsive layout, card components, color scheme, typography
-- **Home page design** — currently just `<h1>Shuffl</h1>`, tagline, and browse/sign-in links
-- **Pundit authorization** — not yet added; policies for user-owned resources (wallet items, quiz responses) still just rely on `current_user` scoping in controllers
-- **Quiz UX** — no per-question "required" validation (skipping a question just scores 0 for it) and no way to go back a step
+- **Unify the six page-scoped stylesheets** onto `application.css`'s tokens — see *Known
+  violations* in DESIGN.md. Highest-value frontend work outstanding; dark mode for browse and
+  results falls out of it almost free.
+- **Settle the two open design decisions** (type scale for Geist, money-out colour) — see
+  *Open decisions* in DESIGN.md. Until then, do not invent values for either.
+- **Quiz length** — the quiz is 16 questions with no payoff until the end. Planned: cut to 8,
+  show results, then a "keep refining" path that reopens the rest. Needs `:edit`/`:update` on
+  `quiz_responses`, since the record is currently created once at the end.
+- **Dark mode ignores the system preference** — `theme.css` responds only to the navbar toggle;
+  there is no `prefers-color-scheme` query.
+- **Pundit authorization** — not yet added; user-owned resources still rely on `current_user`
+  scoping in the controllers.
+- **Quiz UX** — no per-question "required" validation; skipping a question scores 0 for it.
 
 ## Data
 
@@ -124,8 +159,14 @@ All views exist under `app/views/`:
 - `config/routes.rb` — all resource routes wired up
 - `app/views/shared/_navbar.html.erb` — site navigation
 - `app/views/layouts/application.html.erb` — Bootstrap CDN tags + navbar render
-- `app/assets/stylesheets/application.css` — minimal starter (~22 lines, needs work)
-- `app/javascript/application.js` — minimal by design (2 lines); do not add ad-hoc JS here, use Stimulus controllers
+- `app/assets/stylesheets/application.css` — the `:root` token block plus shared chrome
+  (navbar, buttons, footer, flash). The authoritative source for every design token.
+- `app/assets/stylesheets/theme.css` — dark mode, driven by `data-theme` on `<html>`
+- `lib/tasks/design.rake` — `design:check` / `design:baseline`, the enforcement described above
+- `.design-baseline.yml` — recorded violation ceiling per stylesheet; never hand-edit
+- `.githooks/pre-commit` — runs `design:check` when a stylesheet is staged
+- `app/javascript/application.js` — minimal by design; do not add ad-hoc JS here, use Stimulus controllers
+- `app/views/shared/_wordmark.html.erb` — the `shuffl.` wordmark; render it, never hand-write the mark
 
 ## Repo hygiene
 
@@ -142,19 +183,31 @@ All views exist under `app/views/`:
 
 **Read `DESIGN.md` before touching any view, partial, stylesheet, or Stimulus controller.**
 
-Shuffl follows the "Quiet Interface" design language. The three non-negotiable rules:
+**DESIGN.md is the only source of truth for anything visual.** It is deliberately not summarised
+here: this file used to restate its rules, the two copies drifted, and the drifted copy is what
+people implemented. Three burgundies and an unlicensed typeface came out of that. Read DESIGN.md
+itself — it marks every statement as binding, open, or a known violation, so you can tell which
+parts are decided.
 
-1. **One family** — every character is set in Geist, referenced through the `--font-sans` token. No second typeface, and no stylesheet names a font family directly.
-2. **One burgundy** (`#7B1622`) — exactly one filled burgundy button per screen, always the primary CTA. Nothing else uses that colour except tertiary text links on hover.
-3. **Nothing at rest** — secondary controls (compare, share, explore links) are hidden by default and revealed only on hover/focus with a 160ms opacity transition. Only show buttons that are 100% necessary.
+The short version, so you know what you are walking into:
 
-Key implementation details:
-- All design tokens (colours, spacing, radii, typography) are defined as CSS custom properties in `application.css` — use `var(--token-name)`, never raw hex values
-- No shadows anywhere in the UI
-- Dividers over boxes — don't wrap content in a card just to group it
-- Pence portions of monetary figures drop to `muted` colour — this is a signature detail
-- Hover-revealed controls must be keyboard-accessible (`visibility: hidden` + `opacity: 0`, never `display: none`)
-- Use Bootstrap grid, utilities, and responsive breakpoints as normal — but override Bootstrap's default colours, shadows, and radii with the Shuffl tokens (see DESIGN.md for the full CSS variable block)
-- Don't use Bootstrap colour classes (`.text-primary`, `.bg-info`) with their defaults — they pull in Bootstrap blue/green instead of the Shuffl palette
-- Geist is loaded from Google Fonts in the layout; every stylesheet reaches it via `var(--font-sans)`
-- The `shuffl.` wordmark is a partial (`shared/_wordmark.html.erb`) whose full stop is a drawn circle, not a typed period — never hand-write the mark, and see DESIGN.md for why
+- One typeface (Geist), one burgundy (`#601020`), nothing visible at rest that is not the next step.
+- Never write a raw hex or name a font family in a stylesheet. Use `var(--token)`. The
+  authoritative token list is the `:root` block of `application.css`.
+- Never hand-write the `shuffl.` wordmark. Render `shared/_wordmark.html.erb` — its full stop is
+  a drawn circle, not a typed period, for reasons DESIGN.md explains.
+- Two design decisions are explicitly **open** (the type scale, the money-out colour). Do not
+  answer them in passing. Match the surrounding file and leave them alone.
+
+### Enforcement
+
+`rake design:check` fails a commit that reintroduces a retired burgundy or font name, or that adds
+a raw hex or hardcoded font family to any stylesheet. Existing violations are recorded per file in
+`.design-baseline.yml` and may shrink but never grow; run `rake design:baseline` after cleaning
+some up to lock in the lower number.
+
+Enable the hook once per clone:
+
+```
+git config core.hooksPath .githooks
+```

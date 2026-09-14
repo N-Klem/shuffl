@@ -1,12 +1,28 @@
 # Shuffl Design Language — "The Quiet Interface"
 
-This document is the single source of truth for Shuffl's visual design. Every frontend view,
-component, and stylesheet must follow this spec. When an implementation decision is ambiguous,
-resolve it with the three rules below.
+This document is the single source of truth for Shuffl's visual design. `CLAUDE.md` describes how
+the app is built; anything visual is decided here and nowhere else.
+
+## How to read this document
+
+Every statement here is one of exactly three things, and it says which:
+
+- **Binding.** A settled answer. Implement it as written. Do not substitute a near-miss value
+  because it looks similar, and do not introduce a new value for a job a token already covers.
+  If you believe a binding answer is wrong, change it here first, in its own commit, and say why.
+- **Open.** A decision nobody has made yet, listed under *Open decisions* at the end. Until it is
+  settled, do not invent an answer — reuse whatever the surrounding code already does and leave
+  it alone. Every drift problem this codebase has had started as an open question answered quietly.
+- **Known violation.** Something binding that the code does not yet do, listed under
+  *Known violations*. These are debt, not precedent. Never cite one to justify another.
+
+Two rules are machine-checked by `rake design:check` (see *Enforcement*). The rest are on you.
 
 ---
 
 ## The Three Rules
+
+*Binding.*
 
 1. **One family.** Every character — wordmark, 100px display headline, 12px disclosure — is set in
    the same tight grotesque. No second typeface, no monospace for numbers.
@@ -21,26 +37,40 @@ resolve it with the three rules below.
 
 ### Colour
 
-| Token             | Hex / Value           | Use                                                              |
-|-------------------|-----------------------|------------------------------------------------------------------|
-| `ink`             | `#0A0A0A`             | All primary text, wordmark, selection outlines, 1px structural rules |
-| `body`            | `#4A4A4A`             | Body copy, descriptive paragraphs                                |
-| `muted`           | `#6B6B6B`             | Captions, labels, disclosures, pence portions of figures         |
-| `hairline`        | `#E5E5E5`             | Card borders, section dividers                                   |
-| `hairline-soft`   | `#F0F0F0`             | Row separators inside a panel                                    |
-| `surface`         | `#FFFFFF`             | The only background. White is the loudest colour in the system.  |
-| `burgundy`        | `#7B1622`             | The single primary action per screen. Nothing else.              |
-| `burgundy-hover`  | `#63111B`             | Hover state of the primary button only                           |
-| `pine`            | `#16624B`             | Money in — rewards, cashback, positive deltas                    |
-| `pine-pence`      | `#3F7A65`             | Pence portion of a pine figure (4.6:1 on white)                  |
-| `amber`           | `#A85410`             | Money out — fees, interest, negative flags                       |
-| `amber-pence`     | `#8A6234`             | Pence portion of an amber figure (4.9:1 on white)                |
-| `overlay`         | `rgba(10,10,10,0.74)` | Hover-reveal scrim over card artwork                             |
+*Binding.* These are the CSS custom property names exactly as they are defined in
+`application.css`'s `:root`. Reference them as `var(--token)`. A raw hex in any stylesheet is a
+defect — see *Enforcement*.
+
+| Token              | Hex / Value           | Use                                                              |
+|--------------------|-----------------------|------------------------------------------------------------------|
+| `--ink`            | `#0A0A0A`             | All primary text, wordmark, selection outlines, 1px structural rules |
+| `--body-color`     | `#4A4A4A`             | Body copy, descriptive paragraphs                                |
+| `--muted`          | `#6B6B6B`             | Captions, labels, disclosures, pence portions of figures         |
+| `--hairline`       | `#E5E5E5`             | Card borders, section dividers                                   |
+| `--hairline-soft`  | `#F0F0F0`             | Row separators inside a panel                                    |
+| `--surface`        | `#FFFFFF`             | The only background. White is the loudest colour in the system.  |
+| `--burgundy`       | `#601020`             | The single primary action per screen. Nothing else.              |
+| `--burgundy-hover` | `#4C0D1A`             | Hover and active state of the primary button only                |
+| `--pine`           | `#16624B`             | Money in — rewards, cashback, positive deltas                    |
+| `--pine-pence`     | `#3F7A65`             | Pence portion of a pine figure (4.6:1 on white)                  |
+| `--overlay-from`   | `rgba(10,10,10,0)`    | Top stop of the hover-reveal scrim over card artwork             |
+| `--overlay-to`     | `rgba(10,10,10,0.74)` | Bottom stop of that scrim                                        |
+
+The card finishes (`--finish-bone`, `--finish-burgundy`, `--finish-graphite`, `--finish-steel`,
+`--finish-silver`) are gradients for placeholder card artwork. They are temporary and will be
+replaced by real card images — do not build anything else on them.
+
+**The burgundy is `#601020` and only `#601020`.** The app previously carried three near-identical
+burgundies (`#7B1622`, `#681522`, `#601020`) across different stylesheets because each was typed
+by hand instead of referenced. All three are now `var(--burgundy)`. The two retired values are
+banned outright by `rake design:check`.
 
 **Colour budget:** burgundy must occupy under 3% of any screen's pixels. On a 1440×900 viewport
-that is one button plus the wordmark rule. Pine and amber appear only on figures, never on chrome.
+that is one button plus the wordmark rule. Pine appears only on figures, never on chrome.
 
 **Never coloured:** headings, selected states, links at rest, tags, icons.
+
+The colour used for fees and other money-out figures is *open* — see *Open decisions*.
 
 ### Typography
 
@@ -50,9 +80,16 @@ Geist (Google Fonts) is the face. It is loaded in the layout and exposed as the 
 token. Never name a font family directly in a stylesheet — that is how six sheets ended up
 pinned to Helvetica and silently missed the last face change. Always reference the token.
 
-Geist sits tighter than the Helvetica stack it replaced, so the tracking values in the scale
-below still carry the old face's tuning and run a little close. Retuning them is outstanding.
-The wordmark has already been done — see below.
+The font stack above is **binding**. The scale below is **open** — see *Open decisions*.
+
+Two separate things are wrong with it. No stylesheet implements a single one of these steps:
+`clamp(40px, 8.4vw, 104px)` does not appear anywhere in the codebase, and neither does any other
+row. And the tracking values were tuned for Helvetica Now Display, which was never licensed and
+never shipped; Geist sets appreciably tighter, so applying them as written runs the type too
+close. That is the same fault that made the wordmark read as a capital L.
+
+Until the scale is settled, **match the surrounding file rather than importing a row from this
+table.** Treat it as a record of intent, not as values to paste.
 
 | Step          | Size                       | Weight | Tracking   | Line-height | Use                            |
 |---------------|----------------------------|--------|------------|-------------|--------------------------------|
@@ -92,9 +129,10 @@ without turning bold and black. The dot is `currentColor`, so dark mode needs no
 
 - Every figure: `font-variant-numeric: tabular-nums lining-nums` so columns align.
 - **Pence drop to `muted`.** Split the string: `£412` in the figure's ink colour, `.00` in muted.
-  For pine/amber figures, use `pine-pence` / `amber-pence` so the semantic colour survives while
-  staying above 4.5:1 contrast. This is a signature detail — do not skip it.
-- Deltas always carry a sign and a colour: `+£137` pine, `−£3.72` amber.
+  For pine figures use `--pine-pence`, so the semantic colour survives while staying above 4.5:1
+  contrast. This is a signature detail — do not skip it. The money-out equivalent waits on
+  *Open decisions*.
+- Deltas always carry a sign and a colour: `+£137` in `--pine`, `−£3.72` in the money-out colour.
 - Currency symbol and unit never separate from the number across a line break.
 
 ### Spacing
@@ -225,7 +263,7 @@ Deleting a control is only safe if something absorbs its job:
 
 ### Other Transitions
 
-- Primary button hover: background `#7B1622` → `#63111B`, `120ms`
+- Primary button hover: background `var(--burgundy)` → `var(--burgundy-hover)`, `120ms`
 - Text action hover: colour and border-colour → burgundy, `120ms`
 - Row hover (runners-up, selection rows): background → `#FAFAFA`, no border change
 - Focus visible everywhere: 2px ink ring, 2px offset
@@ -315,7 +353,7 @@ Six card finishes, each bound to a category so imagery carries information:
 | Finish    | Colour     | Category   |
 |-----------|------------|------------|
 | Bone      | Off-white  | Everyday   |
-| Burgundy  | `#7B1622`  | Travel     |
+| Burgundy  | `--finish-burgundy` | Travel |
 | Graphite  | Dark grey  | Dining     |
 | Steel     | Silver     | Student    |
 | Silver    | Light grey | Cashback   |
@@ -345,46 +383,14 @@ and responsive breakpoints all work as you'd expect from Le Wagon. The design la
 on top of Bootstrap by overriding its theme variables so the rendered result matches Shuffl's
 look instead of Bootstrap's defaults.
 
-In `app/assets/stylesheets/application.css`, override Bootstrap's theme and add Shuffl tokens:
+The authoritative token list is the `:root` block of `app/assets/stylesheets/application.css`.
+It is deliberately **not** reproduced here: this document previously carried its own copy, the two
+drifted, and the copy is what people implemented. Read the file for the values; read the *Colour*
+and *Typography* tables above for what each token is *for*.
 
-```css
-:root {
-  /* Override Bootstrap theme colours */
-  --bs-primary: #7B1622;
-  --bs-body-color: #4A4A4A;
-  --bs-body-bg: #FFFFFF;
-  --bs-border-color: #E5E5E5;
-  --bs-link-color: #0A0A0A;
-  --bs-link-hover-color: #7B1622;
-  --font-sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --bs-body-font-family: var(--font-sans);
-
-  /* Shuffl colour tokens */
-  --ink: #0A0A0A;
-  --body: #4A4A4A;
-  --muted: #6B6B6B;
-  --hairline: #E5E5E5;
-  --hairline-soft: #F0F0F0;
-  --surface: #FFFFFF;
-  --burgundy: #7B1622;
-  --burgundy-hover: #63111B;
-  --pine: #16624B;
-  --pine-pence: #3F7A65;
-  --amber: #A85410;
-  --amber-pence: #8A6234;
-  --overlay: rgba(10, 10, 10, 0.74);
-
-  /* Spacing */
-  --section-padding: clamp(40px, 5vw, 68px);
-  --page-gutter: clamp(16px, 3.5vw, 56px);
-  --content-max-width: 1320px;
-
-  /* Radius */
-  --radius-button: 6px;
-  --radius-row: 8px;
-  --radius-card: 10px;
-}
-```
+Bootstrap's own variables are remapped onto those tokens in the same block, so
+`--bs-primary`, `--bs-body-font-family` and friends resolve to Shuffl values rather than
+Bootstrap defaults.
 
 **Using Bootstrap with the Shuffl design language:**
 
@@ -409,7 +415,108 @@ Load Geist from Google Fonts (in the `application.html.erb` layout):
       rel="stylesheet">
 ```
 
-## Home reference refinement (September 2026)
+---
+
+## Enforcement
+
+Two of the binding rules are machine-checked, because prose alone demonstrably did not hold them:
+the app carried three burgundies and six stylesheets pinned to a font nobody had licensed, all
+while this document said otherwise.
+
+```
+rake design:check      # what the pre-commit hook runs
+rake design:baseline   # re-record the ceiling after cleaning some up
+```
+
+`design:check` enforces two things:
+
+1. **Banned values fail outright.** The retired burgundies (`#7B1622`, `#681522`, `#63111B`) and
+   the retired font names (`Helvetica Now`, `Inter Tight`) may not reappear anywhere, in any count.
+2. **Debt may shrink, never grow.** Raw hex literals and hardcoded font families are counted per
+   file and compared against `.design-baseline.yml`. Adding one to a file fails the check. Removing
+   some and running `rake design:baseline` locks in the lower number permanently.
+
+The ratchet exists because failing on all 361 existing violations at once would only teach everyone
+to pass `--no-verify`. You cannot make the mess worse; you can only make it better.
+
+Enable the hook once per clone:
+
+```
+git config core.hooksPath .githooks
+```
+
+Do not hand-edit `.design-baseline.yml`. If a violation is genuinely unavoidable, say so in the
+pull request and run `rake design:baseline` deliberately, so the exception is visible in the diff.
+
+---
+
+## Known violations
+
+Binding rules the code does not yet follow. These are debt, not precedent — never cite one to
+justify another.
+
+**Six stylesheets are self-contained design systems.** `browse.css`, `wallet.css`, `login.css`,
+`results.css`, `home.css` and `quiz.css` each carry their own CSS reset, their own base font size
+and their own colour literals rather than building on `application.css`. This is the root cause of
+almost everything else in this list, and unpicking it is the single highest-value piece of frontend
+work outstanding. `results.css` still aliases `--wine` to the burgundy token rather than using it
+directly.
+
+**361 raw hex literals remain**, concentrated in the files above:
+
+| File                   | Raw hex |
+|------------------------|---------|
+| `browse.css`           | 60      |
+| `wallet.css`           | 55      |
+| `theme.css`            | 53      |
+| `login.css`            | 44      |
+| `application.css`      | 40      |
+| `results.css`          | 33      |
+| `home.css`             | 26      |
+| everything else        | 50      |
+
+Most are an ad-hoc grey ramp — `#777` appears 29 times, then `#ccc`, `#666`, `#ddd`, `#888`,
+`#555`, `#111` — sitting alongside the `--muted` and `--hairline` tokens that already exist for
+exactly that job.
+
+**The type scale is not implemented.** No stylesheet uses any row of it. Each page sized its
+headings independently. This is bound up with the open question below.
+
+**`.ai-bubble` is dead.** A full component's worth of rules across `application.css`, `home.css`
+and `theme.css` that no view references. Safe to delete.
+
+**Dark mode does not follow the system preference.** `theme.css` responds only to the
+`data-theme` attribute set by the navbar toggle. There is no `prefers-color-scheme` query, so a
+reader whose OS is in dark mode gets the light theme until they find the control.
+
+---
+
+## Open decisions
+
+Nobody has decided these. Until one is settled, **do not invent an answer** — match whatever the
+surrounding file already does. Settle one by editing this document in its own commit.
+
+**1. The type scale for Geist.** The table under *Typography* was tuned for a different face and
+is implemented nowhere. Deciding it means picking tracking values for Geist at each step and then
+migrating the pages onto them. The wordmark was settled this way — by looking at candidates at the
+real sizes rather than reasoning about numbers — and the scale deserves the same treatment.
+*Owner: Noah.*
+
+**2. The colour of money-out figures.** This document has always specified amber `#A85410` for
+fees, interest and negative flags. No stylesheet has ever used it; `browse.css` and `wallet.css`
+use a red, `#a12a36`, instead. Amber reads as caution and pairs with pine; red reads as cost and
+is the more conventional choice for a fee. One of them is right and the other should be deleted
+from this document. There is deliberately no `--amber` token until this is settled, so that
+nothing can quietly start depending on the losing answer. *Owner: Noah.*
+
+---
+
+## Implementation notes (non-binding)
+
+Everything below this line is a record of how particular surfaces were built. It is context, not
+specification — where it disagrees with anything above, the rule above wins.
+
+### Home reference refinement (September 2026)
 
 The supplied `home.png` is the authority for the home surface. Scoped rules live in
 `home.css`: an inset outlined navigation bar, oversized two-line grotesque headline,
@@ -426,7 +533,7 @@ staggered by 40ms, and removed for reduced-motion preferences. Mobile uses a hor
 snap rail and button activation. The assistant remains a visual placeholder until
 its backend is implemented.
 
-## Quiz reference implementation (September 2026)
+### Quiz reference implementation (September 2026)
 
 `quiz.css` scopes the supplied quiz reference to `.quiz-page`: the home navigation
 frame, large black question heading, thin divider, two-column outlined answers on
@@ -451,7 +558,7 @@ Navigation glass refinement: the sticky navbar floats 12px below the viewport to
 
 Quiz presentation update: content is centred within 880px. Key phrases in each question use burgundy, with a soft burgundy selected-answer tint. Sixteen progress bubbles replace the line: solid bubbles mark completed questions, a double ring marks the current question, and outlined bubbles mark upcoming questions. Progress retains an accessible label and numeric value.
 
-## Results integration (September 2026)
+### Results integration (September 2026)
 
 The approved results mockup is integrated into quiz responses. The page uses the
 shared sticky navbar, a 1440px content width, a left value/spending/timeline panel,
