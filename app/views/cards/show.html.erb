@@ -1,19 +1,131 @@
-<h1><%= @card.name %></h1>
+<% content_for :body_class, "detail-page" %>
+<% content_for :title, "#{@card.name} · Shuffl" %>
+<% content_for :meta_description, "#{@card.name} from #{@card.issuer}: #{@card.reward_rate}x rewards, #{number_to_currency(@card.annual_fee, precision: 0)} annual fee. #{@card.description}" %>
 
-<ul class="card-details">
-  <li><strong>Issuer:</strong> <%= @card.issuer %></li>
-  <li><strong>Network:</strong> <%= @card.network %></li>
-  <li><strong>Card type:</strong> <%= @card.card_type %></li>
-  <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>
-  <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>
-  <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>
-  <li><strong>Perks:</strong> <%= @card.perks %></li>
-  <li><strong>Best for:</strong> <%= @card.best_for %></li>
-  <li><strong>Description:</strong> <%= @card.description %></li>
-</ul>
+<main>
+  <p class="eyebrow"><%= @card.issuer %> · <%= @card.network %> · <%= @card.card_type %></p>
+  <h1><%= @card.name %></h1>
+  <p class="lede"><%= @card.description %></p>
 
-<% if user_signed_in? && !current_user.cards.exists?(@card.id) %>
-  <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post %>
-<% end %>
+  <div class="detail-layout">
+    <div>
+      <div class="detail-art <%= card_finish(@card) %>">
+        <span class="brand">shuffl.</span>
+        <span class="chip"></span>
+        <span class="masked"><%= @card.name %></span>
+      </div>
 
-<%= link_to "Back to cards", cards_path %>
+      <% if @quiz_rank %>
+        <section class="detail-foryou" aria-label="How this card ranks for you">
+          <p class="eyebrow">Based on your quiz</p>
+          <p class="detail-foryou-rank">#<%= @quiz_rank %><span class="of">of <%= @quiz_total %> cards, for your answers</span></p>
+          <% if @in_recommended_stack %>
+            <p class="detail-foryou-note">This card is in your recommended stack.</p>
+          <% elsif @quiz_rank <= 10 %>
+            <p class="detail-foryou-note">A close fit, just outside your top <%= [ @quiz_total, 5 ].min %>.</p>
+          <% else %>
+            <p class="detail-foryou-note">Other cards fit your answers better. Worth comparing before you commit.</p>
+          <% end %>
+          <%= link_to "See your full results", quiz_response_path(latest_quiz_response), class: "detail-back detail-back--tight" %>
+        </section>
+      <% else %>
+        <section class="detail-foryou detail-foryou--empty" aria-label="Find out if this card fits you">
+          <p class="eyebrow">Is this the right card for you?</p>
+          <p class="detail-foryou-copy"><%= Card::QUIZ_QUESTIONS.size %> quick questions rank all <%= @card_total %> cards against how you actually spend.</p>
+          <%= link_to "Take the quiz", new_quiz_response_path, class: "btn-wallet" %>
+        </section>
+      <% end %>
+    </div>
+
+    <div>
+      <p class="detail-figure"><%= figure_with_pence(@card.annual_fee) %></p>
+      <p class="detail-figure-label">Annual fee</p>
+
+      <ul class="detail-facts">
+        <li><span class="key">Top reward rate</span><span class="value"><%= @card.reward_rate %>x</span></li>
+        <li><span class="key">Welcome bonus</span><span class="value"><%= @card.welcome_bonus.presence || "None" %></span></li>
+        <li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min.presence || "Not specified" %></span></li>
+        <li><span class="key">Foreign transaction fee</span><span class="value"><%= @card.foreign_transaction_fee? ? "Yes" : "None" %></span></li>
+      </ul>
+
+      <% perks = @card.perks.to_s.split(",").map(&:strip).reject(&:blank?) %>
+      <% if perks.any? %>
+        <div class="detail-section">
+          <h2>Perks</h2>
+          <ul class="detail-perks">
+            <% perks.each do |perk| %>
+              <li><%= perk %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% categories = @card.best_for.to_s.split(",").map(&:strip).reject(&:blank?) %>
+      <% if categories.any? %>
+        <div class="detail-section">
+          <h2>Best for</h2>
+          <ul class="detail-tags">
+            <% categories.each do |category| %>
+              <li><%= category %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="detail-actions">
+        <% if !user_signed_in? %>
+          <%= link_to "Sign in to save this card", new_user_session_path, class: "btn-wallet" %>
+          <span class="owned">Saving keeps it in My Wallet. No application is made.</span>
+        <% elsif current_user.cards.exists?(@card.id) %>
+          <span class="owned">Already in My Wallet.</span>
+          <%= link_to "Open My Wallet", wallet_items_path, class: "detail-back detail-back--tight" %>
+        <% else %>
+          <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post, class: "btn-wallet" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if @stacks.any? || @similar_cards.any? %>
+    <div class="detail-related">
+      <% if @stacks.any? %>
+        <section class="detail-section" aria-label="Stacks that include this card">
+          <h2>In these stacks</h2>
+          <ul class="detail-stacks">
+            <% @stacks.each do |stack| %>
+              <li>
+                <%= link_to stack_path(stack) do %>
+                  <span class="eyebrow"><%= stack.category %></span>
+                  <span class="name"><%= stack.name %></span>
+                  <span class="count"><%= pluralize(stack.cards.size, "card") %></span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
+      <% if @similar_cards.any? %>
+        <section class="detail-section" aria-label="Similar cards">
+          <h2>Similar cards</h2>
+          <ul class="mini-cards">
+            <% @similar_cards.each do |card| %>
+              <li>
+                <%= link_to card_path(card) do %>
+                  <div class="detail-art <%= card_finish(card) %>">
+                    <span class="brand">shuffl.</span>
+                    <span class="chip"></span>
+                  </div>
+                  <span class="name"><%= card.name %></span>
+                  <span class="meta"><%= card.reward_rate %>x · <%= number_to_currency(card.annual_fee, precision: 0) %> a year</span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back to all cards", cards_path, class: "detail-back" %>
+</main>

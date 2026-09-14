@@ -11,3 +11,9 @@
 @media(max-width:760px){.save-area{text-align:left;max-width:none;margin-top:22px}#save-status{max-width:300px}.total{font-size:58px}.total small{font-size:32px}.why summary{min-height:44px}}
 .summary:has(.fine-tune[open]){position:static}
 }
+
+/* Share: a quiet text action beneath Save, so a result can be sent to a friend. */
+.share-area{margin-top:14px}
+.share-button{border:0;background:none;padding:0;font-size:14px;color:#0a0a0a;text-decoration:underline;text-underline-offset:4px;cursor:pointer}
+.share-button:hover{color:var(--wine)}
+.share-status{min-height:20px;margin:6px 0 0;font-size:13px;color:var(--muted);word-break:break-all}

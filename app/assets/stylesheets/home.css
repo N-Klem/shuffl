@@ -105,3 +105,10 @@
 .home-page .is-expanded .fan-card { pointer-events: auto; cursor: pointer; }
 .home-page .is-expanded .fan-card:not([data-current="true"]) .card-reveal { opacity: 0; }
 .home-page .fan-card:focus-visible { outline: 2px solid #651321; outline-offset: 3px; }
+
+/* Signed-in continuity: a quiet "pick up where you left off" line at the foot
+   of the home page (logged-out visitors get sign-in/create in the navbar). */
+.home-continue { padding: 8px 0 40px; border-top: 1px solid var(--hairline); margin-top: 8px; }
+.home-continue-greeting { font-size: 15px; color: var(--muted); margin: 24px 0 6px; }
+.home-continue-actions { font-size: 18px; margin: 0; }
+.home-continue-sep { color: var(--hairline); margin: 0 8px; }

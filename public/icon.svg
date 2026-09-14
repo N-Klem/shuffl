@@ -1,3 +1,11 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#7B1622"/>
+  <g transform="translate(256 276) rotate(-14)">
+    <rect x="-152" y="-96" width="304" height="192" rx="24" fill="#E9E2D4"/>
+  </g>
+  <g transform="translate(256 246) rotate(6)">
+    <rect x="-152" y="-96" width="304" height="192" rx="24" fill="#FFFFFF"/>
+    <rect x="-112" y="-40" width="54" height="40" rx="8" fill="#C9A85C"/>
+    <text x="120" y="-50" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="-2" fill="#0A0A0A">shuffl</text>
+  </g>
 </svg>

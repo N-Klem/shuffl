@@ -1,6 +1,8 @@
 class Card < ApplicationRecord
   has_many :wallet_items, dependent: :destroy
   has_many :users, through: :wallet_items
+  has_many :stack_cards, dependent: :destroy
+  has_many :stacks, through: :stack_cards
 
   validates :name, :issuer, :network, :card_type, presence: true
   validates :annual_fee,

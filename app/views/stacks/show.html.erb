@@ -1,16 +1,48 @@
-<h1><%= @stack.name %></h1>
-<p><%= @stack.description %></p>
+<% content_for :body_class, "detail-page" %>
+<% content_for :title, "#{@stack.name} stack · Shuffl" %>
+<% content_for :meta_description, "The #{@stack.name} stack: #{pluralize(@stack.cards.size, 'card')} chosen to work together. #{@stack.description}" %>
 
-<h2>Cards in this stack</h2>
-<ul class="card-list">
-  <% @stack.cards.each do |card| %>
-    <li>
-      <strong><%= card.name %></strong> —
-      <%= card.issuer %>,
-      annual fee: $<%= card.annual_fee %>,
-      reward rate: <%= card.reward_rate %>x
-    </li>
-  <% end %>
-</ul>
+<main>
+  <p class="eyebrow"><%= @stack.category %> · <%= pluralize(@stack.cards.size, "card") %></p>
+  <h1><%= @stack.name %></h1>
+  <p class="lede"><%= @stack.description %></p>
 
-<%= link_to "Back to stacks", stacks_path %>
+  <div class="detail-layout">
+    <div>
+      <p class="detail-figure"><%= figure_with_pence(@stack.cards.sum(:annual_fee)) %></p>
+      <p class="detail-figure-label">Total annual fees for this stack</p>
+      <p class="detail-foryou-copy detail-foryou-copy--spaced">Not sure this is your stack? The quiz ranks every card against how you spend.</p>
+      <%= link_to "Take the quiz", new_quiz_response_path, class: "detail-back detail-back--tight" %>
+    </div>
+
+    <div>
+      <div class="detail-section detail-section--flush">
+        <h2>Cards in this stack</h2>
+        <ul class="stack-cards">
+          <% @stack.cards.each do |card| %>
+            <li>
+              <%= link_to card_path(card), "aria-label": "Open #{card.name}" do %>
+                <div class="detail-art <%= card_finish(card) %>">
+                  <span class="brand">shuffl.</span>
+                  <span class="chip"></span>
+                </div>
+              <% end %>
+              <div>
+                <%= link_to card_path(card) do %>
+                  <p class="name"><%= card.name %></p>
+                <% end %>
+                <p class="issuer"><%= card.issuer %> · <%= card.card_type %></p>
+              </div>
+              <div class="figures">
+                <strong><%= card.reward_rate %>x</strong>
+                <small><%= number_to_currency(card.annual_fee, precision: 0) %> a year</small>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <%= link_to "Browse all stacks", cards_path(tab: "stacks"), class: "detail-back" %>
+</main>

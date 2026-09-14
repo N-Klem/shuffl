@@ -43,6 +43,9 @@ class QuizResponsesController < ApplicationController
       )
       session[:quiz_step] = 0
       session[:quiz_answers] = {}
+      # Remembered so card pages can show how each card ranks for this visitor,
+      # and so the result can be attached to their account if they sign up later.
+      session[:last_quiz_response_id] = @quiz_response.id
       redirect_to @quiz_response, status: :see_other
     end
   end
