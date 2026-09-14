@@ -50,3 +50,25 @@ main.list>.note{flex-shrink:0;margin-top:10px;font-size:10px}
 
 }.browse-app main.list>.note{margin-bottom:0}.browse-app:has(.tray:not([hidden])) main.list{padding-bottom:80px}
 .browse-app{height:auto;overflow:hidden;padding-top:0}.browse-app .toast:not(:empty){display:block;width:auto}.browse-app .hero{flex-wrap:nowrap;padding:0}.browse-app .metrics{flex-wrap:wrap}.browse-app .list .results{display:block}.browse-app .nav-container{display:none}
+
+/* ── Browse: natural page scroll with pinned controls ──────────────────────
+   The page was locked to 100dvh with overflow:hidden so only .results
+   scrolled. Measured at 1440x820: 463px of chrome (56% of the viewport)
+   left a 251px window for a 9,666px list — 1.4 card rows visible at a time.
+
+   Now the document scrolls normally and the toolbar pins to the top, so the
+   search/filter/sort controls stay reachable (the original intent) without
+   costing half the screen. The navbar scrolls away on this page so the
+   toolbar has a fixed offset of 0 at every width — no nav-height guessing. */
+.browse-page{height:auto;overflow:visible;display:block}
+.browse-page .browse-app{display:block;height:auto;overflow:visible}
+.browse-page .browse-stage{display:block;flex:none;min-height:0}
+.browse-page main.list{display:block;flex:none;min-height:0;padding-bottom:110px}
+.browse-page main.list>.results{display:block;flex:none;min-height:0;overflow:visible;padding-right:0}
+.browse-page main.list>.note{flex-shrink:1;margin-top:26px;font-size:11px}
+
+.browse-page>.site-nav{position:static}
+.browse-page main.list>.toolbar{
+  position:sticky;top:0;z-index:20;background:#fff;
+  box-shadow:0 1px 0 #ccc
+}
