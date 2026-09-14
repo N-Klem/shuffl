@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+#
+# Enforces the machine-checkable rules in DESIGN.md. Deliberately plain Ruby
+# with no Rails and no bundler: it runs from a git hook, in CI, and on any
+# machine whose Ruby differs from the app's, none of which should need to boot
+# the application to find out whether a stylesheet has a hex literal in it.
+#
+#   bin/design-check            # check (exit 1 on failure)
+#   bin/design-check --baseline # re-record the ceiling after cleaning some up
+
+require "yaml"
+
+ROOT     = File.expand_path("..", __dir__)
+SHEETS   = Dir[File.join(ROOT, "app/assets/stylesheets/*.css")].sort
+BASELINE = File.join(ROOT, ".design-baseline.yml")
+
+BANNED = {
+  "#7B1622" => "old burgundy; the canonical brand colour is #601020 via var(--burgundy)",
+  "#681522" => "old burgundy; the canonical brand colour is #601020 via var(--burgundy)",
+  "#63111B" => "old burgundy hover; use var(--burgundy-hover)",
+  "#651321" => "fourth stray burgundy; use var(--burgundy)",
+  "#A85410" => "retired amber; money-out figures are #A12A36 via var(--brick)",
+  "Helvetica Now" => "unlicensed face, never shipped; the typeface is Geist via var(--font-sans)",
+  "Inter Tight"   => "no longer in the stack; the typeface is Geist via var(--font-sans)"
+}.freeze
+
+HEX  = /#[0-9a-fA-F]{3,8}\b/
+FONT = /font(?:-family)?\s*:(?![^;}]*var\()[^;}]*["'][A-Za-z]/
+
+def counts
+  SHEETS.to_h do |path|
+    body = File.read(path)
+    [File.basename(path), { "hex" => body.scan(HEX).size, "fonts" => body.scan(FONT).size }]
+  end
+end
+
+if ARGV.include?("--baseline")
+  File.write(BASELINE, counts.to_yaml)
+  puts "Wrote .design-baseline.yml — ceiling is now #{counts.values.sum { |t| t['hex'] }} raw hex."
+  exit 0
+end
+
+base     = File.exist?(BASELINE) ? YAML.load_file(BASELINE) : {}
+failures = []
+
+SHEETS.each do |path|
+  body = File.read(path)
+  BANNED.each do |needle, why|
+    next unless body.downcase.include?(needle.downcase)
+    failures << "BANNED  #{File.basename(path)}: #{needle} — #{why}"
+  end
+end
+
+now = counts
+now.each do |file, tally|
+  allowed = base[file] || { "hex" => 0, "fonts" => 0 }
+  %w[hex fonts].each do |kind|
+    next if tally[kind] <= allowed[kind].to_i
+    failures << "GREW    #{file}: #{kind} #{allowed[kind].to_i} -> #{tally[kind]}. " \
+                "Use a token from application.css's :root instead of a literal."
+  end
+end
+
+total   = now.values.sum { |t| t["hex"] }
+ceiling = base.values.sum { |t| t["hex"].to_i }
+
+if failures.empty?
+  puts "design:check OK — #{total} raw hex tracked as debt (ceiling #{ceiling}), no banned values."
+else
+  puts "design:check FAILED", ""
+  failures.each { |f| puts "  #{f}" }
+  puts "", "See DESIGN.md. If a violation is genuinely unavoidable, say so in the PR and",
+          "run `bin/design-check --baseline` deliberately — do not edit the baseline by hand."
+  exit 1
+end

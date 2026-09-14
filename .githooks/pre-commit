@@ -2,14 +2,13 @@
 # Blocks commits that break the binding rules in DESIGN.md.
 # Enable once per clone:   git config core.hooksPath .githooks
 # Bypass in a real emergency: git commit --no-verify
+#
+# Calls bin/design-check directly rather than going through rake: the check is
+# plain Ruby and must not depend on booting Rails, or it fails on any machine
+# whose Ruby differs from the app's.
 
-# Nothing to check if no stylesheet is staged.
 if ! git diff --cached --name-only --diff-filter=ACM | grep -q '^app/assets/stylesheets/.*\.css$'; then
   exit 0
 fi
 
-if command -v bundle >/dev/null 2>&1; then
-  bundle exec rake design:check || exit 1
-else
-  rake design:check || exit 1
-fi
+exec ./bin/design-check
