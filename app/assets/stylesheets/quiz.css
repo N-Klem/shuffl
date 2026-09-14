@@ -89,3 +89,20 @@
 .quiz-page .quiz-answer.is-ranked { border-color: var(--burgundy); }
 .quiz-page .quiz-answer.is-ranked .quiz-rank { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .quiz-page .quiz-rank { transition: none; } }
+
+/* "Save and finish later" is a genuine exit, not the next step, so it sits
+   below the controls as a quiet text action rather than a competing button. */
+.quiz-page .quiz-save { margin-top: 28px; }
+.quiz-page .quiz-save-link {
+  border: 0;
+  padding: 4px 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.quiz-page .quiz-save-link:hover { color: var(--burgundy); }
+.quiz-page .quiz-save-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }

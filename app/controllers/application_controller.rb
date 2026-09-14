@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :claim_quiz_response, if: :user_signed_in?
 
-  helper_method :latest_quiz_response
+  helper_method :latest_quiz_response, :draft_quiz_response
 
   protected
 
@@ -25,9 +25,15 @@ class ApplicationController < ActionController::Base
   def latest_quiz_response
     @latest_quiz_response ||= begin
       id = session[:last_quiz_response_id]
-      anonymous = QuizResponse.where(id: id, user_id: nil).first if id.present?
-      anonymous || current_user&.quiz_responses&.order(:completed_at)&.last
+      anonymous = QuizResponse.completed.where(id: id, user_id: nil).first if id.present?
+      anonymous || current_user&.quiz_responses&.completed&.order(:completed_at)&.last
     end
+  end
+
+  # The most recent unfinished quiz belonging to this visitor, which the quiz
+  # resumes from and the home page can offer to continue.
+  def draft_quiz_response
+    @draft_quiz_response ||= current_user&.quiz_responses&.drafts&.order(:updated_at)&.last
   end
 
   private
@@ -36,7 +42,11 @@ class ApplicationController < ActionController::Base
   # their account. session.delete clears the key in the same step, so this runs
   # one query on the request right after sign-in rather than on every request.
   def claim_quiz_response
-    id = session.delete(:last_quiz_response_id)
+    claim(session.delete(:last_quiz_response_id))
+    claim(session.delete(:draft_quiz_response_id))
+  end
+
+  def claim(id)
     return if id.blank?
 
     QuizResponse.where(id: id, user_id: nil).first&.update(user: current_user)

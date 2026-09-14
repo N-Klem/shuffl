@@ -1,4 +1,5 @@
 <% content_for :body_class, "quiz-page" %>
+<% content_for :hide_footer, true %>
 <% content_for :title, "Question #{@step} of #{@total} — Shuffl" %>
 <main class="quiz-shell" data-controller="quiz" data-quiz-limit-value="<%= [ :multi, :ranked ].include?(@question[:type]) ? @question[:max_select] : 1 %>"
   data-quiz-ranked-value="<%= @question[:type] == :ranked %>">
@@ -55,5 +56,15 @@
       <% end %>
       <noscript><button class="btn btn-primary" type="submit">Continue</button></noscript>
     </div>
+
+    <%# Outside the answer form so it never submits the current question. %>
+  <% end %>
+
+  <% if @step > 1 %>
+    <%= form_with url: save_progress_quiz_responses_path, method: :post, class: "quiz-save" do %>
+      <button type="submit" class="quiz-save-link">
+        <%= user_signed_in? ? "Save and finish later" : "Save and finish later — we'll ask you to sign in" %>
+      </button>
+    <% end %>
   <% end %>
 </main>

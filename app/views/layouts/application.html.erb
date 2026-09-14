@@ -52,7 +52,10 @@
     <%= render "shared/navbar" %>
     <%= render "shared/flash" %>
     <%= yield %>
-    <%= render "shared/footer" %>
+    <%# The quiz is a focused flow: a full site footer under a four-option
+        question reads as the page having run out of content. The assistant
+        stays -- help is relevant mid-quiz in a way that legal links are not. %>
+    <%= render "shared/footer" unless content_for(:hide_footer).present? %>
     <%= render "shared/assistant" %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

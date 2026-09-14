@@ -42,11 +42,24 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select ".detail-foryou-rank", count: 0
   end
 
-  test "after the quiz the card page shows the card's rank, and signing in claims the result" do
-    Card::QUIZ_QUESTIONS.each_with_index do |question, index|
-      answer = question[:type] == :multi ? [ question[:options].first ] : question[:options].first
+  # The quiz can skip a conditional question, so walk it by reading back the step
+  # the server is actually on rather than assuming a fixed sequence.
+  def complete_quiz(choice = :first)
+    get new_quiz_response_path
+    loop do
+      field = css_select("input[name='step']").first
+      break if field.nil?
+      index = field["value"].to_i
+      question = Card::CORE_QUESTIONS[index]
+      answer = question[:type] == :ranked ? question[:options].first(3)
+             : choice == :last ? question[:options].last : question[:options].first
       post quiz_responses_path, params: { step: index, answer: answer }
+      follow_redirect!
     end
+  end
+
+  test "after the quiz the card page shows the card's rank, and signing in claims the result" do
+    complete_quiz
     quiz_response = QuizResponse.order(:id).last
     assert_nil quiz_response.user_id
 
@@ -91,10 +104,7 @@ class CardDetailTest < ActionDispatch::IntegrationTest
   end
 
   test "results page offers a share control" do
-    Card::QUIZ_QUESTIONS.each_with_index do |question, index|
-      post quiz_responses_path, params: { step: index, answer: question[:options].first }
-    end
-    follow_redirect!
+    complete_quiz
     assert_select "[data-controller='share'] button", text: "Share this stack"
   end
 end

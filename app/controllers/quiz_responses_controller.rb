@@ -3,6 +3,7 @@ class QuizResponsesController < ApplicationController
 
   def new
     session[:quiz_answers] ||= {}
+    resume_draft if session[:quiz_answers].empty?
     session[:quiz_step] = current_step
     if params[:step].present?
       requested = params[:step].to_i
@@ -50,12 +51,16 @@ class QuizResponsesController < ApplicationController
       redirect_to new_quiz_response_path, status: :see_other
     else
       top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
-      @quiz_response = QuizResponse.create!(
-        user: current_user,
+      # Finish the draft this visitor saved earlier rather than leaving it
+      # orphaned beside a second, complete record.
+      @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
+      @quiz_response.update!(
+        user: current_user || @quiz_response.user,
         answers: session[:quiz_answers].to_json,
         top_card_ids: top_cards.map(&:id).to_json,
         completed_at: Time.current
       )
+      session.delete(:draft_quiz_response_id)
       session[:quiz_step] = 0
       session[:quiz_answers] = {}
       # Remembered so card pages can show how each card ranks for this visitor,
@@ -63,6 +68,30 @@ class QuizResponsesController < ApplicationController
       session[:last_quiz_response_id] = @quiz_response.id
       session[:quiz_finish_id] = @quiz_response.id
       redirect_to @quiz_response, status: :see_other
+    end
+  end
+
+  # "Save and finish later". Stores what has been answered so far as a draft.
+  # Signed out, the draft is anonymous and its id rides in the session until
+  # sign-in claims it -- the same route an anonymous completed quiz already takes.
+  def save_progress
+    session[:quiz_answers] ||= {}
+
+    if session[:quiz_answers].empty?
+      return redirect_to new_quiz_response_path, alert: "Answer a question first and we'll save your place."
+    end
+
+    draft = resumable_draft || QuizResponse.new(user: current_user)
+    draft.update!(user: current_user, answers: session[:quiz_answers].to_json)
+    session[:draft_quiz_response_id] = draft.id unless current_user
+
+    if current_user
+      session[:quiz_step] = 0
+      session[:quiz_answers] = {}
+      redirect_to root_path, notice: "Saved. Pick up where you left off whenever you're ready."
+    else
+      redirect_to new_user_session_path,
+                  notice: "Sign in and we'll keep your answers so far — you can finish the quiz later."
     end
   end
 
@@ -79,6 +108,33 @@ class QuizResponsesController < ApplicationController
 
   def current_step
     session[:quiz_step].to_i.clamp(0, QUESTIONS.size - 1)
+  end
+
+  # The draft belonging to whoever is asking: the signed-in visitor's own, or the
+  # anonymous one whose id is still in this session.
+  def resumable_draft
+    @resumable_draft ||=
+      if current_user
+        current_user.quiz_responses.drafts.order(:updated_at).last
+      elsif session[:draft_quiz_response_id].present?
+        QuizResponse.drafts.where(id: session[:draft_quiz_response_id], user_id: nil).first
+      end
+  end
+
+  # Put a saved draft back into the session and land on the first question that
+  # still needs an answer, which also skips anything now hidden by a condition.
+  def resume_draft
+    draft = resumable_draft
+    return if draft.blank?
+
+    answers = draft.answers_hash
+    return if answers.empty?
+
+    session[:quiz_answers] = answers
+    session[:quiz_step] = QUESTIONS.index { |question|
+      visible?(question) && session[:quiz_answers][question[:key]].blank?
+    } || QUESTIONS.size - 1
+    flash.now[:notice] = "Welcome back — picking up where you left off."
   end
 
   # Some questions only make sense given an earlier answer -- asking a

@@ -9,7 +9,9 @@ Rails.application.routes.draw do
     post :save_browse, on: :collection
     post :save_stack, on: :collection
   end
-  resources :quiz_responses, only: [ :new, :create, :show ]
+  resources :quiz_responses, only: [ :new, :create, :show ] do
+    post :save_progress, on: :collection
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
