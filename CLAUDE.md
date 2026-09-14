@@ -196,8 +196,18 @@ The short version, so you know what you are walking into:
   authoritative token list is the `:root` block of `application.css`.
 - Never hand-write the `shuffl.` wordmark. Render `shared/_wordmark.html.erb` — its full stop is
   a drawn circle, not a typed period, for reasons DESIGN.md explains.
-- Two design decisions are explicitly **open** (the type scale, the money-out colour). Do not
-  answer them in passing. Match the surrounding file and leave them alone.
+- Six breakpoints exist and no more: 480 / 640 / 767 / 850 / 1000, plus a 1600 min-width. If a
+  layout needs a width that is not one of those, the layout is wrong, not the table.
+- Dark mode redefines tokens, it does not restyle components. Build on `var(--token)` and it
+  inverts for free.
+- Shadows are for surfaces that float above the page, never to separate static content.
+- **One design decision is open** — the type scale for Geist. Do not answer it in passing; match
+  the file you are working in.
+
+**When DESIGN.md and the code disagree, DESIGN.md wins and the code is wrong.** Change a binding
+answer by editing DESIGN.md first, in its own commit, then changing the code. Never the reverse.
+The September 2026 reconciliation, where the code won and the document was corrected to match, was
+a one-off to stop the two drifting further apart, and it is spent.
 
 ### Enforcement
 

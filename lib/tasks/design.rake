@@ -21,7 +21,8 @@ module DesignCheck
     "#681522" => "old burgundy; the canonical brand colour is #601020 via var(--burgundy)",
     "#63111B" => "old burgundy hover; use var(--burgundy-hover)",
     "Helvetica Now" => "unlicensed face, never shipped; the typeface is Geist via var(--font-sans)",
-    "Inter Tight" => "no longer in the stack; the typeface is Geist via var(--font-sans)"
+    "Inter Tight" => "no longer in the stack; the typeface is Geist via var(--font-sans)",
+    "#A85410" => "retired amber; money-out figures are #A12A36 via var(--brick)"
   }.freeze
 
   HEX  = /#[0-9a-fA-F]{3,8}\b/.freeze

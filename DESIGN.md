@@ -18,6 +18,23 @@ Every statement here is one of exactly three things, and it says which:
 
 Two rules are machine-checked by `rake design:check` (see *Enforcement*). The rest are on you.
 
+## Which wins, the document or the code?
+
+**The document does — from now on.** To change a binding answer you edit this file first, in its
+own commit, with the reason. Then you change the code. Never the reverse: a value typed into a
+stylesheet does not amend this document, it just makes the document wrong, and a wrong document
+is what produced three burgundies and a typeface nobody had licensed.
+
+There was exactly one exception, applied once. Where this document and the code disagreed as of
+September 2026, **the code won and this document was corrected to match it** — shadows, radius,
+content width, breakpoints, the dark palette and the money-out colour were all settled that way.
+That was a one-time reconciliation to stop the two drifting further apart, not a standing rule,
+and it is now spent. The ordering above applies to everything after it.
+
+One question could not be settled that way: the type scale. Deferring to the code requires the
+code to contain an answer, and it contains no scale at all — every heading in the project uses a
+`clamp()` that appears exactly once. It stays open below.
+
 ---
 
 ## The Three Rules
@@ -53,6 +70,7 @@ defect — see *Enforcement*.
 | `--burgundy-hover` | `#4C0D1A`             | Hover and active state of the primary button only                |
 | `--pine`           | `#16624B`             | Money in — rewards, cashback, positive deltas                    |
 | `--pine-pence`     | `#3F7A65`             | Pence portion of a pine figure (4.6:1 on white)                  |
+| `--brick`          | `#A12A36`             | Money out — fees, interest, negative flags                       |
 | `--overlay-from`   | `rgba(10,10,10,0)`    | Top stop of the hover-reveal scrim over card artwork             |
 | `--overlay-to`     | `rgba(10,10,10,0.74)` | Bottom stop of that scrim                                        |
 
@@ -70,7 +88,11 @@ that is one button plus the wordmark rule. Pine appears only on figures, never o
 
 **Never coloured:** headings, selected states, links at rest, tags, icons.
 
-The colour used for fees and other money-out figures is *open* — see *Open decisions*.
+**Money out is `--brick`, not amber.** This document specified amber `#A85410` for two years and
+no stylesheet ever used it; `browse.css` and `wallet.css` both used `#A12A36`. The code's answer
+won. Amber is gone — do not reintroduce it. There is no `--brick-pence` yet: pine has one because
+pine figures carry pence, and no money-out figure in the app currently does. Add it when one does,
+and give it a contrast ratio above 4.5:1 on white, as `--pine-pence` has.
 
 ### Typography
 
@@ -140,16 +162,91 @@ without turning bold and black. The dot is `currentColor`, so dark mode needs no
 8-point scale: `8 / 12 / 16 / 24 / 40 / 64 / 96`.
 
 - Section padding: `clamp(40px, 5vw, 68px)` vertically
-- Page gutter: `clamp(16px, 3.5vw, 56px)`
-- Content max-width: `1320px`, centred
+- Page gutter: `clamp(16px, 3.5vw, 56px)` — this one is real, it is the `--page-gutter` token
+- Content max-width: **`1440px`**, centred
+
+The 8-point scale above is aspirational: the code is full of off-scale values (`25px`, `27px`,
+`38px`) and no token enforces it. The content width is the code's own majority answer — `1440px`
+appears three times, against `1320px`, `1450px` and `1500px` elsewhere. Both are recorded under
+*Known violations*.
 
 ### Radius & Elevation
 
-- `6px` — buttons
-- `8px` — rows, selection targets, small panels
-- `10px` — cards, card artwork, large panels
-- **No shadows anywhere.** Card photography carries its own contact shadow in the image; the
-  interface adds none.
+Two radius tokens exist, and these are the values in `application.css`:
+
+- `--radius-button` — `6px`
+- `--radius-card` — `14px`
+
+There is no row/panel radius token. Page-scoped sheets use `5px`, `8px`, `9px` and `12px` by hand;
+that is recorded under *Known violations*.
+
+**Shadows are used, deliberately, on floating surfaces only.** This document previously said "no
+shadows anywhere", which was never true — there are 27 `box-shadow` declarations and the best
+component in the app, the frosted navbar, is built out of a layered one. The rule was wrong, so
+the rule changed.
+
+A shadow is permitted when the element genuinely floats above the page:
+
+- the navbar, the account menu, the mobile navigation menu
+- the assistant orb and its panel
+- dialogs, the compare tray, toasts, and the browse toolbar when it pins
+- card artwork, which carries its own contact shadow
+
+A shadow is **not** permitted to separate one block of static content from another. That is what
+the hairline dividers are for, and "dividers over boxes" still holds. If you are reaching for a
+shadow on something that does not float, you want a rule instead.
+
+### Breakpoints
+
+*Binding.* Five tiers, plus one large-desktop floor. Use these and only these:
+
+| Tier          | Query                     | What changes                                  |
+|---------------|---------------------------|-----------------------------------------------|
+| Small phone   | `max-width: 480px`        | Footer collapses to two columns; tightest gutters |
+| Phone         | `max-width: 640px`        | Multi-column grids go to one column           |
+| Mobile        | `max-width: 767px`        | The main mobile breakpoint — nav collapses, layouts stack |
+| Small tablet  | `max-width: 850px`        | Side panels drop below their content          |
+| Laptop        | `max-width: 1000px`       | Two-column page layouts become one            |
+| Large desktop | `min-width: 1600px`       | Wider hero and card-fan treatment             |
+
+These were read off the code, not designed: `767px` was already the dominant mobile value at eight
+uses, and where two near-identical values tied, the one used by a shared stylesheet won. That is
+why the tiers are not round numbers and do not match Bootstrap's.
+
+The project currently also contains `760px`, `860px`, `650px`, `1050px` and `520px` — near-misses
+of the tiers above, each invented by whichever stylesheet needed one. They are recorded under
+*Known violations* and should converge on this table. **Do not add a twelfth breakpoint.** If a
+layout needs to change at a width that is not in this table, that is a signal the layout is wrong,
+not that the table is missing a row.
+
+### Dark mode
+
+*Binding.* Dark mode is driven by `data-theme="dark"` on `<html>`, set by the navbar toggle and
+persisted in `localStorage` under `shuffl-theme`. `theme.css` implements it.
+
+The mechanism is correct and should be followed: **dark mode redefines the tokens, it does not
+restyle components.** Inside `html[data-theme="dark"]`, `theme.css` overrides the core token set,
+and anything built on `var(--token)` inverts for free:
+
+| Token            | Light     | Dark      |
+|------------------|-----------|-----------|
+| `--ink`          | `#0A0A0A` | `#F2EEEE` |
+| `--body-color`   | `#4A4A4A` | `#D2CBCD` |
+| `--muted`        | `#6B6B6B` | `#AFA5A8` |
+| `--hairline`     | `#E5E5E5` | `#443B3F` |
+| `--surface`      | `#FFFFFF` | `#191619` |
+
+`--burgundy` does **not** change between themes. The brand colour is the brand colour.
+
+Component-specific dark values (`#211C20` for raised panels, `#38232D`, `#574A51`, `#E5A6B1` for
+links on dark, and others) are currently written as literals inside `theme.css` rather than as
+tokens. That is the single largest concentration of raw hex in the project and is recorded under
+*Known violations*. When you touch one, promote it to a token rather than adding another literal.
+
+Two things are missing and are *not* open questions, just unbuilt: there is no
+`prefers-color-scheme` query, so a reader whose OS is dark gets the light theme until they find the
+toggle; and `browse.css` and `results.css` hardcode `#fff` backgrounds, so they ignore the theme
+entirely. Both are recorded under *Known violations*.
 
 ### Structure
 
@@ -370,7 +467,7 @@ Six card finishes, each bound to a category so imagery carries information:
 - Body and UI text meets 4.5:1 on white (this is why pence tints are `#3F7A65` / `#8A6234`)
 - Hover-revealed actions must be reachable by keyboard focus and exposed to screen readers at
   all times (`visibility: hidden` + `opacity: 0`, never `display: none`)
-- Colour is never the only signal: pine/amber figures always carry `+` or `−` sign
+- Colour is never the only signal: pine/brick figures always carry `+` or `−` sign
 - Focus ring on every interactive element: `2px solid #0A0A0A`, `2px` offset
 
 ---
@@ -482,6 +579,25 @@ exactly that job.
 **The type scale is not implemented.** No stylesheet uses any row of it. Each page sized its
 headings independently. This is bound up with the open question below.
 
+**Eleven breakpoints exist where there should be six.** Alongside the tiers in *Breakpoints*,
+the code contains `760px` (`application.css`, `login.css`, `results.css`), `860px` (`detail.css`),
+`650px` (`browse.css`), `1050px` (`home.css`, `results.css`) and `520px` (`detail.css`). Each is
+within ten pixels of a real tier. This is the burgundy problem in a different dimension, and it is
+why a layout can break at a slightly different width depending which page you are on.
+
+**Four content widths exist where there should be one.** `1440px` is canonical;
+`detail.css` uses `1320px`, `footer.css` and `browse.css` use `1450px`, `wallet.css` uses `1500px`.
+
+**Radius is set by hand outside the two tokens.** Page-scoped sheets use `5px`, `8px`, `9px` and
+`12px` directly rather than `--radius-button` / `--radius-card`.
+
+**The spacing scale is not enforced.** `25px`, `27px`, `38px` and other off-scale values appear
+throughout. Nothing checks it and no token expresses the scale.
+
+**The dark palette is mostly literals.** `theme.css` correctly overrides the core tokens, but
+carries roughly a dozen component-specific colours as raw hex. It is the third-largest hex count
+in the project at 53.
+
 **`.ai-bubble` is dead.** A full component's worth of rules across `application.css`, `home.css`
 and `theme.css` that no view references. Safe to delete.
 
@@ -496,18 +612,16 @@ reader whose OS is in dark mode gets the light theme until they find the control
 Nobody has decided these. Until one is settled, **do not invent an answer** — match whatever the
 surrounding file already does. Settle one by editing this document in its own commit.
 
-**1. The type scale for Geist.** The table under *Typography* was tuned for a different face and
-is implemented nowhere. Deciding it means picking tracking values for Geist at each step and then
-migrating the pages onto them. The wordmark was settled this way — by looking at candidates at the
-real sizes rather than reasoning about numbers — and the scale deserves the same treatment.
-*Owner: Noah.*
+**1. The type scale for Geist.** This is the only one left, and it is the only one that could not
+be settled by deferring to the code — because the code has no answer to defer to. Every heading in
+the project uses a `clamp()` that appears exactly once; there is no scale, just twenty-odd
+independent decisions. The table under *Typography* is not it either: those values were tuned for
+Helvetica Now Display and appear in no stylesheet.
 
-**2. The colour of money-out figures.** This document has always specified amber `#A85410` for
-fees, interest and negative flags. No stylesheet has ever used it; `browse.css` and `wallet.css`
-use a red, `#a12a36`, instead. Amber reads as caution and pairs with pine; red reads as cost and
-is the more conventional choice for a fee. One of them is right and the other should be deleted
-from this document. There is deliberately no `--amber` token until this is settled, so that
-nothing can quietly start depending on the losing answer. *Owner: Noah.*
+Settling it means choosing tracking and size relationships for Geist at each step, then migrating
+the pages onto them. The wordmark was settled by looking at candidates at their real sizes rather
+than reasoning about numbers, and the scale deserves the same treatment. Until then, match the
+file you are working in. *Owner: Noah.*
 
 ---
 

@@ -1,12 +1,12 @@
 ---
 application.css:
-  hex: 40
+  hex: 41
   fonts: 0
 assistant.css:
   hex: 6
   fonts: 0
 browse.css:
-  hex: 60
+  hex: 59
   fonts: 0
 detail.css:
   hex: 7
@@ -36,7 +36,7 @@ theme.css:
   hex: 53
   fonts: 0
 wallet.css:
-  hex: 55
+  hex: 53
   fonts: 0
 z_mobile.css:
   hex: 2
