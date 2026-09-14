@@ -1,16 +1,45 @@
-<h1><%= @stack.name %></h1>
-<p><%= @stack.description %></p>
+<% content_for :body_class, "detail-page" %>
+<% content_for :title, "#{@stack.name} stack · Shuffl" %>
 
-<h2>Cards in this stack</h2>
-<ul class="card-list">
-  <% @stack.cards.each do |card| %>
-    <li>
-      <strong><%= card.name %></strong> —
-      <%= card.issuer %>,
-      annual fee: $<%= card.annual_fee %>,
-      reward rate: <%= card.reward_rate %>x
-    </li>
-  <% end %>
-</ul>
+<main>
+  <p class="eyebrow"><%= @stack.category %> · <%= pluralize(@stack.cards.size, "card") %></p>
+  <h1><%= @stack.name %></h1>
+  <p class="lede"><%= @stack.description %></p>
 
-<%= link_to "Back to stacks", stacks_path %>
+  <div class="detail-layout">
+    <div>
+      <p class="detail-figure"><%= figure_with_pence(@stack.cards.sum(:annual_fee)) %></p>
+      <p class="detail-figure-label">Total annual fees for this stack</p>
+    </div>
+
+    <div>
+      <div class="detail-section">
+        <h2>Cards in this stack</h2>
+        <ul class="stack-cards">
+          <% @stack.cards.each do |card| %>
+            <li>
+              <%= link_to card_path(card) do %>
+                <div class="detail-art <%= card_finish(card) %>">
+                  <span class="brand">shuffl</span>
+                  <span class="chip"></span>
+                </div>
+              <% end %>
+              <div>
+                <%= link_to card_path(card) do %>
+                  <p class="name"><%= card.name %></p>
+                <% end %>
+                <p class="issuer"><%= card.issuer %> · <%= card.card_type %></p>
+              </div>
+              <div class="figures">
+                <strong><%= card.reward_rate %>x</strong>
+                <small><%= number_to_currency(card.annual_fee) %> a year</small>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <%= link_to "Browse all stacks", stacks_path, class: "detail-back" %>
+</main>

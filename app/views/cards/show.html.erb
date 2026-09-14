@@ -1,19 +1,59 @@
-<h1><%= @card.name %></h1>
+<% content_for :body_class, "detail-page" %>
+<% content_for :title, "#{@card.name} · Shuffl" %>
 
-<ul class="card-details">
-  <li><strong>Issuer:</strong> <%= @card.issuer %></li>
-  <li><strong>Network:</strong> <%= @card.network %></li>
-  <li><strong>Card type:</strong> <%= @card.card_type %></li>
-  <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>
-  <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>
-  <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>
-  <li><strong>Perks:</strong> <%= @card.perks %></li>
-  <li><strong>Best for:</strong> <%= @card.best_for %></li>
-  <li><strong>Description:</strong> <%= @card.description %></li>
-</ul>
+<main>
+  <p class="eyebrow"><%= @card.issuer %> · <%= @card.network %> · <%= @card.card_type %></p>
+  <h1><%= @card.name %></h1>
+  <p class="lede"><%= @card.description %></p>
 
-<% if user_signed_in? && !current_user.cards.exists?(@card.id) %>
-  <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post %>
-<% end %>
+  <div class="detail-layout">
+    <div class="detail-art <%= card_finish(@card) %>">
+      <span class="brand">shuffl</span>
+      <span class="chip"></span>
+      <span class="masked"><%= @card.name %></span>
+    </div>
 
-<%= link_to "Back to cards", cards_path %>
+    <div>
+      <p class="detail-figure"><%= figure_with_pence(@card.annual_fee) %></p>
+      <p class="detail-figure-label">Annual fee</p>
+
+      <ul class="detail-facts">
+        <li><span class="key">Top reward rate</span><span class="value"><%= @card.reward_rate %>x</span></li>
+        <li><span class="key">Welcome bonus</span><span class="value"><%= @card.welcome_bonus %></span></li>
+        <li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min %></span></li>
+        <li><span class="key">Foreign transaction fee</span><span class="value"><%= @card.foreign_transaction_fee? ? "Yes" : "None" %></span></li>
+      </ul>
+
+      <div class="detail-section">
+        <h2>Perks</h2>
+        <ul class="detail-perks">
+          <% @card.perks.to_s.split(",").each do |perk| %>
+            <li><%= perk.strip %></li>
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="detail-section">
+        <h2>Best for</h2>
+        <ul class="detail-tags">
+          <% @card.best_for.to_s.split(",").each do |category| %>
+            <li><%= category.strip %></li>
+          <% end %>
+        </ul>
+      </div>
+
+      <div class="detail-actions">
+        <% if !user_signed_in? %>
+          <%= link_to "Sign in to save this card", new_user_session_path, class: "btn-wallet" %>
+        <% elsif current_user.cards.exists?(@card.id) %>
+          <span class="owned">Already in My Wallet.</span>
+          <%= link_to "Open My Wallet", wallet_items_path, class: "detail-back" %>
+        <% else %>
+          <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post, class: "btn-wallet" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%= link_to "Back to all cards", cards_path, class: "detail-back" %>
+</main>
