@@ -189,6 +189,10 @@ people implemented. Three burgundies and an unlicensed typeface came out of that
 itself — it marks every statement as binding, open, or a known violation, so you can tell which
 parts are decided.
 
+For *how* to approach UI work — findings-first method, the constraints that are not visual law,
+known traps, and a surface map — see `design/UPGRADE_BRIEF.md`. It is a method, not a style guide,
+and it defers to DESIGN.md on anything visual.
+
 The short version, so you know what you are walking into:
 
 - One typeface (Geist), one burgundy (`#601020`), nothing visible at rest that is not the next step.
