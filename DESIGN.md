@@ -670,10 +670,12 @@ Until then, match the file you are working in. *Owner: Noah.*
 
 ### Wallet organization and interaction — September 2026
 
-*Binding, requested by Noah.* Supersedes the wallet fan layout above.
+*Binding, requested by Noah.* Keeps the wallet fan layout above.
 - Owned-card payments appear first, ordered by due date with undated cards last.
-- Compact Owned and Planned lists select one card; Overview, Payments and Bonus
+- Compact Owned and Planned card fans select one card; Overview, Payments and Bonus
   tabs keep the selected owned card's tracking details separate.
+- Both timelines run horizontally in a single scrollable row to minimize page height.
+- The bonus deadline is plain status text, with no border.
 - Planned application dates have their own timeline below the collection.
 - Both card states offer a neutral Remove this card action with confirmation.
 - Wallet action buttons use the shared circling-border light. Text links and
