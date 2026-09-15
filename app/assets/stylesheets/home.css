@@ -49,7 +49,7 @@
 .home-page .fan-card:nth-child(2) { transform: translate(-12%, -10%) rotate(-17deg); }
 .home-page .fan-card:nth-child(3) { transform: translate(13%, 0%) rotate(-10deg); }
 .home-page .fan-card:nth-child(4) { transform: translate(30%, 20%) rotate(9deg); }
-.home-page .stack-tile.is-expanded .stack-fan { height: clamp(240px, 20vw, 330px); overflow: hidden; }
+.home-page .stack-tile.is-expanded .stack-fan { height: clamp(240px, 20vw, 330px); }
 
 .home-page .card-reveal { background: none; color: #161616; padding: 0 10% 7%; transition: opacity 200ms ease; }
 .home-page .finish-burgundy .card-reveal, .home-page .finish-graphite .card-reveal { color: white; }
@@ -146,7 +146,7 @@
 .home-page .home-steps p { margin: 0; font-size: var(--text-dense); }
 
 /* Featured stacks retain their fan-to-vertical-wheel interaction in the hero. */
-.hero-stacks { min-width: 0; color: var(--ink); }
+.hero-stacks { min-width: 0; color: var(--ink); display: grid; }
 /* Clip the departing deal before it crosses into the headline. */
 .hero-stacks.is-dealing { overflow: clip; }
 .hero-stacks.is-dealing .stack-tile,
@@ -187,8 +187,12 @@
 @media (prefers-reduced-motion: reduce) {
   .stack-card-info { transition: none; }
 }
-.hero-stacks [hidden] { display: none !important; }
-.hero-stacks > [data-hero-stacks-target="panel"] { min-height: 448px; }
+/* Overlap slides in one grid row. Inactive slides still reserve their size,
+   keeping the controls and the page below steady for all four stacks. */
+.hero-stacks > [data-hero-stacks-target="panel"] { grid-area: 1 / 1; min-height: 448px; }
+.hero-stacks > [data-hero-stacks-target="panel"][hidden] { display: block !important; visibility: hidden; pointer-events: none; }
+.hero-stacks > .hero-stacks-more[hidden] { display: flex !important; }
+.hero-stacks-controls { grid-area: 2 / 1; }
 .home-page .hero-stacks .stack-fan,
 .home-page .hero-stacks .stack-tile.is-expanded .stack-fan { height: 320px; }
 .home-page .hero-stacks .fan-card { width: 54%; top: 64px; }
