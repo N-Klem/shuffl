@@ -711,7 +711,7 @@ frame, large black question heading, thin divider, two-column outlined answers o
 desktop and one column on mobile. Burgundy marks the selected native radio or
 checkbox and completed progress. No decorative icons or emoji appear in the quiz.
 
-The current 16 questions and their scoring are sourced from `quiz-questions-redesign`.
+The current 10 questions and their scoring are sourced from `quiz-questions-redesign`.
 The progress track measures answered questions and labels the current question out
 of the total. Selecting an answer advances after 250ms of visible feedback; Back
 restores saved selections, including the ability to choose the same answer again.
@@ -721,13 +721,13 @@ multiple-choice questions. Without JavaScript, a submit fallback remains availab
 
 Verify the server flow with `RAILS_ENV=test bundle exec ruby test/integration/quiz_flow_test.rb`.
 
-Quiz sizing refinement: headings cap at 58px on desktop and 34px on phones; answer text uses 17–23px on desktop and 16px on phones. Compact spacing keeps all 16 questions within a 375×667 viewport. Seven-answer questions use two columns on short phones, with 58px minimum answer targets. Content remains scrollable for accessibility zoom and unusually small viewports.
+Quiz sizing refinement: headings cap at 58px on desktop and 34px on phones; answer text uses 17–23px on desktop and 16px on phones. Compact spacing keeps all 10 questions within a 375×667 viewport. Seven-answer questions use two columns on short phones, with 58px minimum answer targets. Content remains scrollable for accessibility zoom and unusually small viewports.
 
 Navigation update: the shared navbar is borderless and sticky at the viewport top, with an opaque white background and elevation above page content. This supersedes the outlined navigation frame in the earlier reference notes.
 
 Navigation glass refinement: the sticky navbar floats 12px below the viewport top (8px on mobile), with a translucent neutral surface, 24px backdrop blur, a fine light rim, rounded corners, and a soft shadow. This supersedes the previous opaque borderless treatment. Reduced-transparency preferences and browsers without backdrop blur receive a solid light surface.
 
-Quiz presentation update: content is centred within 880px. Key phrases in each question use burgundy, with a soft burgundy selected-answer tint. Sixteen progress bubbles replace the line: solid bubbles mark completed questions, a double ring marks the current question, and outlined bubbles mark upcoming questions. Progress retains an accessible label and numeric value.
+Quiz presentation update: content is centred within 880px. Key phrases in each question use burgundy, with a soft burgundy selected-answer tint. Ten progress bubbles replace the line: solid bubbles mark completed questions, a double ring marks the current question, and outlined bubbles mark upcoming questions. Progress retains an accessible label and numeric value.
 
 ### Results integration (September 2026)
 
@@ -746,3 +746,37 @@ conditional perks and caps. The illustrative signup timeline is retained for now
 Selections and spending survive sign-in in session storage; authenticated saving is
 atomic and avoids duplicate wallet cards. The original standalone mockup remains
 available for reference.
+
+### Heading keyword emphasis — September 2026
+
+User-approved exception to “One burgundy”: primary editorial headings may highlight
+one or two meaningful words in the signature burgundy (home: cards / wallet;
+browse and results: rewarding; wallet: wallet; authentication: stack / yours).
+Quiz question emphasis uses the same colour treatment. Keep body copy, navigation,
+product names and financial figures neutral; do not automatically colour every
+occurrence of a keyword. This extends the existing quiz-heading exception.
+Use `.keyword-emphasis` and `var(--burgundy)` in light mode. In dark mode,
+`--keyword-ink` mixes 40% burgundy with white for readable text; button colour stays
+unchanged. The older strict colour budget yields to this limited heading treatment.
+
+### Seamless ranked quiz — September 2026
+
+The quiz is one ten-question journey, with a fixed ten-step progress indicator
+from the first screen. Visitors rank up to three goals first; every goal is
+available regardless of card ownership. The first goal selects two later
+questions, without introducing stages or announcing routing. All three ranked
+goals contribute to scoring at descending weights. Every path asks about
+repayment, spending, fees and credit context. First-card repayment wording is
+prospective. Loyalty and wallet-gap claims are absent from the new flow.
+
+Goals and spending share a spatial ranking control: three outlined slots on the
+left, and a wrapping choice cluster on the right. On narrow screens, choices
+follow the slots vertically. Pointer dragging supports touch; tapping adds a
+choice, and move/remove buttons plus keyboard arrows provide alternatives.
+There is no automatic advancement after ranking. Continue submits the order.
+A checkbox fallback remains available without JavaScript.
+
+Back preserves answers. Only answers incompatible with a changed path are
+removed on submission; saved drafts retain the ranking. Per-form tokens reject
+stale submissions. Short inline explanations replace the unavailable quiz-help
+link. Existing completed quizzes retain their previous scoring interpretation.

@@ -84,7 +84,8 @@ class WalletItemsController < ApplicationController
 
   def destroy
     wallet_item = current_user.wallet_items.find(params[:id])
-    wallet_item.destroy
+    wallet_item.destroy!
+    return render json: WalletDashboard.new(current_user).payload if request.format.json?
     redirect_back fallback_location: wallet_items_path, notice: "Card removed from your wallet."
   end
 end

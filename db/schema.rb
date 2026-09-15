@@ -10,9 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_12_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "card_candidates", force: :cascade do |t|
+    t.string "country", null: false
+    t.datetime "created_at", null: false
+    t.string "currency", null: false
+    t.string "name", null: false
+    t.jsonb "research", default: {}, null: false
+    t.text "review_notes"
+    t.string "review_status", default: "pending", null: false
+    t.datetime "reviewed_at"
+    t.string "reviewed_by"
+    t.integer "shortlist_position", null: false
+    t.string "source_key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country", "review_status"], name: "index_card_candidates_on_country_and_review_status"
+    t.index ["source_key"], name: "index_card_candidates_on_source_key", unique: true
+    t.check_constraint "country::text = 'US'::text AND currency::text = 'USD'::text OR country::text = 'GB'::text AND currency::text = 'GBP'::text", name: "card_candidates_market"
+    t.check_constraint "review_status::text = ANY (ARRAY['pending'::character varying, 'reviewed'::character varying, 'rejected'::character varying]::text[])", name: "card_candidates_review_status"
+  end
 
   create_table "cards", force: :cascade do |t|
     t.integer "annual_fee"

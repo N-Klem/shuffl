@@ -21,11 +21,11 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     get card_path(@card)
     assert_response :success
     assert_select "h1", "Detail test"
-    assert_select ".detail-figure", /4x/                 # leads with value (reward rate), not the fee
-    assert_select ".detail-facts .value", text: /\$95/   # the fee is demoted into the facts
+    assert_select ".detail-figure", /4x/
+    assert_select ".detail-facts .value", text: /\$95/
     assert_select ".detail-perks li", count: 2
     assert_select ".detail-tags li", count: 2
-    assert_select ".detail-tags a[href=?]", cards_path(category: "Travel")  # tags are filter links
+    assert_select ".detail-tags a[href=?]", cards_path(category: "Travel")
     assert_select ".detail-stacks a", text: /Test stack/
     assert_select ".mini-cards li", count: 1
     assert_select ".mini-cards .name", "Similar test"
@@ -44,18 +44,18 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select ".detail-foryou-rank", count: 0
   end
 
-  # The quiz can skip a conditional question, so walk it by reading back the step
-  # the server is actually on rather than assuming a fixed sequence.
+  # Complete the ten-question journey using the rendered form metadata.
   def complete_quiz(choice = :first)
     get new_quiz_response_path
     loop do
       field = css_select("input[name='step']").first
       break if field.nil?
       index = field["value"].to_i
-      question = Card::CORE_QUESTIONS[index]
+      key = css_select("input[name='question_key']").first["value"]
+      question = Card::QUESTION_POOL[key]
       answer = question[:type] == :ranked ? question[:options].first(3)
              : choice == :last ? question[:options].last : question[:options].first
-      post quiz_responses_path, params: { step: index, answer: answer }
+      post quiz_responses_path, params: { step: index, answer: answer, quiz_token: css_select("input[name='quiz_token']").first["value"] }
       follow_redirect!
     end
   end

@@ -1,30 +1,29 @@
 class QuizResponsesController < ApplicationController
-  QUESTIONS = Card::CORE_QUESTIONS
-
   def new
     session[:quiz_answers] ||= {}
     resume_draft if session[:quiz_answers].empty?
-    session[:quiz_step] = current_step
-    if params[:step].present?
-      requested = params[:step].to_i
-      session[:quiz_step] = requested if requested.between?(0, current_step)
-    end
-    prepare_question
+
+    questions = current_questions
+    furthest = resolve_step(questions)
+    requested = params[:step].present? ? params[:step].to_i : session[:quiz_step].to_i
+    session[:quiz_step] = requested.clamp(0, furthest)
+
+    prepare_question(questions)
   end
 
   def create
     session[:quiz_answers] ||= {}
-    session[:quiz_step] = current_step
-    # Ignore repeated submissions and forms left open in another tab.
-    unless params[:step].to_s == current_step.to_s
+    questions = current_questions
+    session[:quiz_step] = session[:quiz_step].to_i.clamp(0, resolve_step(questions))
+
+    unless params[:step].to_s == session[:quiz_step].to_s &&
+           params[:quiz_token].present? && params[:quiz_token] == session[:quiz_token]
       return redirect_to new_quiz_response_path, status: :see_other
     end
 
-    question = QUESTIONS[current_step]
+    question = questions[session[:quiz_step]]
     values = submitted_values(question)
-    # A ranked answer arrives already in the visitor's chosen order and is stored
-    # that way, because position is the signal: first place scores 3, second 2,
-    # third 1.
+
     valid_count =
       case question[:type]
       when :multi, :ranked then values.size.between?(1, question[:max_select])
@@ -32,7 +31,7 @@ class QuizResponsesController < ApplicationController
       end
 
     unless valid_count && (values - question[:options]).empty?
-      prepare_question
+      prepare_question(questions)
       @error =
         case question[:type]
         when :ranked then "Pick up to #{question[:max_select]}, in the order that matters most."
@@ -45,35 +44,22 @@ class QuizResponsesController < ApplicationController
     session[:quiz_answers][question[:key]] =
       [ :multi, :ranked ].include?(question[:type]) ? values : values.first
 
-    next_step = next_visible_step(current_step)
-    if next_step
+    # Only discard answers that no longer belong to the newly chosen path.
+    # Merely visiting an earlier question never destroys answers.
+    questions = current_questions
+    keys = questions.map { |q| q[:key] }
+    session[:quiz_answers].keep_if { |key, value| keys.include?(key) && (Array(value) - questions.find { |q| q[:key] == key }[:options]).empty? }
+    session.delete(:quiz_token)
+    next_step = session[:quiz_step] + 1
+
+    if next_step < questions.size
       session[:quiz_step] = next_step
       redirect_to new_quiz_response_path, status: :see_other
     else
-      top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
-      # Finish the draft this visitor saved earlier rather than leaving it
-      # orphaned beside a second, complete record.
-      @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
-      @quiz_response.update!(
-        user: current_user || @quiz_response.user,
-        answers: session[:quiz_answers].to_json,
-        top_card_ids: top_cards.map(&:id).to_json,
-        completed_at: Time.current
-      )
-      session.delete(:draft_quiz_response_id)
-      session[:quiz_step] = 0
-      session[:quiz_answers] = {}
-      # Remembered so card pages can show how each card ranks for this visitor,
-      # and so the result can be attached to their account if they sign up later.
-      session[:last_quiz_response_id] = @quiz_response.id
-      session[:quiz_finish_id] = @quiz_response.id
-      redirect_to @quiz_response, status: :see_other
+      finish_quiz
     end
   end
 
-  # "Save and finish later". Stores what has been answered so far as a draft.
-  # Signed out, the draft is anonymous and its id rides in the session until
-  # sign-in claims it -- the same route an anonymous completed quiz already takes.
   def save_progress
     session[:quiz_answers] ||= {}
 
@@ -106,12 +92,18 @@ class QuizResponsesController < ApplicationController
 
   private
 
-  def current_step
-    session[:quiz_step].to_i.clamp(0, QUESTIONS.size - 1)
+  # The full ten-question path, tailored to the highest-ranked goal.
+  def current_questions
+    Card.quiz_questions_for(session[:quiz_answers] || {})
   end
 
-  # The draft belonging to whoever is asking: the signed-in visitor's own, or the
-  # anonymous one whose id is still in this session.
+  # Land on the first unanswered question, or the last question if all are
+  # answered (the next submit will finish the quiz).
+  def resolve_step(questions)
+    unanswered = questions.index { |q| session[:quiz_answers][q[:key]].blank? }
+    unanswered || [ questions.size - 1, 0 ].max
+  end
+
   def resumable_draft
     @resumable_draft ||=
       if current_user
@@ -121,8 +113,7 @@ class QuizResponsesController < ApplicationController
       end
   end
 
-  # Put a saved draft back into the session and land on the first question that
-  # still needs an answer, which also skips anything now hidden by a condition.
+  # Restore saved answers from a draft and land on the first unanswered question.
   def resume_draft
     draft = resumable_draft
     return if draft.blank?
@@ -131,62 +122,46 @@ class QuizResponsesController < ApplicationController
     return if answers.empty?
 
     session[:quiz_answers] = answers
-    session[:quiz_step] = QUESTIONS.index { |question|
-      visible?(question) && session[:quiz_answers][question[:key]].blank?
-    } || QUESTIONS.size - 1
+    questions = current_questions
+    session[:quiz_step] = resolve_step(questions)
     flash.now[:notice] = "Welcome back — picking up where you left off."
   end
 
-  # Some questions only make sense given an earlier answer -- asking a
-  # credit-builder which points currency they prefer wastes a screen. Skipped
-  # questions simply never get an answer, and every scoring method treats a
-  # missing answer as zero.
-  # Ranked answers carry their order in a hidden field, because checkbox
-  # submission follows DOM order and position is the signal. Fall back to the
-  # checkboxes if the field is absent, so the question still works without JS --
-  # unordered, but answered.
   def submitted_values(question)
     checked = Array(params[:answer]).reject(&:blank?).uniq
     return checked unless question[:type] == :ranked
 
-    ordered = params[:ordered].to_s.split("\u001F").reject(&:blank?)
+    ordered = params[:ordered].to_s.split("").reject(&:blank?)
     ordered &= checked
     ordered.presence || checked
   end
 
-  def visible?(question)
-    condition = question[:depends_on]
-    return true if condition.blank?
-    session[:quiz_answers][condition[:key]] == condition[:value]
-  end
-
-  def next_visible_step(from)
-    ((from + 1)...QUESTIONS.size).find { |index| visible?(QUESTIONS[index]) }
-  end
-
-  def previous_visible_step(from)
-    (0...from).to_a.reverse.find { |index| visible?(QUESTIONS[index]) }
-  end
-
-  # Numbering has to count only the questions this visitor will actually see,
-  # or a skipped question leaves a gap ("Question 9 of 10" twice, or a jump).
-  def visible_questions
-    QUESTIONS.select { |question| visible?(question) }
-  end
-
-  def prepare_question
-    # A conditional question can become invisible if an earlier answer changed on
-    # the way back, so land on the next one the visitor should actually see.
-    unless visible?(QUESTIONS[current_step])
-      session[:quiz_step] = next_visible_step(current_step) || current_step
-    end
-
-    @question = QUESTIONS[current_step]
-    @current_index = current_step
-    visible = visible_questions
-    @step = visible.index(@question).to_i + 1
-    @total = visible.size
-    @previous_step = previous_visible_step(current_step)
+  def prepare_question(questions)
+    session[:quiz_token] = SecureRandom.hex(16)
+    step = session[:quiz_step]
+    @question = questions[step]
+    @current_index = step
+    @step = step + 1
+    @total = questions.size
+    @previous_step = step > 0 ? step - 1 : nil
     @selected = Array(session[:quiz_answers][@question[:key]])
+  end
+
+  def finish_quiz
+    top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
+
+    @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
+    @quiz_response.update!(
+      user: current_user || @quiz_response.user,
+      answers: session[:quiz_answers].to_json,
+      top_card_ids: top_cards.map(&:id).to_json,
+      completed_at: Time.current
+    )
+    session.delete(:draft_quiz_response_id)
+    session[:quiz_step] = 0
+    session[:quiz_answers] = {}
+    session[:last_quiz_response_id] = @quiz_response.id
+    session[:quiz_finish_id] = @quiz_response.id
+    redirect_to @quiz_response, status: :see_other
   end
 end

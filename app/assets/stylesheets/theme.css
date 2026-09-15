@@ -37,3 +37,7 @@ html[data-theme="dark"] .auth-page .tabs a.active { color: var(--ink); border-co
 html[data-theme="dark"] .quiz-answer:has(input:checked),html[data-theme="dark"] .quiz-answer:hover:not(:has(input:disabled)) { background: #38232d; border-color: #bc7782; }
 html[data-theme="dark"] .quiz-answer input:checked { box-shadow: inset 0 0 0 5px var(--surface-raised); }
 html[data-theme="dark"] .quiz-finish { background: var(--surface); color: var(--ink); }
+
+/* Editorial emphasis: a small number of keywords in primary headings. */
+.keyword-emphasis { color: var(--keyword-ink, var(--burgundy)); }
+html[data-theme="dark"] { --keyword-ink: color-mix(in srgb, var(--burgundy) 40%, white); }

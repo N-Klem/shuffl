@@ -52,10 +52,10 @@
 }
 
 /* Text actions retain their shape: a rose highlight travels along an underline. */
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]) {
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]) {
   position: relative;
 }
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"])::after {
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"])::after {
   content: "";
   position: absolute;
   left: 0;
@@ -73,12 +73,26 @@
   to { background-position: 100% 50%; }
 }
 @media (hover: hover) and (pointer: fine) {
-  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
     opacity: 1;
     animation: shuffl-underline-light 1.5s ease-in-out infinite alternate;
   }
 }
-:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"]):focus-visible::after { opacity: 1; }
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]):focus-visible::after { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, .browse-tabs button, [role="tab"])::after { animation: none !important; transition: none; }
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"])::after { animation: none !important; transition: none; }
+}
+
+/* Text actions have only an underline; never inherit a button halo or lift. */
+:is(button.text, button.link, .btn-link, .tertiary-link, a:not(.btn, .btn-wallet)):is(:hover, :focus-visible) {
+  box-shadow: none !important;
+  filter: none;
+  translate: none;
+  text-shadow: none;
+}
+:is(button.text, button.link, .btn-link, a.text, a.link) {
+  background: transparent !important;
+}
+:is(button.text, button.link, .btn-link, a.text, a.link)::before {
+  content: none !important;
 }

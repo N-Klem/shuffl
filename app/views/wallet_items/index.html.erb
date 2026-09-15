@@ -2,6 +2,7 @@
 <% content_for :title, "My Wallet · Shuffl" %>
 <div class="wallet-app" data-controller="wallet" data-wallet-payload-value="<%= @wallet_payload.to_json %>">
   <div data-wallet-target="stage"><noscript><p>Enable JavaScript to manage your cards and spending trackers.</p><%= link_to "Browse cards", cards_path %></noscript></div>
+  <template data-wallet-wordmark><%= render "shared/wordmark", class: "brand", link: false %></template>
   <dialog data-wallet-target="modal"></dialog>
   <div data-wallet-target="notice" role="status" aria-live="polite"></div>
 </div>

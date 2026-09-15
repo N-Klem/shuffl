@@ -49,6 +49,32 @@ class WalletDashboardTest < ActionDispatch::IntegrationTest
     assert_not item.reload.paid
   end
 
+  test "owned and planned cards can be removed with an updated dashboard" do
+    ["planned", "owned"].each do |status|
+      item = @user.wallet_items.find_or_create_by!(card: @card)
+      item.update!(status: status)
+      assert_difference "@user.wallet_items.count", -1 do
+        delete wallet_item_path(item), as: :json
+      end
+      assert_response :success
+      assert_equal [], response.parsed_body["cards"]
+      assert Card.exists?(@card.id), "removal must not delete the catalogue card"
+    end
+  end
+
+  test "another account cannot remove a wallet item" do
+    item = @other.wallet_items.create!(card: @replacement)
+    assert_no_difference "WalletItem.count" do
+      delete wallet_item_path(item), as: :json
+    end
+    assert_response :not_found
+  end
+
+  test "html removal still redirects to the wallet" do
+    delete wallet_item_path(@item)
+    assert_redirected_to wallet_items_path
+  end
+
   test "invalid amounts dates and duplicate swaps do not overwrite state" do
     patch wallet_item_path(@item), params: { wallet_item: { bonus_spend: -1 } }, as: :json
     assert_response :unprocessable_entity

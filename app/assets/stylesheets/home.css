@@ -13,7 +13,7 @@
 .home-page .hero { padding: 65px 0 56px; align-items: flex-start; flex-wrap: nowrap; gap: 24px; }
 .home-page .hero-headline { max-width: none; }
 .home-page .hero-headline h1 { font-size: clamp(32px, 6vw, 102px); line-height: .91; letter-spacing: -.055em; font-weight: 600; }
-.home-page .hero-headline h1 span { display: block; white-space: nowrap; }
+.home-page .hero-headline h1 > span { display: block; white-space: nowrap; }
 .home-page .hero-actions { margin-top: 22px; min-width: 0; width: 14.8%; }
 .home-page .hero-actions .btn { font-size: clamp(16px, 1.6vw, 26px); padding: 14px 12px; letter-spacing: -.035em; white-space: nowrap; }
 .home-page .btn-primary { --bs-btn-bg: var(--burgundy); --bs-btn-border-color: var(--burgundy); }
@@ -147,6 +147,11 @@
 
 /* Featured stacks retain their fan-to-vertical-wheel interaction in the hero. */
 .hero-stacks { min-width: 0; color: var(--ink); }
+/* Clip the departing deal before it crosses into the headline. */
+.hero-stacks.is-dealing { overflow: clip; }
+.hero-stacks.is-dealing .stack-tile,
+.hero-stacks.is-dealing .ghost-stack { pointer-events: none; }
+.hero-stacks.is-dealing .stack-card-info { opacity: 0; }
 /* Card info panel: appears below the fan when a card is current */
 .stack-card-info {
   text-align: center;

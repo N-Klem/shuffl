@@ -66,7 +66,14 @@ export default class extends Controller {
   else {phase=target;blend=destination;draw();raf=0;last=0;if(!expanded){tile.classList.remove('is-expanded');cards.forEach(c=>{c.style.transform='';c.style.opacity='';c.style.zIndex=''})}}
  }
  function wake(){if(!raf)raf=requestAnimationFrame(tick)}
- function open(value){expanded=value;if(value)tile.classList.add('is-expanded');wake()}
+ function open(value){if(tile.closest('.is-dealing'))return;expanded=value;if(value)tile.classList.add('is-expanded');wake()}
+ listen(tile,'stack:reset',()=>{
+  cancelAnimationFrame(raf);clearTimeout(snapTimer);
+  expanded=false;pinned=false;phase=0;target=0;blend=0;raf=0;last=0;touchY=null;
+  tile.classList.remove('is-expanded');
+  cards.forEach(c=>{c.style.transform='';c.style.opacity='';c.style.zIndex=''});
+  describe();
+ });
  function settle(){clearTimeout(snapTimer);snapTimer=setTimeout(()=>{target=Math.round(target);wake()},240)}
  listen(tile,'pointerenter',e=>{if(e.pointerType==='mouse')open(true)});
  listen(tile,'pointerleave',e=>{if(e.pointerType==='mouse'){target=Math.round(target);open(pinned)}});
@@ -104,7 +111,8 @@ export default class extends Controller {
  listen(fan,'pointerup',()=>{touchY=null;settle()});
  listen(fan,'pointercancel',()=>{touchY=null;settle()});
  capture();describe();
- const observer=new ResizeObserver(()=>{capture();if(expanded)wake()});
+ listen(tile,'stack:rest',capture);
+ const observer=new ResizeObserver(()=>{if(tile.closest('.is-dealing'))return;capture();if(expanded)wake()});
  observer.observe(fan);
  this.cleanup=()=>{events.abort();observer.disconnect();cancelAnimationFrame(raf);clearTimeout(snapTimer);tile.classList.remove('is-expanded');hint.innerHTML=originalHint;cards.forEach(c=>{c.style.transform='';c.style.opacity='';c.style.zIndex=''})};
 

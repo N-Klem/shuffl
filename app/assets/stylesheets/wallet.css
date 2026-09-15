@@ -584,3 +584,81 @@
 .wallet-page .pence {
   color: var(--muted);
 }
+
+/* One task at a time: payments, collection details, then application planning. */
+.wallet-app main { max-width: 1440px; }
+.wallet-app .collection-heading { margin-bottom: 24px; flex-wrap: wrap; }
+.wallet-app .workspace { grid-template-columns: minmax(240px, 32%) minmax(0, 1fr); }
+.wallet-app .workspace > * { min-width: 0; }
+.wallet-app .shelf { padding: 0 0 24px; border: 0; border-bottom: 1px solid var(--hairline); border-radius: 0; background: none; }
+.wallet-app .wallet-empty-note { margin: 16px 0 0; font-size: 14px; color: var(--muted); }
+.wallet-app .timeline { margin-block: 24px 40px; padding-block: 24px; }
+.wallet-app .timeline .row { flex-wrap: wrap; }
+.wallet-app .timeline-intro { margin: 8px 0 24px; font-size: 14px; }
+.wallet-app .wallet-timeline-list { list-style: none; margin: 0; padding: 0 0 0 16px; }
+.wallet-app .wallet-timeline-entry { position: relative; display: grid; grid-template-columns: minmax(120px, .65fr) minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: 20px 0 20px 24px; border-left: 1px solid var(--hairline-strong); border-bottom: 1px solid var(--hairline); }
+.wallet-app .wallet-timeline-entry::before { content: ""; position: absolute; left: -5px; top: 28px; width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--ink); background: var(--surface); }
+.wallet-app .wallet-timeline-entry:first-child::before { background: var(--ink); }
+.wallet-app .timeline-date { font-size: 14px; color: var(--muted); }
+.wallet-app .is-overdue .timeline-date { color: var(--brick); }
+.wallet-app .timeline-card { min-width: 0; }
+.wallet-app .timeline-card h3 { margin: 0 0 4px; overflow-wrap: anywhere; }
+.wallet-app .timeline .actions { align-items: center; justify-content: flex-end; }
+.wallet-app .timeline button { font-size: 14px; }
+.wallet-app .btn-wallet { background: var(--surface); color: var(--ink); border: 1px solid var(--hairline-strong); min-height: 44px; padding: 10px 16px; }
+.wallet-app .btn-wallet:hover { background: var(--surface-field); }
+.wallet-app .text { min-height: 44px; display: inline-flex; align-items: center; width: fit-content; color: var(--ink); }
+.wallet-app .detail-top { grid-template-columns: minmax(0, 1fr) 200px; }
+.wallet-app .detail-top .credit { width: 200px; }
+.wallet-app .tabs { margin-top: 0; margin-bottom: 24px; }
+.wallet-app .tabs button { color: var(--muted); background: none; min-height: 44px; }
+.wallet-app .tabs button.active { color: var(--ink); border-bottom-color: var(--ink); }
+.wallet-app .details-body .section { margin-top: 20px; }
+.wallet-app .wallet-detail-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-top: 16px; border-top: 1px solid var(--hairline); }
+.wallet-app .wallet-detail-actions > .text { margin-left: auto; }
+.wallet-app dialog { background: var(--surface-raised); color: var(--ink); }
+.wallet-app .actions { align-items: center; }
+@media (max-width: 1000px) {
+  .wallet-app .wallet-timeline-entry { grid-template-columns: 130px minmax(0, 1fr); gap: 12px 24px; }
+  .wallet-app .wallet-timeline-entry .actions { grid-column: 2; justify-content: flex-start; }
+  .wallet-app .detail-top { grid-template-columns: 1fr; }
+}
+@media (max-width: 850px) {
+  .wallet-app .workspace { grid-template-columns: 1fr; }
+  .wallet-app .shelves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+}
+@media (max-width: 480px) {
+  .wallet-app .shelves { grid-template-columns: 1fr; gap: 0; }
+  .wallet-app .wallet-timeline-entry { grid-template-columns: 1fr; gap: 8px; padding-left: 20px; }
+  .wallet-app .wallet-timeline-entry .actions { grid-column: 1; margin-top: 8px; }
+  .wallet-app .summary { flex-wrap: wrap; gap: 16px; }
+  .wallet-app .stats { grid-template-columns: 1fr; }
+  .wallet-app .allocation { grid-template-columns: 1fr; }
+}
+
+/* Compact fans and horizontal timelines keep the wallet short. */
+.wallet-app main { padding-top: 24px; }
+.wallet-app .heading { margin-bottom: 16px; }
+.wallet-app .timeline { margin-block: 16px 24px; padding-block: 16px; }
+.wallet-app .timeline-intro { margin-bottom: 16px; }
+.wallet-app .wallet-timeline-list { display: flex; overflow-x: auto; padding: 8px 0 12px; scroll-snap-type: x proximity; }
+.wallet-app .wallet-timeline-entry { flex: 1 0 240px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; border: 0; border-top: 1px solid var(--hairline-strong); padding: 16px 24px 0 0; scroll-snap-align: start; }
+.wallet-app .wallet-timeline-entry::before { left: 0; top: -5px; }
+.wallet-app .wallet-timeline-entry .actions { justify-content: flex-start; margin-top: auto; gap: 8px; }
+.wallet-app .timeline-card h3 { font-size: 16px; }
+.wallet-app .timeline-card .muted { font-size: 13px; }
+.wallet-app .collection-heading { margin-bottom: 16px; }
+.wallet-app .shelf { padding-bottom: 8px; margin-bottom: 8px; }
+.wallet-app .shelf .fan { height: calc(175px + var(--extra, 0) * 22px); margin-top: 0; }
+.wallet-app .fan .credit { width: 200px; left: calc(50% - 90px); }
+.wallet-app .fan .credit[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 3px; }
+.wallet-app .fan .credit:focus-visible { z-index: 30; }
+.wallet-app .bonus-deadline { border: 0; padding: 0; background: none; font-size: 13px; }
+.wallet-app .detail { padding: 16px 24px; }
+.wallet-app .tabs { margin-bottom: 16px; }
+@media (max-width: 480px) {
+  .wallet-app .shelves { display: flex; overflow-x: auto; gap: 16px; scroll-snap-type: x proximity; }
+  .wallet-app .shelf { flex: 0 0 85%; scroll-snap-align: start; }
+  .wallet-app .detail { padding: 16px 0; }
+  .wallet-app .wallet-timeline-entry { flex-basis: 240px; }
+}

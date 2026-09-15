@@ -14,7 +14,7 @@ gives you a place to track the ones you hold.
 
 ## What it does
 
-- **Take a 16-question quiz** (no account needed) — spending habits, credit
+- **Take a 10-question quiz** (no account needed) — spending habits, credit
   profile, travel, rewards preferences — and get a ranked stack of the top 5
   cards, scored individually against your answers.
 - **Browse the catalogue** — 54 cards and 5 curated stacks (Traveler, Foodie,
@@ -29,7 +29,7 @@ gives you a place to track the ones you hold.
 ## The journey
 
 ```
-Home ──► Quiz (16 questions, no login) ──► Results: your top 5 cards
+Home ──► Quiz (10 questions, no login) ──► Results: your top 5 cards
   │                                              │
   └──► Browse cards & stacks ◄───────────────────┘
               │

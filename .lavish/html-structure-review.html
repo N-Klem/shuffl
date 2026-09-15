@@ -1,0 +1,102 @@
+<title>HTML Structure Review</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, td, th, .badge) { overflow-wrap: anywhere; }
+  body { background: var(--color-base-200); }
+  .diff-file { border-radius: 0.75rem; overflow: hidden; border: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent); }
+</style>
+
+<div data-theme="luxury">
+<main class="mx-auto max-w-6xl p-6 lg:p-10 space-y-10">
+
+  <section class="hero bg-base-100 rounded-box shadow">
+    <div class="hero-content flex-col text-center py-10">
+      <div class="badge badge-primary badge-lg mb-3">branch: html-structure</div>
+      <h1 class="text-4xl font-bold">View HTML Structure Restructure</h1>
+      <p class="py-2 max-w-2xl text-base-content/70">
+        Every non-devise, non-layout view now has a page-level wrapper div, grouped headers/actions,
+        and consistent repeating-item containers &mdash; no Ruby/ERB logic, links, or CSS/Bootstrap
+        classes were touched. Nine files, side by side below.
+      </p>
+      <div class="stats stats-vertical sm:stats-horizontal shadow mt-4">
+        <div class="stat">
+          <div class="stat-title">Files changed</div>
+          <div class="stat-value text-primary">9</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Lines added</div>
+          <div class="stat-value text-success">+163</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Lines removed</div>
+          <div class="stat-value text-error">-118</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="space-y-3">
+    <div role="alert" class="alert alert-warning alert-soft">
+      <span><strong>stacks/show.html.erb:</strong> the card list was converted from <code>&lt;ul&gt;&lt;li&gt;</code> plain text to the same <code>.card-list &gt; .card-row</code> div pattern used on <code>cards/index</code> and <code>quiz_responses/show</code>, for cross-page consistency. The card name moved from <code>&lt;strong&gt;</code> to <code>&lt;h3&gt;</code> &mdash; it still has <strong>no link</strong>, matching the original exactly.</span>
+    </div>
+    <div role="alert" class="alert alert-info alert-soft">
+      <span><strong>shared/_navbar.html.erb:</strong> nav links now sit inside a <code>.navbar-links</code> div inside the existing <code>&lt;nav&gt;</code>, so Bootstrap's navbar-nav pattern can target them later.</span>
+    </div>
+  </section>
+
+  <div id="diff-sections" class="space-y-10"></div>
+
+</main>
+</div>
+
+<script type="application/json" id="file-data">[{"area": "Cards", "path": "app/views/cards/index.html.erb", "before": "<h1>Cards</h1>\n\n<div class=\"cards-list\">\n  <% @cards.each do |card| %>\n    <div class=\"card-row\">\n      <h2><%= link_to card.name, card_path(card) %></h2>\n      <p><%= card.issuer %> \u2014 <%= card.network %></p>\n      <p>Annual fee: $<%= card.annual_fee %></p>\n    </div>\n  <% end %>\n</div>\n", "after": "<div class=\"cards-index\">\n  <h1>Cards</h1>\n\n  <div class=\"cards-list\">\n    <% @cards.each do |card| %>\n      <div class=\"card-row\">\n        <h2><%= link_to card.name, card_path(card) %></h2>\n        <p><%= card.issuer %> \u2014 <%= card.network %></p>\n        <p>Annual fee: $<%= card.annual_fee %></p>\n      </div>\n    <% end %>\n  </div>\n</div>\n"}, {"area": "Cards", "path": "app/views/cards/show.html.erb", "before": "<h1><%= @card.name %></h1>\n\n<ul class=\"card-details\">\n  <li><strong>Issuer:</strong> <%= @card.issuer %></li>\n  <li><strong>Network:</strong> <%= @card.network %></li>\n  <li><strong>Card type:</strong> <%= @card.card_type %></li>\n  <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>\n  <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>\n  <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>\n  <li><strong>Perks:</strong> <%= @card.perks %></li>\n  <li><strong>Best for:</strong> <%= @card.best_for %></li>\n  <li><strong>Description:</strong> <%= @card.description %></li>\n</ul>\n\n<% if user_signed_in? && !current_user.cards.exists?(@card.id) %>\n  <%= button_to \"Add to Wallet\", wallet_items_path(card_id: @card.id), method: :post %>\n<% end %>\n\n<%= link_to \"Back to cards\", cards_path %>\n", "after": "<div class=\"cards-show\">\n  <h1><%= @card.name %></h1>\n\n  <ul class=\"card-details\">\n    <li><strong>Issuer:</strong> <%= @card.issuer %></li>\n    <li><strong>Network:</strong> <%= @card.network %></li>\n    <li><strong>Card type:</strong> <%= @card.card_type %></li>\n    <li><strong>Annual fee:</strong> $<%= @card.annual_fee %></li>\n    <li><strong>Reward rate:</strong> <%= @card.reward_rate %>x</li>\n    <li><strong>Welcome bonus:</strong> <%= @card.welcome_bonus %></li>\n    <li><strong>Perks:</strong> <%= @card.perks %></li>\n    <li><strong>Best for:</strong> <%= @card.best_for %></li>\n    <li><strong>Description:</strong> <%= @card.description %></li>\n  </ul>\n\n  <div class=\"card-actions\">\n    <% if user_signed_in? && !current_user.cards.exists?(@card.id) %>\n      <%= button_to \"Add to Wallet\", wallet_items_path(card_id: @card.id), method: :post %>\n    <% end %>\n\n    <%= link_to \"Back to cards\", cards_path %>\n  </div>\n</div>\n"}, {"area": "Home", "path": "app/views/pages/home.html.erb", "before": "<h1>Shuffl</h1>\n<p>Find your perfect credit card.</p>\n\n<p>\n  <%= link_to \"Browse stacks\", stacks_path %> |\n  <%= link_to \"Browse cards\", cards_path %>\n</p>\n\n<% unless user_signed_in? %>\n  <p>\n    <%= link_to \"Sign in\", new_user_session_path %> |\n    <%= link_to \"Sign up\", new_user_registration_path %>\n  </p>\n<% end %>\n", "after": "<div class=\"home\">\n  <div class=\"home-intro\">\n    <h1>Shuffl</h1>\n    <p>Find your perfect credit card.</p>\n  </div>\n\n  <div class=\"home-links\">\n    <p>\n      <%= link_to \"Browse stacks\", stacks_path %> |\n      <%= link_to \"Browse cards\", cards_path %>\n    </p>\n  </div>\n\n  <% unless user_signed_in? %>\n    <div class=\"home-auth\">\n      <p>\n        <%= link_to \"Sign in\", new_user_session_path %> |\n        <%= link_to \"Sign up\", new_user_registration_path %>\n      </p>\n    </div>\n  <% end %>\n</div>\n"}, {"area": "Quiz", "path": "app/views/quiz_responses/new.html.erb", "before": "<h1>Find your stack</h1>\n<p>Question <%= @step %> of <%= @total %></p>\n\n<%= form_with url: quiz_responses_path, method: :post, local: true do %>\n  <div class=\"quiz-question\">\n    <h3><%= @question[:prompt] %></h3>\n\n    <% @question[:options].each do |option| %>\n      <div class=\"quiz-option\">\n        <% if @question[:type] == :multi %>\n          <label>\n            <%= check_box_tag \"answer[]\", option, false, id: nil %>\n            <%= option %>\n          </label>\n        <% else %>\n          <label>\n            <%= radio_button_tag \"answer\", option, false, id: nil %>\n            <%= option %>\n          </label>\n        <% end %>\n      </div>\n    <% end %>\n  </div>\n\n  <%= submit_tag(@step == @total ? \"See my results\" : \"Next\") %>\n<% end %>\n", "after": "<div class=\"quiz-new\">\n  <div class=\"quiz-header\">\n    <h1>Find your stack</h1>\n    <p>Question <%= @step %> of <%= @total %></p>\n  </div>\n\n  <%= form_with url: quiz_responses_path, method: :post, local: true do %>\n    <div class=\"quiz-question\">\n      <h3><%= @question[:prompt] %></h3>\n\n      <div class=\"quiz-options\">\n        <% @question[:options].each do |option| %>\n          <div class=\"quiz-option\">\n            <% if @question[:type] == :multi %>\n              <label>\n                <%= check_box_tag \"answer[]\", option, false, id: nil %>\n                <%= option %>\n              </label>\n            <% else %>\n              <label>\n                <%= radio_button_tag \"answer\", option, false, id: nil %>\n                <%= option %>\n              </label>\n            <% end %>\n          </div>\n        <% end %>\n      </div>\n    </div>\n\n    <div class=\"quiz-actions\">\n      <%= submit_tag(@step == @total ? \"See my results\" : \"Next\") %>\n    </div>\n  <% end %>\n</div>\n"}, {"area": "Quiz", "path": "app/views/quiz_responses/show.html.erb", "before": "<h1>Your personalized stack</h1>\n<p>Based on your answers, here are your top card matches:</p>\n\n<div class=\"card-list\">\n  <% @cards.each do |card| %>\n    <div class=\"card-row\">\n      <h2><%= link_to card.name, card_path(card) %></h2>\n      <p><%= card.issuer %></p>\n      <p>Annual fee: $<%= card.annual_fee %></p>\n      <p>Reward rate: <%= card.reward_rate %>x</p>\n    </div>\n  <% end %>\n</div>\n\n<%= link_to \"Retake the quiz\", new_quiz_response_path %>\n", "after": "<div class=\"quiz-show\">\n  <div class=\"quiz-header\">\n    <h1>Your personalized stack</h1>\n    <p>Based on your answers, here are your top card matches:</p>\n  </div>\n\n  <div class=\"card-list\">\n    <% @cards.each do |card| %>\n      <div class=\"card-row\">\n        <h2><%= link_to card.name, card_path(card) %></h2>\n        <p><%= card.issuer %></p>\n        <p>Annual fee: $<%= card.annual_fee %></p>\n        <p>Reward rate: <%= card.reward_rate %>x</p>\n      </div>\n    <% end %>\n  </div>\n\n  <div class=\"quiz-actions\">\n    <%= link_to \"Retake the quiz\", new_quiz_response_path %>\n  </div>\n</div>\n"}, {"area": "Navbar", "path": "app/views/shared/_navbar.html.erb", "before": "<nav class=\"navbar\">\n  <%= link_to \"Home\", root_path %>\n  <%= link_to \"Stacks\", stacks_path %>\n  <%= link_to \"Cards\", cards_path %>\n  <% if user_signed_in? %>\n    <%= link_to \"My Wallet\", wallet_items_path %>\n  <% end %>\n</nav>\n", "after": "<nav class=\"navbar\">\n  <div class=\"navbar-links\">\n    <%= link_to \"Home\", root_path %>\n    <%= link_to \"Stacks\", stacks_path %>\n    <%= link_to \"Cards\", cards_path %>\n    <% if user_signed_in? %>\n      <%= link_to \"My Wallet\", wallet_items_path %>\n    <% end %>\n  </div>\n</nav>\n"}, {"area": "Stacks", "path": "app/views/stacks/index.html.erb", "before": "<h1>Stacks</h1>\n<p>Don't see one that fits? <%= link_to \"Take the personalized quiz\", new_quiz_response_path %></p>\n\n<div class=\"stacks-list\">\n  <% @stacks.each do |stack| %>\n    <div class=\"stack-card\">\n      <h2><%= link_to stack.name, stack_path(stack) %></h2>\n      <p class=\"stack-category\"><%= stack.category %></p>\n      <p><%= stack.description %></p>\n    </div>\n  <% end %>\n</div>\n", "after": "<div class=\"stacks-index\">\n  <div class=\"stacks-header\">\n    <h1>Stacks</h1>\n    <p>Don't see one that fits? <%= link_to \"Take the personalized quiz\", new_quiz_response_path %></p>\n  </div>\n\n  <div class=\"stacks-list\">\n    <% @stacks.each do |stack| %>\n      <div class=\"stack-card\">\n        <h2><%= link_to stack.name, stack_path(stack) %></h2>\n        <p class=\"stack-category\"><%= stack.category %></p>\n        <p><%= stack.description %></p>\n      </div>\n    <% end %>\n  </div>\n</div>\n"}, {"area": "Stacks", "path": "app/views/stacks/show.html.erb", "before": "<h1><%= @stack.name %></h1>\n<p><%= @stack.description %></p>\n\n<h2>Cards in this stack</h2>\n<ul class=\"card-list\">\n  <% @stack.cards.each do |card| %>\n    <li>\n      <strong><%= card.name %></strong> \u2014\n      <%= card.issuer %>,\n      annual fee: $<%= card.annual_fee %>,\n      reward rate: <%= card.reward_rate %>x\n    </li>\n  <% end %>\n</ul>\n\n<%= link_to \"Back to stacks\", stacks_path %>\n", "after": "<div class=\"stacks-show\">\n  <div class=\"stack-header\">\n    <h1><%= @stack.name %></h1>\n    <p><%= @stack.description %></p>\n  </div>\n\n  <div class=\"stack-cards\">\n    <h2>Cards in this stack</h2>\n\n    <div class=\"card-list\">\n      <% @stack.cards.each do |card| %>\n        <div class=\"card-row\">\n          <h3><%= card.name %></h3>\n          <p><%= card.issuer %></p>\n          <p>Annual fee: $<%= card.annual_fee %></p>\n          <p>Reward rate: <%= card.reward_rate %>x</p>\n        </div>\n      <% end %>\n    </div>\n  </div>\n\n  <div class=\"stack-actions\">\n    <%= link_to \"Back to stacks\", stacks_path %>\n  </div>\n</div>\n"}, {"area": "Wallet", "path": "app/views/wallet_items/index.html.erb", "before": "<h1>My Wallet</h1>\n\n<% if @wallet_items.empty? %>\n  <p>Your wallet is empty. <%= link_to \"Browse cards\", cards_path %> to add some.</p>\n<% else %>\n  <div class=\"wallet-list\">\n    <% @wallet_items.each do |wallet_item| %>\n      <% card = wallet_item.card %>\n      <div class=\"wallet-card\">\n        <h2><%= link_to card.name, card_path(card) %></h2>\n        <p><%= card.issuer %></p>\n        <p>Annual fee: $<%= card.annual_fee %></p>\n        <p>Reward rate: <%= card.reward_rate %>x</p>\n        <%= button_to \"Remove\", wallet_item_path(wallet_item), method: :delete %>\n      </div>\n    <% end %>\n  </div>\n<% end %>\n", "after": "<div class=\"wallet-index\">\n  <h1>My Wallet</h1>\n\n  <% if @wallet_items.empty? %>\n    <p class=\"wallet-empty\">Your wallet is empty. <%= link_to \"Browse cards\", cards_path %> to add some.</p>\n  <% else %>\n    <div class=\"wallet-list\">\n      <% @wallet_items.each do |wallet_item| %>\n        <% card = wallet_item.card %>\n        <div class=\"wallet-card\">\n          <h2><%= link_to card.name, card_path(card) %></h2>\n          <p><%= card.issuer %></p>\n          <p>Annual fee: $<%= card.annual_fee %></p>\n          <p>Reward rate: <%= card.reward_rate %>x</p>\n          <%= button_to \"Remove\", wallet_item_path(wallet_item), method: :delete %>\n        </div>\n      <% end %>\n    </div>\n  <% end %>\n</div>\n"}]</script>
+<script type="module">
+  import { FileDiff } from "https://esm.sh/@pierre/diffs@1.2.10?bundle";
+
+  const theme = { light: "github-light", dark: "github-dark" };
+  const options = { theme, themeType: "dark", overflow: "wrap" };
+
+  const files = JSON.parse(document.getElementById("file-data").textContent);
+  const areas = [...new Set(files.map(f => f.area))];
+  const container = document.getElementById("diff-sections");
+
+  for (const area of areas) {
+    const section = document.createElement("section");
+    section.className = "space-y-4";
+
+    const heading = document.createElement("h2");
+    heading.className = "text-2xl font-semibold border-b border-base-content/10 pb-2";
+    heading.textContent = area;
+    section.appendChild(heading);
+
+    for (const f of files.filter(x => x.area === area)) {
+      const card = document.createElement("div");
+      card.className = "card bg-base-100 shadow";
+      const body = document.createElement("div");
+      body.className = "card-body p-4";
+
+      const path = document.createElement("div");
+      path.className = "font-mono text-sm text-base-content/60 mb-2";
+      path.textContent = f.path;
+      body.appendChild(path);
+
+      const diffEl = document.createElement("div");
+      diffEl.className = "diff-file";
+      body.appendChild(diffEl);
+
+      card.appendChild(body);
+      section.appendChild(card);
+      container.appendChild(section);
+
+      new FileDiff({ ...options, diffStyle: "split" }).render({
+        containerWrapper: diffEl,
+        oldFile: { name: f.path, contents: f.before },
+        newFile: { name: f.path, contents: f.after },
+      });
+    }
+  }
+</script>

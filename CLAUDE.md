@@ -5,7 +5,7 @@ Credit card aggregator for Gen Z. Helps users find optimal credit card combinati
 ## What the app does
 
 - **Pre-made stacks**: Curated groups of 3–5 credit cards optimized for a lifestyle (e.g. Traveler, Student, Foodie). Users browse stacks and view which cards are in each.
-- **Personalized quiz**: 16-question questionnaire about spending habits, travel, dining, subscriptions, etc. Uses weighted scoring to produce a ranked list of top 5 cards.
+- **Personalized quiz**: 10-question questionnaire about spending habits, travel, dining, subscriptions, etc. Uses weighted scoring to produce a ranked list of top 5 cards.
 - **Results page**: Shows the user's recommended cards from quiz results with details on each card.
 - **My Wallet**: Users save cards they like and manage their collection. Add/remove from any card view.
 - **Card browsing**: Browse all 54 cards, view individual card details (annual fee, reward rates, perks, sign-up bonus).
@@ -76,9 +76,9 @@ resources :quiz_responses, only: [:new, :create, :show]
 
 The quiz is a **one-question-per-page wizard** with **weighted scoring** — each card is scored independently against the user's answers, avoiding nested if-statements:
 
-- Questions defined in `Card::QUIZ_QUESTIONS` constant (16 questions, mix of single-select and one multi-select capped at 3 picks)
+- Questions defined in `Card::QUIZ_QUESTIONS` constant (10 questions, mix of single-select and one multi-select capped at 3 picks)
 - Session-based flow: `session[:quiz_step]` (integer index into `QUIZ_QUESTIONS`) tracks progress, `session[:quiz_answers]` (hash) accumulates answers across requests
-- `QuizResponsesController#new` renders the current question with a "Question X of 12" progress line; `#create` stores the submitted answer and either redirects to the next question or, on the last one, scores and redirects straight to results
+- `QuizResponsesController#new` renders the current question with a "Question X of 10" progress line; `#create` stores the submitted answer and either redirects to the next question or, on the last one, scores and redirects straight to results
 - On the last question, `Card.ranked_for(session[:quiz_answers])` sorts all cards by `#quiz_score`, top 5 are saved as `QuizResponse#top_card_ids` (JSON), session state is cleared
 - Scoring weights (all in `Card`'s private methods): top priority (+3), secondary priorities (+1 each, up to 3), frequency-based bonuses for dining/travel/driving/streaming (matched against `best_for`), fee fit (+2/-2 vs `annual_fee`), credit score fit (+2/-3 vs `credit_score_min`), international travel fit (vs `foreign_transaction_fee`), cashback-vs-points preference (vs `best_for` containing "Cashback"), welcome bonus importance (vs `welcome_bonus` presence), student status (+3 vs `best_for` containing "Student")
 
@@ -131,8 +131,8 @@ as an inline script or ad-hoc JS in that file.
   results falls out of it almost free.
 - **Settle the two open design decisions** (type scale for Geist, money-out colour) — see
   *Open decisions* in DESIGN.md. Until then, do not invent values for either.
-- **Quiz length** — the quiz is 16 questions with no payoff until the end. Planned: cut to 8,
-  show results, then a "keep refining" path that reopens the rest. Needs `:edit`/`:update` on
+- **Quiz length** — the quiz is now 10 questions (cut from the original 16). A future
+  "keep refining" path could reopen removed questions. Would need `:edit`/`:update` on
   `quiz_responses`, since the record is currently created once at the end.
 - **Dark mode ignores the system preference** — `theme.css` responds only to the navbar toggle;
   there is no `prefers-color-scheme` query.

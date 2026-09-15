@@ -14,18 +14,23 @@
 
   <header class="quiz-heading">
     <h1 tabindex="-1" data-quiz-target="heading"><%= quiz_question_heading(@question) %></h1>
-    <p><%= link_to "Why are we asking this?", "/how-our-quiz-works?#{ { question: @question[:key] }.to_query }", class: "quiz-explanation-link" %></p>
+    <p><%= quiz_question_explanation(@question) %></p>
   </header>
 
   <%= form_with url: quiz_responses_path, method: :post, data: { quiz_target: "form", action: "submit->quiz#submitting turbo:submit-end->quiz#finished" } do %>
     <%= hidden_field_tag :step, @current_index %>
+    <%= hidden_field_tag :question_key, @question[:key] %>
+    <%= hidden_field_tag :quiz_token, session[:quiz_token] %>
     <% if @question[:type] == :ranked %>
-      <%# Checkbox submission follows DOM order, but position is the whole point
-          here, so the controller keeps the click order in this field and the
-          server prefers it when present. %>
-      <%= hidden_field_tag :ordered, @selected.join("\u001F"), data: { quiz_target: "ordered" } %>
+      <%= hidden_field_tag :ordered, @selected.join(""), data: { quiz_target: "ordered" } %>
     <% end %>
-    <fieldset aria-describedby="quiz-status">
+    <% if @question[:type] == :ranked %>
+      <div class="rank-board" data-quiz-target="board" hidden>
+        <div class="rank-column"><p class="rank-caption">YOUR TOP THREE <span>Most important first</span></p><div data-quiz-target="slots" class="rank-slots"></div></div>
+        <div class="rank-cloud-column"><p class="rank-caption">MAKE IT YOURS <span>Drag a choice into a slot, or tap to add</span></p><div data-quiz-target="pool" class="rank-cloud" aria-label="Available choices"></div></div>
+      </div>
+    <% end %>
+    <fieldset aria-describedby="quiz-status" class="<%= 'rank-fallback' if @question[:type] == :ranked %>">
       <legend class="visually-hidden"><%= @question[:prompt] %></legend>
       <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %>">
         <% @question[:options].each_with_index do |option, index| %>
@@ -47,17 +52,15 @@
     <p class="quiz-status" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
     <div class="quiz-controls">
       <% if @previous_step %>
-        <%= link_to "Back", new_quiz_response_path(step: @previous_step), class: "quiz-back", data: { action: "click->quiz#cancel" } %>
+        <%= link_to "Back", new_quiz_response_path(step: @previous_step), class: "quiz-back", data: { action: "click->quiz#cancel", turbo_prefetch: false } %>
       <% else %>
-        <%= link_to "Back", root_path, class: "quiz-back", data: { action: "click->quiz#cancel" } %>
+        <%= link_to "Back", root_path, class: "quiz-back", data: { action: "click->quiz#cancel", turbo_prefetch: false } %>
       <% end %>
       <% if [ :multi, :ranked ].include?(@question[:type]) %>
-        <button class="btn btn-primary quiz-done" type="submit" data-quiz-target="done"><%= @question[:type] == :ranked ? "Done ranking" : "Done selecting" %></button>
+        <button class="btn btn-primary quiz-done" type="submit" data-quiz-target="done"><%= @question[:type] == :ranked ? "Continue" : "Done selecting" %></button>
       <% end %>
       <noscript><button class="btn btn-primary" type="submit">Continue</button></noscript>
     </div>
-
-    <%# Outside the answer form so it never submits the current question. %>
   <% end %>
 
   <% if @step > 1 %>

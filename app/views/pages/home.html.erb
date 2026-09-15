@@ -1,13 +1,13 @@
 <% content_for :body_class, "home-page" %>
 <section class="hero container product-hero">
   <div class="hero-copy">
-    <div class="hero-headline"><h1><span>find your cards</span><span>build your wallet</span></h1></div>
+    <div class="hero-headline"><h1><span>find your <span class="keyword-emphasis">cards</span></span><span>build your <span class="keyword-emphasis">wallet</span></span></h1></div>
     <p class="hero-description">Compare credit cards for how you spend.<br>Find a few that work together, in one wallet.</p>
     <div class="hero-actions">
       <%= link_to "Take the quiz", new_quiz_response_path, class: "btn btn-primary", aria: { describedby: "quiz-expectations" } %>
       <%= link_to "Browse cards & stacks", cards_path, class: "btn btn-outline-dark" %>
     </div>
-    <p class="home-caption" id="quiz-expectations">Up to <%= Card::CORE_QUESTIONS.size %> questions. No account needed to see your results. Save and finish later if you need a break.</p>
+    <p class="home-caption" id="quiz-expectations">Up to <%= Card::QUIZ_LENGTH_RANGE.max %> questions. No account needed to see your results. Save and finish later if you need a break.</p>
   </div>
   <div class="hero-stacks" data-controller="hero-stacks" role="region" aria-roledescription="carousel" aria-label="Featured stacks">
     <% @featured_stacks.each_with_index do |stack, index| %>

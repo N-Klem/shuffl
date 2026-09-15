@@ -31,7 +31,7 @@
       <% else %>
         <section class="detail-foryou detail-foryou--empty" aria-label="Find out if this card fits you">
           <p class="eyebrow">Is this the right card for you?</p>
-          <p class="detail-foryou-copy"><%= Card::CORE_QUESTIONS.size %> quick questions rank all <%= @card_total %> cards against how you actually spend.</p>
+          <p class="detail-foryou-copy"><%= Card::QUIZ_LENGTH_RANGE.max %> quick questions rank all <%= @card_total %> cards against how you actually spend.</p>
           <%= link_to "Take the quiz", new_quiz_response_path, class: "btn-wallet" %>
         </section>
       <% end %>
