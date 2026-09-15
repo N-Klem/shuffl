@@ -1,10 +1,32 @@
 # Real credit-card research catalogue
 
-Initial research: 15 September 2026. 50 candidates: 30 US / USD, 20 UK / GBP (ISO country code GB).
+Researched 15 September 2026: **50 records, 30 US / USD and 20 UK / GBP**. The source collection covers all 30 US cards and 19 UK cards. M&S Shopping Plus remains on hold because its exact current variant could not be confirmed.
 
-## What is built
+## Sources and scope
 
-`catalogue.json` is a portable initial research import. `CardCandidate` stores it in PostgreSQL's `card_candidates` table. These are **review candidates**, not published `Card` records. No migration or task deletes fictional cards, replaces wallet items, changes old quiz results, or mixes countries in the live catalogue.
+- **US:** NerdWallet card reviews are the primary source, with issuer evidence retained where useful.
+- **UK:** MoneySavingExpert covers nine shortlisted cards; issuer pages and summary boxes fill other coverage. NerdWallet's UK comparison service closed on 24 March 2026.
+- Core rewards, account fees, foreign purchase fees, observed welcome offers, selected perks and available interest/eligibility guidance are captured. Sources include URLs, access dates and evidence labels.
+- This is a demo research dataset, not a weekly updater. A source may omit dynamic pricing or personalised bonuses. Those fields stay explicitly unresolved rather than receiving guessed values.
+
+The data lives in `catalogue.json` and the local PostgreSQL `card_candidates` table. **The live app still uses the fictional catalogue. No Heroku data or deployment was changed.** Country selection, live-card import and recommendation integration are separate remaining work.
+
+## Read the data
+
+- `review/cards.md`: readable card-by-card facts and clickable sources.
+- `review/cards.csv`: spreadsheet export of the same database records.
+- `review/unknowns.md` and `.csv`: regenerated source gaps and caveats, including optional fields. These replace the original blanket manual-lookup checklist.
+
+There are account-fee values for 48 records and foreign-purchase-fee values for 45. The substantive gaps are:
+
+- M&S Shopping Plus: exact offer, fees and rewards unresolved; `demo_inclusion: hold`.
+- Halifax Clarity: account fee unresolved.
+- Amazon Barclaycard, Barclaycard Avios, Avios Plus and Capital One Classic: exact foreign purchase fee unresolved.
+- UK British Airways Amex and Marriott Amex: retrieved pages omit a new-card welcome amount.
+
+Missing networks, additional perks, numerical APRs and general eligibility are also listed where relevant. They do not all block a rewards demo. No universal numerical credit-score approval threshold is invented.
+
+## Import and export
 
 ```sh
 bundle exec rails db:migrate
@@ -12,54 +34,37 @@ bundle exec rails cards:catalogue:import
 bundle exec rails cards:catalogue:export
 ```
 
-Exports live at `data/real_cards/review/cards.csv` and `cards.md`. The Markdown version has clickable sources. CSV can be opened in a spreadsheet; edits to the export do not automatically update the database.
+Import adds missing candidates and **preserves every existing record**, including manual edits. It is not a refresh command. The research collection in this change was explicitly refreshed into the local database only where pending records still matched the preceding JSON; reviewed or manually changed records would have been preserved.
 
-## How to review
+For an existing database, reconcile JSON changes with the stored research explicitly. Do not delete and reimport to refresh it. Spreadsheet edits do not automatically change the database. Export regenerates both the full catalogue and the gaps from database records.
 
-Open each source and check the exact card, country, new-applicant availability, ongoing fee, first-year fee, foreign purchase fee, reward categories/caps, bonus requirements and eligibility. Send corrections using the stable `source_key`, or edit the candidate in Rails console. Mark a record `reviewed` or `rejected` only with `reviewed_by` and `reviewed_at`. `reviewed` records still do not publish to the app.
+`review_status` describes human review only. It remains `pending` until someone actually reviews a record; automated research does not impersonate a reviewer. `research_status` separately describes NerdWallet, MSE or issuer coverage. Neither field automatically publishes cards. Human review can be recorded with `reviewed_by` and `reviewed_at`, but this source-gathering task does not require a manual review of every card for the demo.
 
-Example after completing a manual check (replace values with real findings):
+## Interpret the fields
 
-```ruby
-candidate = CardCandidate.find_by!(source_key: "us-chase-sapphire-preferred")
-research = candidate.research.deep_dup
-# Correct research fields and source details here using the issuer page.
-candidate.update!(research: research, review_notes: "Describe exactly what was checked")
-# When finished, separately record the actual reviewer and time:
-# candidate.update!(review_status: "reviewed", reviewed_by: "Your name", reviewed_at: Time.current)
-```
+- **Fees:** decimal strings in the record's currency. Monthly billing is separate from annual billing. Applicability fields explain why an alternative billing field is blank. `annual_conditions` and `foreign_purchase_conditions` must accompany the amount.
+- **Rewards:** points, miles and cashback use different units. `rewards_complete` means the captured core earning schedule, not exhaustive benefits or every merchant promotion. Scope and conditions remain attached. No rewards advertised is distinct from confirmed no rewards and from an unresearched schedule.
+- **Welcome offers:** status distinguishes observed, personalised, no offer, no offer advertised on the retrieved page and an amount that could not be captured. Never add a referral reward to a new-card bonus.
+- **Perks:** selected benefits with relevant caps and spending/enrolment conditions. Not an exhaustive insurance policy. An empty list means no additional perks captured.
+- **Eligibility:** partial guidance. `editorial_credit_guidance` is a publisher's recommendation, not an issuer approval requirement; `credit_score_min` remains null.
+- **Sources:** `editorial_review` / `editorial_guide`, `official_page` and `official_search_extract` distinguish the evidence. Search extracts can lag. Access dates are not offer effective dates. Sources support the record collectively; this is not a field-level historical audit.
+- **Quiz tags and recommendation conditions:** Shuffl's editorial mapping. They do not change current scoring.
 
-Repeat imports intentionally preserve existing records, including pending records with manual edits. Updating the JSON does not overwrite database research. Importing a malformed batch rolls back new inserts. There is no automatic promotion or weekly scraping yet.
+## Conditions to preserve during integration
 
-## Meaning of the fields
+- Freedom Flex's foreign fee changes on 20 September 2026; use the current value until its effective date. Future rotating categories and temporary Lyft earnings must respect their dates.
+- United's hotel booking-channel total includes earnings beyond the credit card; `earning_basis` marks this. Do not score it as a pure card multiplier.
+- Virgin Reward caps monthly reward-earning spend at the credit limit. Its foreign-fee waiver applies only to specified currencies and locations, not all overseas spending.
+- John Lewis pays vouchers, Amazon Barclaycard pays gift cards, and Yonder points have experience-specific redemption values.
+- Amex Cashback Everyday UK requires GBP 3,000 annual spending for cashback payment. Lloyds Ultra and Amazon Barclaycard introductory rates differ from ongoing rates.
+- Personalised Amex/Yonder offers are not guaranteed amounts. Wells Fargo's selected-channel bonus differs from an older issuer result; Discover Student's NerdWallet offer must not be combined with a different issuer promotion.
+- John Lewis has a future terms change on 25 September 2026. A Bank of America student-card source also contains conflicting availability information; retained source caveats explain it.
 
-- `source_key`: stable country-specific identity, independent of renames.
-- `fees`: decimal strings in the card's currency; annual and monthly billing stay separate. Introductory waivers are described explicitly. A monthly fee is not a billed annual fee.
-- `rewards`: numeric rate strings with explicit units and conditions. A multiplier is not cash value. Shared caps, portal requirements and introductory periods must remain attached to their rates. Schedules are partial and marked `rewards_complete: false` until reviewed.
-- `welcome_offer`: observed offer text, not a guaranteed offer for every applicant. Null means not captured, not no bonus. Referrals and incidental account credits are not ordinary spending bonuses.
-- `eligibility`, `network`, `credit_score_min`: unknown unless supported. No invented numerical approval scores. Issuer display names may still need legal-entity verification.
-- `sources`: official URLs, access date, evidence type. `official_page` means page text was retrieved; `official_search_extract` means information came from an issuer search result and may lag the live page. Neither means human approval. Source dates are not guaranteed offer effective dates. Sources support the record collectively, not a field-by-field audit trail.
-- `quiz_tags` / `recommendation_conditions`: Shuffl's editorial mapping, not issuer facts. These do not change current quiz scoring.
-- `availability`: product listed is not verified application availability. M&S Shopping Plus needs exact-variant confirmation.
-- `review_flags`: unresolved research questions. `perks` is initially empty: benefits are not fully extracted. Null, empty reward lists and empty perks lists are not proof that a card lacks them.
-
-## Important findings
-
-- Wells Fargo Active Cash currently shows USD 100 on the retrieved channel, while an older terms result shows USD 200. Preserve channel and recheck.
-- Some issuer pages omit dynamic welcome/pricing numbers. These remain unknown rather than being reconstructed from memory.
-- John Lewis publishes a future rewards change for 25 September 2026. Preserve the effective date when reviewing.
-- Hyatt and United headline multipliers include loyalty-program earnings. The research uses card-only rates where supported.
-- Lloyds Ultra and Amazon Barclaycard have first-year rates that differ from ongoing rates.
-- Discover sources now link into Capital One; legal issuer and application details need verification.
-- Some sources still use the legal names Platinum Cashback / Platinum Cashback Everyday while marketing uses Cashback / Cashback Everyday.
-
-## Remaining product work
-
-After human review: migrate approved facts into a country-aware live catalogue, replace the fictional source consumed by `BrowseCatalogue`, add country selection/localised quiz wording and conditional brand/eligibility checks, and update reward scoring. The current app still reads `data/cards.json` and the existing `cards` table. This step builds the research database and review package only.
-
-Tests:
+## Validation
 
 ```sh
-RAILS_ENV=test bundle exec rails db:migrate
 bundle exec rails test test/models/card_candidate_test.rb
+bundle exec rubocop lib/tasks/card_catalogue.rake --cache false
 ```
+
+The import tests cover all 50 records, market and numeric validation, manual-edit preservation and rollback. Live Cards, wallets, stacks and quiz results remain separate.
