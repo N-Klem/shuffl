@@ -22,7 +22,11 @@
 .home-page .stacks > .row { margin: 0; --bs-gutter-x: 0; --bs-gutter-y: 0; }
 .home-page .stack-col { padding: 0 16px; border-color: var(--home-rule); }
 .home-page .stack-tile { gap: 10px; position: relative; container-type: inline-size; }
-.home-page .stack-fan { height: clamp(240px, 20vw, 330px); perspective: 1400px; cursor: pointer; }
+/* z-index 2 keeps the fan — and a card collapsing back into it — above the
+   info panel below, so the card animates over the panel's white surface
+   instead of sliding under it. The cards are already positioned against the
+   fan, so this changes stacking only, not layout. */
+.home-page .stack-fan { height: clamp(240px, 20vw, 330px); perspective: 1400px; cursor: pointer; position: relative; z-index: 2; }
 .home-page .fan-card {
   top: clamp(45px, 4vw, 66px); width: 57%; height: auto; aspect-ratio: 1.586;
   border-radius: 9px; transform-origin: center;
@@ -149,6 +153,10 @@
   padding: 14px 16px 10px;
   margin: -4px auto 0;
   max-width: 280px;
+  /* Reserve the panel's space permanently so the heading and link below it
+     stay put — it fades in/out (opacity) rather than being added to and
+     removed from the flow, which is what pushed the layout down on hover. */
+  min-height: 116px;
   border: 1px solid var(--hairline);
   border-radius: 10px;
   background: var(--surface-raised);
@@ -158,6 +166,8 @@
   opacity: 0;
   transform: translateY(-6px);
   transition: opacity 200ms ease, transform 200ms ease;
+  position: relative;
+  z-index: 1; /* below the fan (z-index 2) so a collapsing card passes over, not under */
 }
 .stack-card-info.is-visible {
   opacity: 1;
@@ -167,7 +177,7 @@
 .stack-card-info dl { margin: 8px 0 4px; display: grid; gap: 4px; }
 .stack-card-info dl > div { display: flex; justify-content: space-between; gap: 8px; }
 .stack-card-info dt { font-weight: 400; color: var(--muted); }
-.stack-card-info dd { margin: 0; text-align: right; }
+.stack-card-info dd { margin: 0; text-align: right; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .stack-card-info .stack-card-disclosure { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
 @media (prefers-reduced-motion: reduce) {
   .stack-card-info { transition: none; }

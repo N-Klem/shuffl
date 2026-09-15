@@ -21,9 +21,11 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     get card_path(@card)
     assert_response :success
     assert_select "h1", "Detail test"
-    assert_select ".detail-figure", /\$95/
+    assert_select ".detail-figure", /4x/                 # leads with value (reward rate), not the fee
+    assert_select ".detail-facts .value", text: /\$95/   # the fee is demoted into the facts
     assert_select ".detail-perks li", count: 2
     assert_select ".detail-tags li", count: 2
+    assert_select ".detail-tags a[href=?]", cards_path(category: "Travel")  # tags are filter links
     assert_select ".detail-stacks a", text: /Test stack/
     assert_select ".mini-cards li", count: 1
     assert_select ".mini-cards .name", "Similar test"
@@ -90,7 +92,8 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select '.nav-links a', text: "Browse"
     assert_select '.nav-links a', text: "Cards", count: 0
     assert_select '.nav-links a', text: "Stacks", count: 0
-    assert_select '.wordmark', text: "shuffl."
+    assert_select ".wordmark", text: "shuffl"
+    assert_select ".wordmark .wordmark-dot"
 
     user = User.create!(first_name: "Nav", email: "nav-test@example.com", password: "password123")
     sign_in user

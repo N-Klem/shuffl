@@ -38,11 +38,11 @@
     </div>
 
     <div>
-      <p class="detail-figure"><%= figure_with_pence(@card.annual_fee) %></p>
-      <p class="detail-figure-label">Annual fee</p>
+      <p class="detail-figure"><%= number_with_precision(@card.reward_rate, strip_insignificant_zeros: true) %>x</p>
+      <p class="detail-figure-label">Top reward rate</p>
 
       <ul class="detail-facts">
-        <li><span class="key">Top reward rate</span><span class="value"><%= @card.reward_rate %>x</span></li>
+        <li><span class="key">Annual fee</span><span class="value"><%= @card.annual_fee.to_i.zero? ? "None" : number_to_currency(@card.annual_fee, precision: 0) %></span></li>
         <li><span class="key">Welcome bonus</span><span class="value"><%= @card.welcome_bonus.presence || "None" %></span></li>
         <li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min.presence || "Not specified" %></span></li>
         <li><span class="key">Foreign transaction fee</span><span class="value"><%= @card.foreign_transaction_fee? ? "Yes" : "None" %></span></li>
@@ -66,7 +66,7 @@
           <h2>Best for</h2>
           <ul class="detail-tags">
             <% categories.each do |category| %>
-              <li><%= category %></li>
+              <li><%= link_to category, cards_path(category: category), "aria-label": "Browse #{category} cards" %></li>
             <% end %>
           </ul>
         </div>
