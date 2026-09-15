@@ -299,11 +299,29 @@
     background: none;
   }
   .compare-label {
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
+    font-size: 13px;
+    color: var(--ink);
+    display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--hairline-strong);
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+  .compare-label:hover,
+  .compare-label:focus-within {
+    border-color: var(--ink);
+  }
+  /* Selected = the inverted-ink pill Shuffl already uses for active states, so
+     it reads in both themes and burgundy stays reserved for the one action. */
+  .compare-label:has(input:checked) {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--surface);
   }
   .compare-label input {
     accent-color: var(--burgundy);
@@ -371,10 +389,10 @@
     position: fixed;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50%);
-    background: white;
+    transform: translate(-50%, 0);
+    background: var(--surface-raised);
     border: 1px solid var(--hairline-strong);
-    border-radius: 8px;
+    border-radius: var(--radius-button);
     box-shadow: 0 10px 40px #0002;
     padding: 12px 20px;
     display: flex;
@@ -383,9 +401,19 @@
     z-index: 10;
     font-size: 13px;
     max-width: 90vw;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 160ms ease, transform 200ms cubic-bezier(0.23, 1, 0.32, 1), visibility 0s;
   }
+  /* Selecting a row raises the bar rather than popping it in. Hidden keeps its
+     display so the exit can fade; visibility pulls it from the a11y tree. */
   .tray[hidden] {
-    display: none;
+    display: flex !important;
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 160ms ease, transform 200ms cubic-bezier(0.23, 1, 0.32, 1), visibility 0s linear 200ms;
   }
   .empty {
     padding: 60px;
@@ -399,7 +427,7 @@
     overflow: auto;
     border: 1px solid var(--hairline-strong);
     padding: 32px;
-    border-radius: 9px;
+    border-radius: var(--radius-card);
     box-shadow: 0 30px 100px #0003;
   }
   dialog::backdrop {
@@ -458,12 +486,17 @@
   th,
   td {
     text-align: left;
-    border-bottom: 1px solid var(--hairline-strong);
+    border-bottom: 1px solid var(--hairline);
     padding: 15px 10px;
     vertical-align: top;
+    font-variant-numeric: tabular-nums;
   }
   th {
     font-weight: 500;
+  }
+  tbody th {
+    font-weight: 400;
+    color: var(--muted);
   }
   .toast {
     position: fixed;
