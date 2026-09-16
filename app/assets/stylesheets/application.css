@@ -88,6 +88,11 @@ a {
   --bs-btn-hover-color: #FFFFFF;
   --bs-btn-active-bg: var(--burgundy-hover);
   --bs-btn-active-border-color: var(--burgundy-hover);
+  /* A disabled primary stays burgundy at Bootstrap's disabled opacity instead of
+     falling through to its default blue. */
+  --bs-btn-disabled-bg: var(--burgundy);
+  --bs-btn-disabled-border-color: var(--burgundy);
+  --bs-btn-disabled-color: var(--bs-btn-color);
 }
 
 .btn-outline-dark {
