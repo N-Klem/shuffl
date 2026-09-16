@@ -1,7 +1,7 @@
 class CardAssistant
   ISSUER_DOMAINS = %w[chase.com americanexpress.com capitalone.com citi.com discover.com bankofamerica.com wellsfargo.com usbank.com barclaycardus.com synchrony.com bilt.com biltrewards.com].freeze
   # The assistant's name, shown in the panel and on its replies. Change it here only.
-  NAME = "pip"
+  NAME = "chip"
   REFUSAL = "I can help with Shuffl cards, stacks, rewards, fees and your shortlist. Please ask a question about those."
   UNKNOWN = "I couldn't verify an answer from the catalogue or the permitted issuer sources. Please try a more specific card question, or check the issuer's terms."
 
