@@ -442,14 +442,25 @@ Every page must have a bottom; none may end in empty white.
 
 ### Results
 
-- Display headline: "Here are the cards we recommend."
-- Subtitle: "Your recommended stack"
-- Left panel: "Your stack at a glance" summary (annual fees, sign-up bonuses, estimated
-  yearly rewards, estimated first-year value)
-- Lead card gets the single burgundy "Keep this card" / "Apply for this card" button
-- Runner-up cards: compact clickable rows with thumbnail, name, figures — their apply buttons
-  live on detail pages
-- Disclosure text directly under figures
+*Binding, simplified at Noah’s request.*
+- Show only the recommended cards and the actions to keep, swap and save them.
+- Present recommendations as compact horizontal rows separated by hairlines, with
+  small card artwork, a role headline, earning details and an aligned fee. Keep
+  Keep, Swap and the expandable explanation together; avoid large boxed panels.
+- Each card explains “Use for” a concrete qualifying purchase category and highlights
+  the captured cashback percentage or points/miles per dollar, with material conditions.
+- Keep the card artwork, name and ongoing annual fee visible. Supporting match reasons
+  and benefits can sit behind “Why this card?”. Empty reward and offer rows are omitted.
+- Lead each card with a prominent role hook tied to its suggested use (for example,
+  “Your online shopper”). Highlight earning rates in pine, positive ongoing fees in
+  brick, and zero-fee labels in neutral ink. Keep conditions beside the earning rate.
+  Credit-building cards get an honest credit-builder hook, never a rewards claim.
+- No spending slider, budget inputs, programme selectors, annual earnings estimates,
+  separate usage planner, summary sidebar or application timeline on Results.
+- Spending planning belongs in My Wallet. Its calculations require confirmed spending,
+  preserve original reward currencies and count each purchase once.
+- Historical cards and saved recommendations remain intact. Known facts take the place
+  of missing metrics; never invent rewards for cards that do not earn them.
 
 ### My Wallet
 
