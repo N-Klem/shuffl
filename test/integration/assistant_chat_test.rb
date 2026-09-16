@@ -18,6 +18,16 @@ class AssistantChatTest < ActionDispatch::IntegrationTest
     @reply = { paragraphs: [ { text: "What card would you like to inspect?", kind: "question", evidence_ids: [] } ], sources: [], cards: [], stacks: [] }
   end
 
+  test "panel names the assistant and offers starter prompts once signed in" do
+    get root_path
+    assert_select "#assistant-title", text: CardAssistant::NAME
+    assert_select ".assistant-starters", 0
+    sign_in @user
+    get root_path
+    assert_select ".assistant-starters button[data-prompt]", 3
+    assert_select "[data-assistant-name-value=?]", CardAssistant::NAME
+  end
+
   test "all chat endpoints require sign in" do
     get assistant_chat_path, as: :json
     assert_response :unauthorized

@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear"]
-  static values = { url: String, saveUrl: String }
+  static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear", "starters", "status", "intro"]
+  static values = { url: String, saveUrl: String, name: String }
 
   connect() {
     this.x = 24
@@ -33,6 +33,7 @@ export default class extends Controller {
 
   disconnect() {
     this.request?.abort()
+    clearTimeout(this.pendingTimer)
     if (this.pageObserver) this.pageObserver.disconnect()
     removeEventListener("load", this.repark)
   }
@@ -46,6 +47,8 @@ export default class extends Controller {
     const top = this.parkedY()
     this.orbTarget.style.top = `${top}px`
     if (!this.panelTarget.hidden) {
+      // Phone widths dock the panel as a sheet from the stylesheet; inline offsets would override it.
+      if (innerWidth <= 640) { this.panelTarget.style.left = ""; this.panelTarget.style.top = ""; return }
       const width = this.panelTarget.offsetWidth
       const height = this.panelTarget.offsetHeight
       const anchor = this.parkedX()
@@ -136,6 +139,18 @@ export default class extends Controller {
     try { localStorage.setItem("shuffl-assistant-position", JSON.stringify({ x: this.x, y: this.y })) } catch (_) {}
   }
 
+  // Enter sends, as in every chat; Shift+Enter keeps the newline.
+  keydown(event) {
+    if (event.key !== "Enter" || event.shiftKey || event.isComposing) return
+    event.preventDefault()
+    this.formTarget.requestSubmit()
+  }
+
+  starter(event) {
+    this.inputTarget.value = event.currentTarget.dataset.prompt
+    this.formTarget.requestSubmit()
+  }
+
   async loadChat() {
     if (this.busy) return
     this.setBusy(true)
@@ -147,7 +162,9 @@ export default class extends Controller {
         this.addReply(message.reply)
       })
       this.loaded = true
-      this.feedbackTarget.textContent = data.configured ? `${data.remaining} messages left today.` : "Chat isn't connected yet. You can still browse cards and stacks."
+      this.showIntro(data.messages.length === 0)
+      this.showRemaining(data.configured ? data.remaining : null)
+      this.feedbackTarget.textContent = data.configured ? "" : "Chat isn't connected yet. You can still browse cards and stacks."
     } catch (error) { this.showError(error) }
     finally { this.setBusy(false); this.resize() }
   }
@@ -158,15 +175,19 @@ export default class extends Controller {
     const question = this.inputTarget.value.trim()
     if (!question) return
     this.setBusy(true)
+    this.showIntro(false)
+    this.feedbackTarget.textContent = ""
     this.addQuestion(question)
     this.inputTarget.value = ""
-    this.feedbackTarget.textContent = "Checking the catalogue and relevant sources…"
+    this.addPending()
     try {
       const data = await this.fetchJson(this.urlValue, "POST", { message: question })
+      this.removePending()
       this.addReply(data.reply)
-      this.feedbackTarget.textContent = `${data.remaining} messages left today.`
+      this.showRemaining(data.remaining)
     } catch (error) {
-      this.showError(error)
+      this.removePending()
+      this.addError(error.name === "AbortError" ? "That took too long. Please try again shortly." : error.message)
       this.inputTarget.value = question
     } finally {
       this.setBusy(false)
@@ -181,6 +202,7 @@ export default class extends Controller {
     try {
       await this.fetchJson(this.urlValue, "DELETE")
       this.messagesTarget.replaceChildren()
+      this.showIntro(true)
       this.feedbackTarget.textContent = "Conversation cleared. Your daily message limit stays the same."
     } catch (error) { this.showError(error) }
     finally { this.setBusy(false); this.resize() }
@@ -223,6 +245,16 @@ export default class extends Controller {
     this.messagesTarget.setAttribute("aria-busy", String(busy))
   }
 
+  // The introduction and starters belong to an empty conversation only.
+  showIntro(show) {
+    this.introTarget.hidden = !show
+    this.startersTarget.hidden = !show
+  }
+
+  showRemaining(remaining) {
+    this.statusTarget.textContent = remaining === null || remaining === undefined ? "" : `${remaining} messages left today`
+  }
+
   showError(error) {
     this.feedbackTarget.textContent = error.name === "AbortError" ? "That took too long. Please try again shortly." : error.message
   }
@@ -241,9 +273,34 @@ export default class extends Controller {
     this.scrollMessages()
   }
 
+  // The wait sits in the transcript, where the answer will land. Issuer lookups
+  // take longer than catalogue answers, so the wording changes once it is likely one.
+  addPending() {
+    const article = this.element("article", undefined, "assistant-message assistant-pending")
+    const text = this.element("p", "Reading the catalogue…")
+    article.append(this.element("strong", this.nameValue), text)
+    this.messagesTarget.append(article)
+    this.pending = article
+    this.pendingTimer = setTimeout(() => { text.textContent = "Checking issuer sites too. This can take a few more seconds…" }, 6000)
+    this.scrollMessages()
+  }
+
+  removePending() {
+    clearTimeout(this.pendingTimer)
+    this.pending?.remove()
+    this.pending = null
+  }
+
+  addError(text) {
+    const article = this.element("article", undefined, "assistant-message assistant-error")
+    article.append(this.element("strong", this.nameValue), this.element("p", text))
+    this.messagesTarget.append(article)
+    this.scrollMessages()
+  }
+
   addReply(reply) {
     const article = this.element("article", undefined, "assistant-message")
-    article.append(this.element("strong", "Assistant"))
+    article.append(this.element("strong", this.nameValue))
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
       const p = this.element("p", paragraph.text)
@@ -329,6 +386,8 @@ export default class extends Controller {
 
   scrollMessages() {
     this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
+    // As a sheet the panel is the only scroller, so bring the newest message and the box into view.
+    this.panelTarget.scrollTop = this.panelTarget.scrollHeight
     this.resize()
   }
 }

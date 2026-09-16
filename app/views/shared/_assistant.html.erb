@@ -1,24 +1,31 @@
-<div class="floating-assistant" data-controller="assistant" data-assistant-url-value="<%= assistant_chat_path %>" data-assistant-save-url-value="<%= save_browse_wallet_items_path %>" data-action="keydown.esc@window->assistant#close resize@window->assistant#resize scroll@window->assistant#resize">
-  <button type="button" class="assistant-orb" data-assistant-target="orb" data-action="pointerdown->assistant#start pointermove->assistant#move pointerup->assistant#end pointercancel->assistant#cancel click->assistant#toggle keydown->assistant#keyboard" aria-label="Ask shuffl. Drag to move, or use arrow keys when focused." aria-expanded="false" aria-controls="assistant-panel">
+<div class="floating-assistant" data-controller="assistant" data-assistant-url-value="<%= assistant_chat_path %>" data-assistant-save-url-value="<%= save_browse_wallet_items_path %>" data-assistant-name-value="<%= CardAssistant::NAME %>" data-action="keydown.esc@window->assistant#close resize@window->assistant#resize scroll@window->assistant#resize">
+  <button type="button" class="assistant-orb" data-assistant-target="orb" data-action="pointerdown->assistant#start pointermove->assistant#move pointerup->assistant#end pointercancel->assistant#cancel click->assistant#toggle keydown->assistant#keyboard" aria-label="Ask <%= CardAssistant::NAME %>. Drag to move, or use arrow keys when focused." aria-expanded="false" aria-controls="assistant-panel">
     <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"/><path d="M7 9h10M7 13h6"/></svg>
   </button>
   <section id="assistant-panel" class="assistant-panel" data-assistant-target="panel" role="region" aria-labelledby="assistant-title" hidden>
-    <header><h2 id="assistant-title">Ask <%= render "shared/wordmark", link: false %></h2><button type="button" class="assistant-close" data-action="assistant#close" aria-label="Close assistant">×</button></header>
+    <header><h2 id="assistant-title"><%= CardAssistant::NAME %></h2><button type="button" class="assistant-close" data-action="assistant#close" aria-label="Close assistant">×</button></header>
     <% if user_signed_in? %>
-      <p class="assistant-intro">Compare cards, explore stacks, or find a card for your spending. Catalogue facts and issuer sources; unknowns stay unknown.</p>
+      <p class="assistant-intro" data-assistant-target="intro"><%= CardAssistant::NAME %> compares cards, explores stacks and finds a card for your spending, using catalogue facts and issuer sources. Unknowns stay unknown.</p>
       <div class="assistant-messages" data-assistant-target="messages" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions"></div>
+      <div class="assistant-starters" data-assistant-target="starters">
+        <p>Try one to start</p>
+        <button type="button" data-action="assistant#starter" data-prompt="Which cards have no foreign transaction fee?">Cards with no foreign transaction fee</button>
+        <button type="button" data-action="assistant#starter" data-prompt="What's in the Everyday Cashback stack, and who is it for?">Inside the Everyday Cashback stack</button>
+        <button type="button" data-action="assistant#starter" data-prompt="What are the latest terms for the Chase Sapphire Preferred?">Latest Sapphire Preferred terms</button>
+      </div>
       <p class="assistant-feedback" data-assistant-target="feedback" role="status"></p>
       <form data-assistant-target="form" data-action="submit->assistant#send">
-        <label for="assistant-question">Your card question</label>
-        <textarea id="assistant-question" data-assistant-target="input" maxlength="1500" rows="2" required placeholder="Which cards have no foreign transaction fee?"></textarea>
+        <label for="assistant-question">Ask <%= CardAssistant::NAME %></label>
+        <textarea id="assistant-question" data-assistant-target="input" data-action="keydown->assistant#keydown" maxlength="1500" rows="2" required placeholder="Which cards have no foreign transaction fee?"></textarea>
         <div class="assistant-compose-actions">
-          <button type="button" data-assistant-target="clear" data-action="assistant#clearChat">Clear chat</button>
-          <button type="submit" data-assistant-target="send">Send</button>
+          <button type="button" class="assistant-clear" data-assistant-target="clear" data-action="assistant#clearChat">Clear chat</button>
+          <button type="submit" class="assistant-send" data-assistant-target="send">Send</button>
         </div>
       </form>
-      <p class="assistant-disclosure">AI can make mistakes. Check issuer terms before applying. Don't share account details. Messages are sent to OpenAI to answer your question.</p>
+      <p class="assistant-status" data-assistant-target="status"></p>
+      <p class="assistant-disclosure">AI can make mistakes: check issuer terms before applying. Don't share account details. Questions are sent to OpenAI.</p>
     <% else %>
-      <p>Ask about our cards and stacks, then save your shortlist right here.</p>
+      <p>Ask <%= CardAssistant::NAME %> about our cards and stacks, then save your shortlist right here.</p>
       <%= link_to "Sign in to chat →", new_user_session_path, class: "tertiary-link" %>
     <% end %>
   </section>
