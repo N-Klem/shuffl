@@ -12,3 +12,28 @@
 .assistant-panel .tertiary-link { font-size: 14px; }
 html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.94); --assistant-edge:rgba(210,185,196,.2); }
 @media (prefers-reduced-transparency:reduce) { .floating-assistant { --assistant-glass:#f7f7f9; } html[data-theme="dark"] .floating-assistant { --assistant-glass:#231d22; } }
+
+/* Chat stays within the existing floating surface, including on small screens. */
+.floating-assistant .assistant-panel { width: min(440px, calc(100vw - 24px)); padding: 24px; background: var(--surface); }
+.assistant-panel header { margin-bottom: 12px; }
+.assistant-panel .assistant-close { min-width: 44px; min-height: 44px; }
+.assistant-panel .assistant-intro, .assistant-panel .assistant-disclosure { margin: 8px 0; font-size: 13px; }
+.assistant-messages { max-height: min(48dvh, 440px); overflow-y: auto; overscroll-behavior: contain; overflow-wrap: anywhere; }
+.assistant-message { padding: 12px 0; border-top: 1px solid var(--hairline); font-size: 14px; }
+.assistant-message > strong { font-size: 13px; color: var(--muted); }
+.assistant-message p { color: var(--body-color); margin: 8px 0; white-space: pre-wrap; }
+.assistant-question { padding-left: 16px; }
+.assistant-panel label { display: block; font-size: 14px; margin-bottom: 8px; }
+.assistant-panel textarea { width: 100%; max-height: 120px; resize: vertical; padding: 12px; border: 1px solid var(--hairline); border-radius: var(--radius-button); color: var(--ink); background: var(--surface-field); font: inherit; font-size: var(--text-dense); }
+.assistant-compose-actions, .assistant-item-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.assistant-panel button:not(.assistant-close) { min-height: 44px; border: 1px solid var(--hairline); border-radius: var(--radius-button); background: var(--surface); color: var(--ink); padding: 8px 12px; font: inherit; font-size: 14px; }
+.assistant-panel button:disabled { opacity: .55; cursor: default; }
+.assistant-panel button:focus-visible, .assistant-panel textarea:focus-visible, .assistant-panel a:focus-visible, .assistant-panel summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.assistant-panel a { color: var(--ink); text-underline-offset: 3px; }
+.assistant-panel .assistant-feedback { min-height: 20px; font-size: 13px; margin: 8px 0; }
+.assistant-item, .assistant-sources { border-top: 1px solid var(--hairline); padding: 8px 0; }
+.assistant-panel summary { cursor: pointer; padding: 12px 0; min-height: 44px; color: var(--ink); font-size: 14px; }
+.assistant-item dt { text-transform: capitalize; font-weight: 600; margin-top: 8px; }
+.assistant-item dd { margin-left: 12px; color: var(--body-color); }
+.assistant-item ul { padding-left: 20px; }
+.assistant-item li { margin: 8px 0; }

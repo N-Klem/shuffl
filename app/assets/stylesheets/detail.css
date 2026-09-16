@@ -219,7 +219,7 @@
 
 .stack-cards > li {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr) auto;
+  grid-template-columns: 140px minmax(0, 1fr);
   gap: 24px;
   align-items: center;
   padding: 24px 0;
@@ -229,7 +229,7 @@
 .stack-cards .detail-art { aspect-ratio: 1.58; border-radius: 10px; }
 .stack-cards .name { font-size: 19px; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); margin: 0; }
 .stack-cards .issuer { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
-.stack-cards .figures { text-align: right; font-variant-numeric: tabular-nums lining-nums; }
+.stack-cards .figures { grid-column: 2; min-width: 0; overflow-wrap: anywhere; text-align: left; font-variant-numeric: tabular-nums lining-nums; }
 .stack-cards .figures strong { display: block; font-size: 19px; font-weight: 600; letter-spacing: -0.03em; }
 .stack-cards .figures small { color: var(--muted); font-size: 13px; }
 .stack-cards a { text-decoration: none; color: inherit; }
@@ -326,3 +326,5 @@ a:hover > .detail-art, a:focus-visible > .detail-art { transform: translateY(-4p
 @media (prefers-reduced-motion: reduce) {
   .detail-art { transition: none; }
 }
+
+.stack-cards .stack-role { margin: 8px 0 0; color: var(--body-color); font-size: var(--text-dense); line-height: 1.55; }

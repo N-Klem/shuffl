@@ -10,9 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_16_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "assistant_messages", force: :cascade do |t|
+    t.string "conversation_key", null: false
+    t.datetime "created_at", null: false
+    t.integer "input_tokens", default: 0, null: false
+    t.integer "output_tokens", default: 0, null: false
+    t.text "question", null: false
+    t.jsonb "reply", default: {}, null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["created_at"], name: "index_assistant_messages_on_created_at"
+    t.index ["user_id", "conversation_key", "created_at"], name: "index_assistant_conversation"
+    t.index ["user_id"], name: "index_assistant_messages_on_user_id"
+  end
 
   create_table "card_candidates", force: :cascade do |t|
     t.string "country", null: false
@@ -30,24 +45,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
     t.index ["country", "review_status"], name: "index_card_candidates_on_country_and_review_status"
     t.index ["source_key"], name: "index_card_candidates_on_source_key", unique: true
     t.check_constraint "country::text = 'US'::text AND currency::text = 'USD'::text OR country::text = 'GB'::text AND currency::text = 'GBP'::text", name: "card_candidates_market"
-    t.check_constraint "review_status::text = ANY (ARRAY['pending'::character varying, 'reviewed'::character varying, 'rejected'::character varying]::text[])", name: "card_candidates_review_status"
+    t.check_constraint "review_status::text = ANY (ARRAY['pending'::character varying::text, 'reviewed'::character varying::text, 'rejected'::character varying::text])", name: "card_candidates_review_status"
   end
 
   create_table "cards", force: :cascade do |t|
-    t.integer "annual_fee"
+    t.decimal "annual_fee", precision: 10, scale: 2
     t.text "best_for"
     t.string "card_type"
+    t.string "catalogue_status", default: "legacy", null: false
+    t.jsonb "catalogue_terms", default: {}, null: false
+    t.string "country"
     t.datetime "created_at", null: false
     t.integer "credit_score_min"
+    t.string "currency"
     t.text "description"
-    t.boolean "foreign_transaction_fee", default: false, null: false
+    t.boolean "foreign_transaction_fee"
     t.string "issuer"
     t.string "name"
     t.string "network"
     t.text "perks"
     t.float "reward_rate"
+    t.string "source_key"
     t.datetime "updated_at", null: false
     t.string "welcome_bonus"
+    t.index ["catalogue_status"], name: "index_cards_on_catalogue_status"
+    t.index ["source_key"], name: "index_cards_on_source_key", unique: true
+    t.check_constraint "catalogue_status::text = ANY (ARRAY['legacy'::character varying::text, 'draft'::character varying::text, 'published'::character varying::text, 'retired'::character varying::text])", name: "cards_catalogue_status"
+    t.check_constraint "source_key IS NULL OR country::text = 'US'::text AND currency::text = 'USD'::text", name: "cards_real_market"
   end
 
   create_table "quiz_responses", force: :cascade do |t|
@@ -63,6 +87,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
   create_table "stack_cards", force: :cascade do |t|
     t.bigint "card_id", null: false
     t.datetime "created_at", null: false
+    t.integer "position", default: 0, null: false
+    t.text "role"
     t.bigint "stack_id", null: false
     t.datetime "updated_at", null: false
     t.index ["card_id"], name: "index_stack_cards_on_card_id"
@@ -75,7 +101,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
     t.datetime "created_at", null: false
     t.text "description"
     t.string "name"
+    t.text "notes"
+    t.string "source_key"
     t.datetime "updated_at", null: false
+    t.index ["source_key"], name: "index_stacks_on_source_key", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -111,6 +140,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
     t.index ["user_id"], name: "index_wallet_items_on_user_id"
   end
 
+  add_foreign_key "assistant_messages", "users", on_delete: :cascade
   add_foreign_key "quiz_responses", "users"
   add_foreign_key "stack_cards", "cards"
   add_foreign_key "stack_cards", "stacks"

@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["orb", "panel"]
+  static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear"]
+  static values = { url: String, saveUrl: String }
 
   connect() {
     this.x = 24
@@ -31,6 +32,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.request?.abort()
     if (this.pageObserver) this.pageObserver.disconnect()
     removeEventListener("load", this.repark)
   }
@@ -108,6 +110,10 @@ export default class extends Controller {
     this.panelTarget.hidden = !this.panelTarget.hidden
     this.orbTarget.setAttribute("aria-expanded", String(!this.panelTarget.hidden))
     this.resize()
+    if (!this.panelTarget.hidden && this.hasInputTarget) {
+      this.inputTarget.focus({ preventScroll: true })
+      if (!this.loaded) this.loadChat()
+    }
   }
 
   close() {
@@ -128,5 +134,201 @@ export default class extends Controller {
 
   save() {
     try { localStorage.setItem("shuffl-assistant-position", JSON.stringify({ x: this.x, y: this.y })) } catch (_) {}
+  }
+
+  async loadChat() {
+    if (this.busy) return
+    this.setBusy(true)
+    try {
+      const data = await this.fetchJson(this.urlValue)
+      this.messagesTarget.replaceChildren()
+      data.messages.forEach(message => {
+        this.addQuestion(message.question)
+        this.addReply(message.reply)
+      })
+      this.loaded = true
+      this.feedbackTarget.textContent = data.configured ? `${data.remaining} messages left today.` : "Chat isn't connected yet. You can still browse cards and stacks."
+    } catch (error) { this.showError(error) }
+    finally { this.setBusy(false); this.resize() }
+  }
+
+  async send(event) {
+    event.preventDefault()
+    if (this.busy || !this.formTarget.reportValidity()) return
+    const question = this.inputTarget.value.trim()
+    if (!question) return
+    this.setBusy(true)
+    this.addQuestion(question)
+    this.inputTarget.value = ""
+    this.feedbackTarget.textContent = "Checking the catalogue and relevant sources…"
+    try {
+      const data = await this.fetchJson(this.urlValue, "POST", { message: question })
+      this.addReply(data.reply)
+      this.feedbackTarget.textContent = `${data.remaining} messages left today.`
+    } catch (error) {
+      this.showError(error)
+      this.inputTarget.value = question
+    } finally {
+      this.setBusy(false)
+      this.resize()
+      if (!this.panelTarget.hidden) this.inputTarget.focus({ preventScroll: true })
+    }
+  }
+
+  async clearChat() {
+    if (this.busy || !window.confirm("Clear this conversation? Your saved wallet cards will stay.")) return
+    this.setBusy(true)
+    try {
+      await this.fetchJson(this.urlValue, "DELETE")
+      this.messagesTarget.replaceChildren()
+      this.feedbackTarget.textContent = "Conversation cleared. Your daily message limit stays the same."
+    } catch (error) { this.showError(error) }
+    finally { this.setBusy(false); this.resize() }
+  }
+
+  async saveItem(event) {
+    const button = event.currentTarget
+    if (button.disabled) return
+    const payload = button.dataset.stackId ? { stack_id: button.dataset.stackId } : { card_ids: [button.dataset.cardId] }
+    button.disabled = true
+    try {
+      const data = await this.fetchJson(this.saveUrlValue, "POST", payload)
+      button.textContent = "Saved to wallet"
+      this.feedbackTarget.textContent = "Saved. New cards are in Planned in My Wallet."
+      this.dispatch("wallet-updated", { detail: { wallet: data.wallet } })
+    } catch (error) { button.disabled = false; this.showError(error) }
+  }
+
+  async fetchJson(url, method = "GET", body) {
+    const request = new AbortController()
+    if (url === this.urlValue) this.request = request
+    const timer = setTimeout(() => request.abort(), 28000)
+    try {
+      const response = await fetch(url, {
+        method, credentials: "same-origin", signal: request.signal,
+        headers: { "Accept": "application/json", "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || "" },
+        ...(body ? { body: JSON.stringify(body) } : {})
+      })
+      if (response.status === 204) return {}
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.error || "That action couldn't be completed. Please sign in and try again.")
+      return data
+    } finally { clearTimeout(timer) }
+  }
+
+  setBusy(busy) {
+    this.busy = busy
+    this.sendTarget.disabled = busy
+    this.clearTarget.disabled = busy
+    this.messagesTarget.setAttribute("aria-busy", String(busy))
+  }
+
+  showError(error) {
+    this.feedbackTarget.textContent = error.name === "AbortError" ? "That took too long. Please try again shortly." : error.message
+  }
+
+  element(tag, text, className) {
+    const element = document.createElement(tag)
+    if (text !== undefined) element.textContent = text
+    if (className) element.className = className
+    return element
+  }
+
+  addQuestion(text) {
+    const article = this.element("article", undefined, "assistant-message assistant-question")
+    article.append(this.element("strong", "You"), this.element("p", text))
+    this.messagesTarget.append(article)
+    this.scrollMessages()
+  }
+
+  addReply(reply) {
+    const article = this.element("article", undefined, "assistant-message")
+    article.append(this.element("strong", "Assistant"))
+    const sources = reply.sources || []
+    ;(reply.paragraphs || []).forEach(paragraph => {
+      const p = this.element("p", paragraph.text)
+      ;(paragraph.evidence_ids || []).forEach(id => {
+        const source = sources.find(item => item.id === id)
+        if (!source) return
+        const link = this.element("a", ` [${sources.indexOf(source) + 1}]`)
+        link.href = source.url
+        link.target = "_blank"
+        link.rel = "noopener noreferrer"
+        link.setAttribute("aria-label", `Source: ${source.title}${source.checked_on ? `, checked ${source.checked_on}` : ""}`)
+        p.append(link)
+      })
+      article.append(p)
+    })
+    ;(reply.cards || []).forEach(card => article.append(this.cardElement(card)))
+    ;(reply.stacks || []).forEach(stack => {
+      const detail = this.element("details", undefined, "assistant-item")
+      detail.append(this.element("summary", stack.name), this.element("p", stack.description))
+      if (stack.notes) detail.append(this.element("p", stack.notes))
+      stack.cards.forEach(card => detail.append(this.cardElement(card)))
+      this.addActions(detail, stack, "stack")
+      article.append(detail)
+    })
+    if (sources.length) {
+      const detail = this.element("details", undefined, "assistant-sources")
+      detail.append(this.element("summary", "Sources"))
+      sources.forEach((source, index) => {
+        const p = this.element("p")
+        const link = this.element("a", `${index + 1}. ${source.title}`)
+        link.href = source.url; link.target = "_blank"; link.rel = "noopener noreferrer"
+        p.append(link, document.createTextNode(source.type === "web" ? ` — issuer lookup, ${source.checked_on}` : " — catalogue snapshot"))
+        detail.append(p)
+      })
+      article.append(detail)
+    }
+    this.messagesTarget.append(article)
+    this.scrollMessages()
+  }
+
+  cardElement(card) {
+    const detail = this.element("details", undefined, "assistant-item")
+    detail.append(this.element("summary", card.name), this.element("p", `${card.issuer} · ${card.fee}`), this.element("p", card.rewards))
+    if (card.description) detail.append(this.element("p", card.description))
+    if (card.terms && Object.keys(card.terms).length) {
+      const terms = this.element("details")
+      terms.append(this.element("summary", "All recorded terms"), this.factsElement(card.terms))
+      detail.append(terms)
+    }
+    this.addActions(detail, card, "card")
+    return detail
+  }
+
+  factsElement(value) {
+    if (value === null || value === "") return this.element("span", "Not recorded")
+    if (Array.isArray(value)) {
+      const list = this.element("ul")
+      value.forEach(item => { const li = this.element("li"); li.append(this.factsElement(item)); list.append(li) })
+      return list
+    }
+    if (typeof value === "object") {
+      const list = this.element("dl")
+      Object.entries(value).forEach(([key, item]) => {
+        const dd = this.element("dd"); dd.append(this.factsElement(item))
+        list.append(this.element("dt", key.replaceAll("_", " ")), dd)
+      })
+      return list
+    }
+    return this.element("span", String(value))
+  }
+
+  addActions(parent, item, type) {
+    const actions = this.element("div", undefined, "assistant-item-actions")
+    const link = this.element("a", "Full page ↗")
+    link.href = item.url; link.target = "_blank"; link.rel = "noopener noreferrer"
+    const button = this.element("button", item.saved ? "Saved to wallet" : `Save ${type} to wallet`)
+    button.type = "button"; button.disabled = item.saved
+    button.dataset[type === "stack" ? "stackId" : "cardId"] = item.id
+    button.dataset.action = "assistant#saveItem"
+    actions.append(link, button)
+    parent.append(actions)
+  }
+
+  scrollMessages() {
+    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
+    this.resize()
   }
 }

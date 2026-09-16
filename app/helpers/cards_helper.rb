@@ -10,7 +10,18 @@ module CardsHelper
 
   # A short line for a card in a fan/tile: its first perk, or its headline rate.
   def card_benefit(card)
-    card.perks.to_s.split(",").map(&:strip).find(&:present?) || "#{card.reward_rate}x rewards"
+    card.perk_list.first || card.reward_summary
+  end
+
+  def card_annual_fee(card)
+    card.annual_fee.nil? ? "Check issuer terms" : number_to_currency(card.annual_fee)
+  end
+
+  def card_foreign_fee(card)
+    return "Check issuer terms" if card.foreign_transaction_fee.nil?
+    rate = card.catalogue_terms.dig("fees", "foreign_purchase_percent")
+    return "#{rate}%" if rate.present?
+    card.foreign_transaction_fee? ? "Applies" : "None"
   end
 
   # DESIGN.md: the pence drop to muted so figures line up and read as one number.

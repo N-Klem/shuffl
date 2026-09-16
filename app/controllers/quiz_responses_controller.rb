@@ -24,18 +24,13 @@ class QuizResponsesController < ApplicationController
     question = questions[session[:quiz_step]]
     values = submitted_values(question)
 
-    valid_count =
-      case question[:type]
-      when :multi, :ranked then values.size.between?(1, question[:max_select])
-      else values.size == 1
-      end
-
-    unless valid_count && (values - question[:options]).empty?
+    unless Card.valid_quiz_answer?(question, values)
       prepare_question(questions)
       @error =
         case question[:type]
+        when :budget then "Enter a maximum annual budget in USD, zero or above, with up to two decimal places."
         when :ranked then "Pick up to #{question[:max_select]}, in the order that matters most."
-        when :multi then "Choose between 1 and #{question[:max_select]} answers."
+        when :multi then "Choose up to #{question[:max_select]} answers, or No preference on its own."
         else "Choose one answer to continue."
         end
       return render :new, status: :unprocessable_entity
@@ -48,7 +43,7 @@ class QuizResponsesController < ApplicationController
     # Merely visiting an earlier question never destroys answers.
     questions = current_questions
     keys = questions.map { |q| q[:key] }
-    session[:quiz_answers].keep_if { |key, value| keys.include?(key) && (Array(value) - questions.find { |q| q[:key] == key }[:options]).empty? }
+    session[:quiz_answers].keep_if { |key, value| keys.include?(key) && Card.valid_quiz_answer?(questions.find { |q| q[:key] == key }, value) }
     session.delete(:quiz_token)
     next_step = session[:quiz_step] + 1
 
@@ -100,7 +95,7 @@ class QuizResponsesController < ApplicationController
   # Land on the first unanswered question, or the last question if all are
   # answered (the next submit will finish the quiz).
   def resolve_step(questions)
-    unanswered = questions.index { |q| session[:quiz_answers][q[:key]].blank? }
+    unanswered = questions.index { |q| !Card.valid_quiz_answer?(q, session[:quiz_answers][q[:key]]) }
     unanswered || [ questions.size - 1, 0 ].max
   end
 
@@ -123,11 +118,19 @@ class QuizResponsesController < ApplicationController
 
     session[:quiz_answers] = answers
     questions = current_questions
-    session[:quiz_step] = resolve_step(questions)
+    session[:quiz_answers].keep_if do |key, value|
+      question = questions.find { |q| q[:key] == key }
+      question && Card.valid_quiz_answer?(question, value)
+    end
+    session[:quiz_step] = resolve_step(current_questions)
     flash.now[:notice] = "Welcome back — picking up where you left off."
   end
 
   def submitted_values(question)
+    if question[:type] == :budget
+      value = params[:answer] == "Custom" ? params[:custom_budget] : params[:answer]
+      return [value.to_s.strip]
+    end
     checked = Array(params[:answer]).reject(&:blank?).uniq
     return checked unless question[:type] == :ranked
 
@@ -148,7 +151,8 @@ class QuizResponsesController < ApplicationController
   end
 
   def finish_quiz
-    top_cards = Card.ranked_for(session[:quiz_answers]).first(5)
+    answers = session[:quiz_answers]
+    top_cards = QuizRecommendation.new(answers).cards
 
     @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
     @quiz_response.update!(

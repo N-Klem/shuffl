@@ -1,0 +1,281 @@
+{
+  "us-chase-freedom-unlimited": {
+    "reviewed_rewards": [
+      {
+        "rate": "5",
+        "unit": "cashback_percent",
+        "category": "Chase Travel",
+        "conditions": ""
+      },
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "Dining and drugstores",
+        "conditions": ""
+      },
+      {
+        "rate": "1.5",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "2",
+        "unit": "cashback_percent",
+        "category": "Lyft promotion",
+        "temporary": true,
+        "conditions": "Eligible Lyft purchases through September 2027.",
+        "effective_until": "2027-09-30"
+      }
+    ],
+    "base_rule": 2,
+    "categories": {
+      "dining": {
+        "rule": 1,
+        "annual_cap": null
+      }
+    }
+  },
+  "us-chase-freedom-rise": {
+    "reviewed_rewards": [
+      {
+        "rate": "1.5",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "Dining introductory offer",
+        "conditions": "First 6 months; USD 6,000 dining cap; then normal rate."
+      }
+    ],
+    "base_rule": 0,
+    "categories": {}
+  },
+  "us-amex-blue-cash-preferred": {
+    "reviewed_rewards": [
+      {
+        "rate": "6",
+        "unit": "cashback_percent",
+        "category": "US supermarkets",
+        "conditions": "USD 6,000 per year, then 1%."
+      },
+      {
+        "rate": "6",
+        "unit": "cashback_percent",
+        "category": "Selected US streaming",
+        "conditions": ""
+      },
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "US gas stations and transit",
+        "conditions": ""
+      },
+      {
+        "rate": "1",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      }
+    ],
+    "base_rule": 3,
+    "categories": {
+      "groceries": {
+        "rule": 0,
+        "annual_cap": 6000
+      },
+      "gas": {
+        "rule": 2,
+        "annual_cap": null
+      },
+      "streaming": {
+        "rule": 1,
+        "annual_cap": null
+      }
+    }
+  },
+  "us-amex-blue-cash-everyday": {
+    "reviewed_rewards": [
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "US supermarkets",
+        "conditions": "USD 6,000 annual category cap, then 1%."
+      },
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "US gas",
+        "conditions": "Separate USD 6,000 annual category cap, then 1%."
+      },
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "US online retail",
+        "conditions": "Separate USD 6,000 annual category cap, then 1%."
+      },
+      {
+        "rate": "1",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      }
+    ],
+    "base_rule": 3,
+    "categories": {
+      "groceries": {
+        "rule": 0,
+        "annual_cap": 6000
+      },
+      "gas": {
+        "rule": 1,
+        "annual_cap": 6000
+      }
+    }
+  },
+  "us-capital-one-savor": {
+    "reviewed_rewards": [
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "Dining, groceries, entertainment and eligible streaming",
+        "conditions": "Groceries exclude superstores such as Walmart and Target."
+      },
+      {
+        "rate": "5",
+        "unit": "cashback_percent",
+        "category": "Capital One Travel hotels, vacation rentals and rental cars",
+        "conditions": ""
+      },
+      {
+        "rate": "1",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "8",
+        "unit": "cashback_percent",
+        "category": "Capital One Entertainment bookings",
+        "conditions": ""
+      }
+    ],
+    "base_rule": 2,
+    "categories": {
+      "dining": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "groceries": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "streaming": {
+        "rule": 0,
+        "annual_cap": null
+      }
+    },
+    "category_conditions": {
+      "dining": "Eligible restaurant purchases.",
+      "streaming": "Eligible streaming services only; check the provider and billing method."
+    }
+  },
+  "us-capital-one-quicksilver": {
+    "reviewed_rewards": [
+      {
+        "rate": "1.5",
+        "unit": "cashback_percent",
+        "category": "Eligible purchases",
+        "conditions": "Standard Quicksilver Rewards variant."
+      },
+      {
+        "rate": "5",
+        "unit": "cashback_percent",
+        "category": "Capital One Travel hotels, vacation rentals and rental cars",
+        "conditions": ""
+      }
+    ],
+    "base_rule": 0,
+    "categories": {}
+  },
+  "us-capital-one-savor-student": {
+    "reviewed_rewards": [
+      {
+        "rate": "3",
+        "unit": "cashback_percent",
+        "category": "Groceries, dining, entertainment and eligible streaming",
+        "conditions": "Superstores excluded."
+      },
+      {
+        "rate": "1",
+        "unit": "cashback_percent",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "5",
+        "unit": "cashback_percent",
+        "category": "Capital One Travel hotels, vacation rentals and rental cars",
+        "conditions": ""
+      },
+      {
+        "rate": "8",
+        "unit": "cashback_percent",
+        "category": "Capital One Entertainment bookings",
+        "conditions": ""
+      }
+    ],
+    "base_rule": 1,
+    "categories": {
+      "dining": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "groceries": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "streaming": {
+        "rule": 0,
+        "annual_cap": null
+      }
+    },
+    "category_conditions": {
+      "dining": "Eligible restaurant purchases.",
+      "streaming": "Eligible streaming services only; check the provider and billing method."
+    }
+  },
+  "us-citi-double-cash": {
+    "reviewed_rewards": [
+      {
+        "rate": "2",
+        "unit": "cashback_percent",
+        "category": "Purchases and repayment combined",
+        "conditions": "1% when buying plus 1% when paying; pay at least minimum on time."
+      },
+      {
+        "rate": "5",
+        "unit": "cashback_percent",
+        "category": "Citi Travel hotels, rental cars and attractions",
+        "conditions": "Includes purchase and repayment components; not 5% plus the base 2%."
+      }
+    ],
+    "base_rule": 0,
+    "categories": {}
+  },
+  "us-wells-fargo-active-cash": {
+    "reviewed_rewards": [
+      {
+        "rate": "2",
+        "unit": "cashback_percent",
+        "category": "Eligible purchases",
+        "conditions": "Net purchases, after returns/credits."
+      }
+    ],
+    "base_rule": 0,
+    "categories": {}
+  }
+}

@@ -2,7 +2,8 @@
 <% content_for :hide_footer, true %>
 <% content_for :title, "Question #{@step} of #{@total} — Shuffl" %>
 <main class="quiz-shell" data-controller="quiz" data-quiz-limit-value="<%= [ :multi, :ranked ].include?(@question[:type]) ? @question[:max_select] : 1 %>"
-  data-quiz-ranked-value="<%= @question[:type] == :ranked %>">
+  data-quiz-ranked-value="<%= @question[:type] == :ranked %>"
+  data-quiz-budget-value="<%= @question[:type] == :budget %>">
   <div class="quiz-progress">
     <div class="quiz-progress-copy"><span>Question <%= @step %> of <%= @total %></span><span><%= ((@step - 1).fdiv(@total) * 100).round %>% complete</span></div>
     <div class="quiz-bubbles" role="progressbar" aria-label="Quiz completion" aria-valuemin="0" aria-valuemax="<%= @total %>" aria-valuenow="<%= @step - 1 %>" aria-valuetext="Question <%= @step %> of <%= @total %>; <%= @step - 1 %> completed">
@@ -34,21 +35,28 @@
       <legend class="visually-hidden"><%= @question[:prompt] %></legend>
       <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %>">
         <% @question[:options].each_with_index do |option, index| %>
+          <% budget_custom = @question[:type] == :budget && option == "Custom" && @selected.any? && !%w[0 100 300].include?(@selected.first) %>
           <% rank = @question[:type] == :ranked ? @selected.index(option) : nil %>
           <label class="quiz-answer <%= "is-ranked" if rank %>" for="quiz-answer-<%= index %>" data-quiz-target="option">
             <% if @question[:type] == :ranked %>
-              <%= check_box_tag "answer[]", option, rank.present?, id: "quiz-answer-#{index}", data: { quiz_target: "answer", action: "change->quiz#choose" } %>
+              <%= check_box_tag "answer[]", option, rank.present?, id: "quiz-answer-#{index}", data: { quiz_target: "answer", exclusive: Array(@question[:exclusive]).include?(option), action: "change->quiz#choose" } %>
               <span class="quiz-rank" aria-hidden="true"><%= rank ? rank + 1 : "" %></span>
             <% elsif @question[:type] == :multi %>
-              <%= check_box_tag "answer[]", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", action: "change->quiz#choose" } %>
+              <%= check_box_tag "answer[]", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", exclusive: Array(@question[:exclusive]).include?(option), action: "change->quiz#choose" } %>
             <% else %>
-              <%= radio_button_tag "answer", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", action: "change->quiz#choose click->quiz#reselect" } %>
+              <%= radio_button_tag "answer", option, @selected.include?(option) || budget_custom, id: "quiz-answer-#{index}", data: { quiz_target: "answer", exclusive: Array(@question[:exclusive]).include?(option), action: "change->quiz#choose click->quiz#reselect" } %>
             <% end %>
-            <span><%= option %></span>
+            <span><%= @question[:type] == :budget ? { "0" => "No annual fees", "100" => "Up to $100 per year", "300" => "Up to $300 per year", "Custom" => "Set my own maximum" }.fetch(option) : option %></span>
           </label>
         <% end %>
       </div>
     </fieldset>
+    <% if @question[:type] == :budget %>
+      <div data-quiz-target="budgetField">
+        <%= label_tag :custom_budget, "Maximum combined annual fees (USD)" %>
+        <%= number_field_tag :custom_budget, (params[:custom_budget].presence || (@selected.first unless %w[0 100 300].include?(@selected.first))), min: 0, max: 999999.99, step: 0.01, class: "form-control", data: { quiz_target: "budgetInput", action: "input->quiz#update" } %>
+      </div>
+    <% end %>
     <p class="quiz-status" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
     <div class="quiz-controls">
       <% if @previous_step %>
@@ -56,10 +64,12 @@
       <% else %>
         <%= link_to "Back", root_path, class: "quiz-back", data: { action: "click->quiz#cancel", turbo_prefetch: false } %>
       <% end %>
-      <% if [ :multi, :ranked ].include?(@question[:type]) %>
-        <button class="btn btn-primary quiz-done" type="submit" data-quiz-target="done"><%= @question[:type] == :ranked ? "Continue" : "Done selecting" %></button>
+      <% if [ :multi, :ranked, :budget ].include?(@question[:type]) %>
+        <button class="btn btn-primary quiz-done" type="submit" data-quiz-target="done"><%= @question[:type] == :multi ? "Done selecting" : "Continue" %></button>
       <% end %>
-      <noscript><button class="btn btn-primary" type="submit">Continue</button></noscript>
+      <% unless [ :multi, :ranked, :budget ].include?(@question[:type]) %>
+        <noscript><button class="btn btn-primary" type="submit">Continue</button></noscript>
+      <% end %>
     </div>
   <% end %>
 

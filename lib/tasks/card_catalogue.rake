@@ -2,6 +2,17 @@ require "csv"
 
 namespace :cards do
   namespace :catalogue do
+    desc "Copy US research into live card drafts without changing discovery"
+    task stage: :environment do
+      puts "Staged #{Card.import_us_candidates!} US cards."
+    end
+
+    desc "Publish the accepted US demo research and retire fictional discovery records"
+    task publish_demo: :environment do
+      Card.publish_us_demo!
+      puts "Published #{Card.available.count} US cards. Historical references preserved."
+    end
+
     desc "Import real-card research for review (does not publish cards)"
     task import: :environment do
       result = CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
@@ -38,7 +49,7 @@ namespace :cards do
           lines << ""
         end
       end
-      File.write(directory.join("cards.md"), lines.join("\n"))
+      File.write(directory.join("cards.md"), lines.map(&:rstrip).join("\n") + "\n")
       puts "Exported #{CardCandidate.count} candidates to #{directory}"
     end
   end

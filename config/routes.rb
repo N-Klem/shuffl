@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
   devise_for :users
   root "pages#home"
+  resource :assistant_chat, only: [:show, :create, :destroy]
 
   resources :stacks, only: [ :index, :show ]
   resources :cards, only: [ :index, :show ]
+  resources :reward_estimates, only: [ :create ]
   resources :wallet_items, only: [ :index, :create, :update, :destroy ] do
     patch :preferences, on: :collection
     post :save_browse, on: :collection

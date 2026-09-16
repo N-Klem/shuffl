@@ -76,16 +76,15 @@ export default class extends Controller {
       } else {
         const nextCards = this.cards(incoming)
         const rests = nextCards.map(card => ({ transform: getComputedStyle(card).transform, opacity: getComputedStyle(card).opacity }))
-        // Hold the new cards together during travel, then release into the fan.
-        const holds = nextCards.map(card => {
-          const hold = card.animate([collapsed, collapsed], { duration: 1, fill: "forwards" })
-          this.animations.add(hold)
-          return hold
-        })
+        // One timeline owns both arrival and fan-out. No temporary hold
+        // animation to cancel between phases (which can expose the CSS fan).
         const art = incoming.querySelector(".stack-fan, .ghost-stack")
-        if (art) await this.animate(art, [{ transform: `translateX(${85 * direction}%)`, opacity: 0 }, { transform: "translateX(0)", opacity: 1 }], 400)
-        holds.forEach(hold => { hold.cancel(); this.animations.delete(hold) })
-        await Promise.all(nextCards.map((card, i) => this.animate(card, [collapsed, rests[i]], 300, this.morph)))
+        const distance = (art?.clientWidth || incoming.clientWidth) * 0.85 * direction
+        await Promise.all(nextCards.map((card, i) => this.animate(card, [
+          { transform: `translateX(${distance}px)`, opacity: 0, offset: 0, easing: this.ease },
+          { ...collapsed, offset: 0.57, easing: this.morph },
+          { ...rests[i], offset: 1 }
+        ], 700, "linear")))
       }
     } catch (error) {
       if (error.name !== "AbortError") throw error

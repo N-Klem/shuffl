@@ -25,25 +25,11 @@ export default class extends Controller {
    c.dataset.current=String(i===index);c.setAttribute('aria-hidden',!expanded);c.tabIndex=expanded?0:-1;
    c.setAttribute('aria-label',(i===index?'Current card: ':'Bring to front: ')+c.querySelector('.name').textContent);
   });
-  const infoPanel=tile.querySelector('.stack-card-info');
-  if(infoPanel){
-   const current=cards[index];
-   if(expanded&&current){
-    const name=current.dataset.cardName||'';
-    const benefit=current.dataset.cardBenefit||'';
-    const fee=current.dataset.cardFee||'';
-    infoPanel.innerHTML='<strong>'+name+'</strong><dl><div><dt>Top benefit</dt><dd>'+benefit+'</dd></div><div><dt>Annual fee</dt><dd>'+fee+'</dd></div></dl><span class="stack-card-disclosure">Sample catalogue \u00b7 Not a live offer</span>';
-    infoPanel.classList.add('is-visible');
-   } else {
-    // The panel keeps its reserved space (see .stack-card-info min-height) and
-    // only fades out, so the heading and link below it never move.
-    infoPanel.classList.remove('is-visible');
-   }
-  }
+
  }
  function draw(){
   cards.forEach((c,i)=>{
-   const angle=(i-phase)*Math.PI/2,depth=(Math.cos(angle)+1)/2;
+   const angle=(i-phase)*2*Math.PI/cards.length,depth=(Math.cos(angle)+1)/2;
    const h=c.offsetHeight,top=parseFloat(getComputedStyle(c).top),radius=Math.max(20,(fan.clientHeight-h)/2+2);
    const scale=.76+.24*depth,scaleX=.64+.36*depth,y=fan.clientHeight/2-top-h/2+Math.sin(angle)*radius;
    const to=[scaleX,0,0,scale,0,y],matrix=rest[i].map((v,j)=>v+(to[j]-v)*blend);
@@ -53,6 +39,7 @@ export default class extends Controller {
   });describe();
  }
  function tick(now){
+  if(tile.closest('.is-dealing')){raf=0;last=0;return;}
   const dt=last?Math.min((now-last)/1000,.05):.016;last=now;
   const destination=expanded?1:0;
   phase+=(target-phase)*(reduce.matches?1:1-Math.exp(-dt/.23));
@@ -65,7 +52,7 @@ export default class extends Controller {
   if(Math.abs(target-phase)>.0005||Math.abs(destination-blend)>.0005)raf=requestAnimationFrame(tick);
   else {phase=target;blend=destination;draw();raf=0;last=0;if(!expanded){tile.classList.remove('is-expanded');cards.forEach(c=>{c.style.transform='';c.style.opacity='';c.style.zIndex=''})}}
  }
- function wake(){if(!raf)raf=requestAnimationFrame(tick)}
+ function wake(){if(tile.closest('.is-dealing'))return;if(!raf)raf=requestAnimationFrame(tick)}
  function open(value){if(tile.closest('.is-dealing'))return;expanded=value;if(value)tile.classList.add('is-expanded');wake()}
  listen(tile,'stack:reset',()=>{
   cancelAnimationFrame(raf);clearTimeout(snapTimer);
@@ -82,6 +69,7 @@ export default class extends Controller {
  cards.forEach((card,i)=>{
   card.setAttribute('role','button');
   function select(){
+   if(tile.closest('.is-dealing'))return;
    clearTimeout(snapTimer);
    const current=((phase%cards.length)+cards.length)%cards.length;
    let distance=i-current;
@@ -95,6 +83,7 @@ export default class extends Controller {
  listen(fan,'focus',()=>open(true));
  listen(tile,'focusout',e=>{if(!tile.contains(e.relatedTarget))open(pinned)});
  listen(fan,'wheel',e=>{
+  if(tile.closest('.is-dealing'))return;
   if(e.ctrlKey||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
   e.preventDefault();open(true);
   const pixels=e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?fan.clientHeight:1);
@@ -103,6 +92,7 @@ export default class extends Controller {
   settle();wake();
  },{passive:false});
  listen(tile,'keydown',e=>{
+  if(tile.closest('.is-dealing'))return;
   if(e.key==='Escape'){pinned=false;open(false);return}
   if(['ArrowDown','ArrowRight','ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();clearTimeout(snapTimer);target=Math.round(target)+(e.key==='ArrowDown'||e.key==='ArrowRight'?1:-1);open(true)}
  });

@@ -5,8 +5,8 @@ class CardsController < ApplicationController
 
   def show
     @card = Card.find(params[:id])
-    @card_total = Card.count
-    @stacks = @card.stacks.order(:name)
+    @card_total = Card.available.count
+    @stacks = @card.stacks.available.order(:name)
     @similar_cards = similar_cards
     rank_for_visitor if latest_quiz_response
   end
@@ -18,7 +18,7 @@ class CardsController < ApplicationController
     categories = @card.best_for.to_s.split(",").map(&:strip)
     return [] if categories.empty?
 
-    Card.where.not(id: @card.id).order(:name).select do |card|
+    Card.available.where.not(id: @card.id).order(:name).select do |card|
       (card.best_for.to_s.split(",").map(&:strip) & categories).any?
     end.first(3)
   end
@@ -27,7 +27,7 @@ class CardsController < ApplicationController
   def rank_for_visitor
     answers = JSON.parse(latest_quiz_response.answers.presence || "{}")
     ranked = Card.ranked_for(answers)
-    @quiz_rank = ranked.index(@card) + 1
+    @quiz_rank = ranked.index(@card)&.+(1)
     @quiz_total = ranked.size
     top_ids = JSON.parse(latest_quiz_response.top_card_ids.presence || "[]")
     @in_recommended_stack = top_ids.include?(@card.id)

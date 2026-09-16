@@ -17,6 +17,26 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     @stack.stack_cards.create!(card: @card)
   end
 
+  test "supplied artwork renders and reaches the client catalogues" do
+    @card.update_columns(source_key: "us-chase-sapphire-preferred")
+    image = "/card-images/us-chase-sapphire-preferred.png"
+
+    get card_path(@card)
+    assert_response :success
+    assert_select ".detail-art.has-card-image img[src=?]", image
+    assert_equal image, @card.results_data[:imageUrl]
+    assert_equal image, BrowseCatalogue.new.payload[:cards].find { |card| card[:id] == @card.id.to_s }[:imageUrl]
+  end
+
+  test "image manifest covers the complete catalogue and preserves the legacy fallback" do
+    catalogue_keys = JSON.parse(Rails.root.join("data/real_cards/catalogue.json").read).fetch("cards").map { |card| card.fetch("source_key") }
+    assert_equal catalogue_keys.sort, Card.image_paths.keys.sort
+    Card.image_paths.each_value do |path|
+      assert Rails.root.join("public", path.delete_prefix("/")).file?, "Missing image: #{path}"
+    end
+    assert_nil @card.image_path
+  end
+
   test "card page renders facts, perks, related stacks and similar cards" do
     get card_path(@card)
     assert_response :success
@@ -52,9 +72,10 @@ class CardDetailTest < ActionDispatch::IntegrationTest
       break if field.nil?
       index = field["value"].to_i
       key = css_select("input[name='question_key']").first["value"]
-      question = Card::QUESTION_POOL[key]
+      question = Card::QUIZ_QUESTION_POOL[key]
       answer = question[:type] == :ranked ? question[:options].first(3)
              : choice == :last ? question[:options].last : question[:options].first
+      answer = "300" if question[:type] == :budget
       post quiz_responses_path, params: { step: index, answer: answer, quiz_token: css_select("input[name='quiz_token']").first["value"] }
       follow_redirect!
     end
@@ -106,8 +127,9 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select ".flash", text: /Card added to your wallet/
   end
 
-  test "results page offers a share control" do
+  test "results page offers saving without the retired share control" do
     complete_quiz
-    assert_select "[data-controller='share'] button", text: "Share this stack"
+    assert_select "button#save-stack", text: "Save this stack"
+    assert_select "[data-controller='share'] button", count: 0
   end
 end
