@@ -41,6 +41,7 @@ class AssistantOpenaiClientTest < ActiveSupport::TestCase
       assert_equal 1, body["max_tool_calls"]
       assert_equal "required", body["tool_choice"]
       assert_equal CardAssistant::ISSUER_DOMAINS, body["tools"].first.dig("filters", "allowed_domains")
+      assert_equal "gpt-4.1", body["model"], "web research must use a model that accepts domain filters"
       assert_equal 0, captured[:options][:max_retries]
       assert_equal [ "api.openai.com", 443 ], captured[:args]
       assert_equal 10, client.input_tokens

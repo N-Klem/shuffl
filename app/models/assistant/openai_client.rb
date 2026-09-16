@@ -25,8 +25,10 @@ module Assistant
       raise Unavailable unless self.class.configured?
       # Byte ceilings also bound worst-case token input, including future catalogue growth.
       raise Unavailable if input.bytesize > 160_000
+      # The provider rejects web_search domain filters on gpt-4.1-mini, so the one research call
+      # uses a model that supports them; screening and answering keep the cheaper model.
       payload = {
-        model: ENV.fetch("OPENAI_ASSISTANT_MODEL", "gpt-4.1-mini"),
+        model: web ? ENV.fetch("OPENAI_RESEARCH_MODEL", "gpt-4.1") : ENV.fetch("OPENAI_ASSISTANT_MODEL", "gpt-4.1-mini"),
         store: false, instructions: instructions, input: input,
         max_output_tokens: max_output_tokens
       }

@@ -13,7 +13,8 @@ Configuration (server environment only):
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `OPENAI_API_KEY` | credentials `openai.api_key` | API credential; the environment variable overrides the credential |
-| `OPENAI_ASSISTANT_MODEL` | `gpt-4.1-mini` | Must support Responses structured output and hosted web search |
+| `OPENAI_ASSISTANT_MODEL` | `gpt-4.1-mini` | Screening and answer calls; must support Responses structured output |
+| `OPENAI_RESEARCH_MODEL` | `gpt-4.1` | The single issuer web-search call; must support `web_search` with domain `filters`, which gpt-4.1-mini rejects |
 | `ASSISTANT_ENABLED` | `true` | Set `false` to stop new model calls immediately |
 | `ASSISTANT_USER_DAILY_LIMIT` | `20` | Attempts per account per UTC day, maximum 100 |
 | `ASSISTANT_GLOBAL_DAILY_LIMIT` | `200` | Attempts across the app per UTC day, maximum 10,000; 0 disables calls |
