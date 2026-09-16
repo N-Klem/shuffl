@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear", "starters", "status", "intro"]
+  static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear", "starters", "status", "intro", "transcript", "avatar"]
   static values = { url: String, saveUrl: String, name: String }
 
   connect() {
@@ -151,6 +151,12 @@ export default class extends Controller {
     this.formTarget.requestSubmit()
   }
 
+  // The box grows with the question up to the stylesheet's max-height, then scrolls.
+  grow() {
+    this.inputTarget.style.height = ""
+    this.inputTarget.style.height = `${this.inputTarget.scrollHeight}px`
+  }
+
   async loadChat() {
     if (this.busy) return
     this.setBusy(true)
@@ -179,6 +185,7 @@ export default class extends Controller {
     this.feedbackTarget.textContent = ""
     this.addQuestion(question)
     this.inputTarget.value = ""
+    this.inputTarget.style.height = ""
     this.addPending()
     try {
       const data = await this.fetchJson(this.urlValue, "POST", { message: question })
@@ -252,7 +259,7 @@ export default class extends Controller {
   }
 
   showRemaining(remaining) {
-    this.statusTarget.textContent = remaining === null || remaining === undefined ? "" : `${remaining} messages left today`
+    this.statusTarget.textContent = remaining === null || remaining === undefined ? "" : `${remaining} messages left today · `
   }
 
   showError(error) {
@@ -268,20 +275,34 @@ export default class extends Controller {
 
   addQuestion(text) {
     const article = this.element("article", undefined, "assistant-message assistant-question")
-    article.append(this.element("strong", "You"), this.element("p", text))
+    article.append(this.element("strong", "You", "assistant-who"), this.element("p", text))
     this.messagesTarget.append(article)
     this.scrollMessages()
+  }
+
+  // Every row from the assistant: avatar, a hidden name for screen readers, then the body.
+  answerRow(className) {
+    const article = this.element("article", undefined, ["assistant-message", "assistant-answer", className].filter(Boolean).join(" "))
+    article.append(this.avatarTarget.content.firstElementChild.cloneNode(true))
+    const body = this.element("div", undefined, "assistant-body")
+    body.append(this.element("strong", this.nameValue, "assistant-who"))
+    article.append(body)
+    return [article, body]
   }
 
   // The wait sits in the transcript, where the answer will land. Issuer lookups
   // take longer than catalogue answers, so the wording changes once it is likely one.
   addPending() {
-    const article = this.element("article", undefined, "assistant-message assistant-pending")
-    const text = this.element("p", "Reading the catalogue…")
-    article.append(this.element("strong", this.nameValue), text)
+    const [article, body] = this.answerRow("assistant-pending")
+    const dots = this.element("span", undefined, "assistant-typing")
+    dots.append(this.element("i"), this.element("i"), this.element("i"))
+    const text = this.element("p")
+    const label = this.element("span", "Reading the catalogue…")
+    text.append(dots, label)
+    body.append(text)
     this.messagesTarget.append(article)
     this.pending = article
-    this.pendingTimer = setTimeout(() => { text.textContent = "Checking issuer sites too. This can take a few more seconds…" }, 6000)
+    this.pendingTimer = setTimeout(() => { label.textContent = "Checking issuer sites too. This can take a few more seconds…" }, 6000)
     this.scrollMessages()
   }
 
@@ -292,15 +313,14 @@ export default class extends Controller {
   }
 
   addError(text) {
-    const article = this.element("article", undefined, "assistant-message assistant-error")
-    article.append(this.element("strong", this.nameValue), this.element("p", text))
+    const [article, body] = this.answerRow("assistant-error")
+    body.append(this.element("p", text))
     this.messagesTarget.append(article)
     this.scrollMessages()
   }
 
   addReply(reply) {
-    const article = this.element("article", undefined, "assistant-message")
-    article.append(this.element("strong", this.nameValue))
+    const [row, article] = this.answerRow()
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
       const p = this.element("p", paragraph.text)
@@ -337,7 +357,7 @@ export default class extends Controller {
       })
       article.append(detail)
     }
-    this.messagesTarget.append(article)
+    this.messagesTarget.append(row)
     this.scrollMessages()
   }
 
@@ -385,9 +405,7 @@ export default class extends Controller {
   }
 
   scrollMessages() {
-    this.messagesTarget.scrollTop = this.messagesTarget.scrollHeight
-    // As a sheet the panel is the only scroller, so bring the newest message and the box into view.
-    this.panelTarget.scrollTop = this.panelTarget.scrollHeight
+    this.transcriptTarget.scrollTop = this.transcriptTarget.scrollHeight
     this.resize()
   }
 }
