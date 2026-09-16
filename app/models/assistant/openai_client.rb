@@ -12,8 +12,13 @@ module Assistant
       @output_tokens = 0
     end
 
+    # Environment wins so Heroku config vars and one-off runs can override the shared credential.
+    def self.api_key
+      ENV["OPENAI_API_KEY"].presence || Rails.application.credentials.dig(:openai, :api_key)
+    end
+
     def self.configured?
-      ENV["OPENAI_API_KEY"].present? && ENV.fetch("ASSISTANT_ENABLED", "true") == "true"
+      api_key.present? && ENV.fetch("ASSISTANT_ENABLED", "true") == "true"
     end
 
     def call(instructions:, input:, max_output_tokens:, schema: nil, web: false)
@@ -34,7 +39,7 @@ module Assistant
       end
       uri = URI("https://api.openai.com/v1/responses")
       request = Net::HTTP::Post.new(uri)
-      request["Authorization"] = "Bearer #{ENV.fetch('OPENAI_API_KEY')}"
+      request["Authorization"] = "Bearer #{self.class.api_key}"
       request["Content-Type"] = "application/json"
       request.body = JSON.generate(payload)
       response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 18, write_timeout: 5, max_retries: 0) do |http|
