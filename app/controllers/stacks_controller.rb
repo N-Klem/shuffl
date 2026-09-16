@@ -4,6 +4,7 @@ class StacksController < ApplicationController
   end
 
   def show
-    @stack = Stack.find(params[:id])
+    @stack = Stack.includes(stack_cards: :card).find(params[:id])
+    @available = Stack.available.exists?(@stack.id)
   end
 end

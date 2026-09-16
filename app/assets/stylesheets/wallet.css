@@ -668,3 +668,10 @@
 /* A thin, token-coloured scrollbar tells the reader a row scrolls sideways. */
 .wallet-app .wallet-timeline-list,
 .wallet-app .shelves { scrollbar-width: thin; scrollbar-color: var(--hairline-strong) transparent; }
+.wallet-page .spending-checkbox {
+  display: inline;
+  width: 24px;
+  height: 24px;
+  accent-color: var(--ink);
+}
+.wallet-page .benefit-heading { color: var(--ink); font-size: var(--text-dense); letter-spacing: 0; }

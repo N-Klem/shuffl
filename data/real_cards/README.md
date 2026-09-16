@@ -1,65 +1,64 @@
-# Real credit-card research catalogue
+# US demo catalogue
 
-Initial research: 15 September 2026. 50 candidates: 30 US / USD, 20 UK / GBP (ISO country code GB).
+The demo uses 30 US / USD cards. Noah accepted the existing research for demo use on 16 September 2026. UK cards are outside scope. This acceptance does not claim that every term or application requirement has been verified.
 
-## What is built
+## One shared live catalogue
 
-`catalogue.json` is a portable initial research import. `CardCandidate` stores it in PostgreSQL's `card_candidates` table. These are **review candidates**, not published `Card` records. No migration or task deletes fictional cards, replaces wallet items, changes old quiz results, or mixes countries in the live catalogue.
+`catalogue.json` is the portable snapshot of the US research candidates, including the saved local research corrections. `CardCandidate` holds editable research. Published `Card` records supply browsing, details, quiz results and wallet payloads; those features no longer read the fictional `data/cards.json`.
+
+Live cards have a stable `source_key`, market, publication status, decimal annual fee and structured `catalogue_terms`. The terms retain reward units and conditions, fee treatment, welcome-offer requirements, benefits, eligibility notes, research limitations and source dates. Null remains unknown. A missing foreign fee is not treated as no fee, and points/miles are not converted into dollars.
+
+`legacy` records are visible until the demo cutover; `draft` records are hidden; `published` records are discoverable; `retired` records remain accessible through historical links and saved data.
+
+## Import and publication
 
 ```sh
 bundle exec rails db:migrate
 bundle exec rails cards:catalogue:import
+bundle exec rails cards:catalogue:stage
+bundle exec rails cards:catalogue:publish_demo
+```
+
+- `import` inserts missing candidates and preserves existing research corrections and review decisions. Updating the JSON does not overwrite an existing candidate.
+- `stage` copies non-rejected US candidates into cards by `source_key`. New cards are drafts. Existing cards retain their status and ID; their facts are updated from candidate research.
+- `publish_demo` imports the candidates transactionally, publishes the non-rejected US set and retires fictional cards and previously published cards outside that set. It does not delete wallet items, quiz results, stack memberships or card records.
+- `db:seed` imports the portable candidates and runs the same demo publication. It is safe to repeat without duplicating cards or restoring fictional cards.
+
+Publication does not mark candidate research as reviewed. Rejected candidates are not published. An invalid candidate rolls the card import back.
+
+## Current display policy
+
+Show recorded rates with their units and conditions, welcome offers with captured requirements, and sources with check dates. Dollar reward estimates and automatic spending allocations are unavailable until calculation rules support caps, conditional rates and redemption values. Missing benefits are not evidence of no benefits.
+
+Old wallet entries and quiz results retain their original card IDs. Retired cards cannot be newly added or offered as swaps. Pre-made stacks containing retired cards are hidden from discovery and the home carousel; rebuilding those stacks is the next separate step. Historical stack links remain available.
+
+The quiz evaluates complementary combinations of published cards, respecting the maximum card count and combined annual-fee budget. Automatic recommendations and results swaps now require matching recorded credit-profile guidance. Unknown card guidance, an unknown user credit range, and unsupported profiles produce no automatic match. New-to-credit guidance is not treated as support for damaged credit. Explicit student requirements and named programme preferences also apply; suitability tags alone are not eligibility requirements. Prime Visa requires an explicit Amazon with Prime answer as well as supported credit guidance. These are conservative editorial filters, not issuer approval guarantees. All published cards remain available in Browse for deliberate selection; historical recommendations retain their saved IDs. A no-match result explains the limitation without presenting an empty stack as a recommendation.
+
+Every current question now feeds eligibility, coverage, management effort, fees or conditional benefits. See `docs/quiz-matching.md` for the complete question-to-decision mapping and editorial scoring policy. Unknown terms are not invented, temporary promotions are excluded from ongoing fit, and dollar reward/bonus-feasibility calculations remain deferred.
+
+## Maintaining research
+
+Edit the candidate identified by `source_key`, preserving URLs, check dates, rates, units and conditions. Re-run `stage` or `publish_demo` to update its live card. To move local research to a fresh installation, update the portable JSON snapshot too; database edits do not write back automatically.
+
+```sh
 bundle exec rails cards:catalogue:export
 ```
 
-Exports live at `data/real_cards/review/cards.csv` and `cards.md`. The Markdown version has clickable sources. CSV can be opened in a spreadsheet; edits to the export do not automatically update the database.
-
-## How to review
-
-Open each source and check the exact card, country, new-applicant availability, ongoing fee, first-year fee, foreign purchase fee, reward categories/caps, bonus requirements and eligibility. Send corrections using the stable `source_key`, or edit the candidate in Rails console. Mark a record `reviewed` or `rejected` only with `reviewed_by` and `reviewed_at`. `reviewed` records still do not publish to the app.
-
-Example after completing a manual check (replace values with real findings):
-
-```ruby
-candidate = CardCandidate.find_by!(source_key: "us-chase-sapphire-preferred")
-research = candidate.research.deep_dup
-# Correct research fields and source details here using the issuer page.
-candidate.update!(research: research, review_notes: "Describe exactly what was checked")
-# When finished, separately record the actual reviewer and time:
-# candidate.update!(review_status: "reviewed", reviewed_by: "Your name", reviewed_at: Time.current)
-```
-
-Repeat imports intentionally preserve existing records, including pending records with manual edits. Updating the JSON does not overwrite database research. Importing a malformed batch rolls back new inserts. There is no automatic promotion or weekly scraping yet.
-
-## Meaning of the fields
-
-- `source_key`: stable country-specific identity, independent of renames.
-- `fees`: decimal strings in the card's currency; annual and monthly billing stay separate. Introductory waivers are described explicitly. A monthly fee is not a billed annual fee.
-- `rewards`: numeric rate strings with explicit units and conditions. A multiplier is not cash value. Shared caps, portal requirements and introductory periods must remain attached to their rates. Schedules are partial and marked `rewards_complete: false` until reviewed.
-- `welcome_offer`: observed offer text, not a guaranteed offer for every applicant. Null means not captured, not no bonus. Referrals and incidental account credits are not ordinary spending bonuses.
-- `eligibility`, `network`, `credit_score_min`: unknown unless supported. No invented numerical approval scores. Issuer display names may still need legal-entity verification.
-- `sources`: official URLs, access date, evidence type. `official_page` means page text was retrieved; `official_search_extract` means information came from an issuer search result and may lag the live page. Neither means human approval. Source dates are not guaranteed offer effective dates. Sources support the record collectively, not a field-by-field audit trail.
-- `quiz_tags` / `recommendation_conditions`: Shuffl's editorial mapping, not issuer facts. These do not change current quiz scoring.
-- `availability`: product listed is not verified application availability. M&S Shopping Plus needs exact-variant confirmation.
-- `review_flags`: unresolved research questions. `perks` is initially empty: benefits are not fully extracted. Null, empty reward lists and empty perks lists are not proof that a card lacks them.
-
-## Important findings
-
-- Wells Fargo Active Cash currently shows USD 100 on the retrieved channel, while an older terms result shows USD 200. Preserve channel and recheck.
-- Some issuer pages omit dynamic welcome/pricing numbers. These remain unknown rather than being reconstructed from memory.
-- John Lewis publishes a future rewards change for 25 September 2026. Preserve the effective date when reviewing.
-- Hyatt and United headline multipliers include loyalty-program earnings. The research uses card-only rates where supported.
-- Lloyds Ultra and Amazon Barclaycard have first-year rates that differ from ongoing rates.
-- Discover sources now link into Capital One; legal issuer and application details need verification.
-- Some sources still use the legal names Platinum Cashback / Platinum Cashback Everyday while marketing uses Cashback / Cashback Everyday.
-
-## Remaining product work
-
-After human review: migrate approved facts into a country-aware live catalogue, replace the fictional source consumed by `BrowseCatalogue`, add country selection/localised quiz wording and conditional brand/eligibility checks, and update reward scoring. The current app still reads `data/cards.json` and the existing `cards` table. This step builds the research database and review package only.
-
-Tests:
+This refreshes `review/cards.csv` and `review/cards.md` from the research database. The `review/unknowns` files are the original research checklist, not a current audit of the richer snapshot.
 
 ```sh
-RAILS_ENV=test bundle exec rails db:migrate
-bundle exec rails test test/models/card_candidate_test.rb
+bundle exec rails test test/models/card_candidate_test.rb test/models/live_catalogue_test.rb
 ```
+
+## Curated demo stacks
+
+After publishing the US catalogue, run `bundle exec rails stacks:seed_demo`.
+`db:seed` also runs this step. The five approved lineups live in `stacks.json`;
+card references use stable source keys. Descriptions, roles and usage notes are
+editorial guidance, separate from the issuer facts in `catalogue.json`.
+
+The import is transactional and repeatable. It requires available cards, preserves
+stack IDs, and leaves historical fictional stacks intact. Starter has two cards;
+the other four have three. Fees are summed from the live card records, before
+introductory waivers or conditional credits. Saving adds missing cards to Planned
+without changing existing owned or planned wallet entries.

@@ -3,14 +3,24 @@
 <% content_for :meta_description, "The #{@stack.name} stack: #{pluralize(@stack.cards.size, 'card')} chosen to work together. #{@stack.description}" %>
 
 <main>
+  <% unless @available %>
+    <p>This is a retired demo stack, preserved for historical links. <%= link_to "Browse current cards", cards_path %></p>
+  <% end %>
+
   <p class="eyebrow"><%= @stack.category %> · <%= pluralize(@stack.cards.size, "card") %></p>
   <h1><%= @stack.name %></h1>
   <p class="lede"><%= @stack.description %></p>
 
   <div class="detail-layout">
     <div>
-      <p class="detail-figure"><%= figure_with_pence(@stack.cards.sum(:annual_fee)) %></p>
-      <p class="detail-figure-label">Total annual fees for this stack</p>
+      <p class="detail-figure"><%= @stack.annual_fee.nil? ? "Check issuer terms" : figure_with_pence(@stack.annual_fee) %></p>
+      <p class="detail-figure-label">Combined ongoing annual fees · USD<br>Before introductory waivers or conditional credits</p>
+      <% if @available %>
+        <div class="detail-section">
+          <%= button_to(user_signed_in? ? "Add stack to Planned" : "Sign in to save this stack", save_browse_wallet_items_path, params: { stack_id: @stack.id }, class: "btn btn-primary") %>
+          <p class="detail-figure-label">A shortlist, not an application. Cards already in your wallet stay as they are.</p>
+        </div>
+      <% end %>
       <p class="detail-foryou-copy detail-foryou-copy--spaced">Not sure this is your stack? The quiz ranks every card against how you spend.</p>
       <%= link_to "Take the quiz", new_quiz_response_path, class: "detail-back detail-back--tight" %>
     </div>
@@ -19,11 +29,13 @@
       <div class="detail-section detail-section--flush">
         <h2>Cards in this stack</h2>
         <ul class="stack-cards">
-          <% @stack.cards.each do |card| %>
+          <% @stack.stack_cards.each do |member| %>
+            <% card = member.card %>
             <li>
               <%= link_to card_path(card), "aria-label": "Open #{card.name}" do %>
-                <div class="detail-art <%= card_finish(card) %>">
-                  <span class="brand">shuffl.</span>
+                <div class="detail-art <%= card_finish(card) %> <%= "has-card-image" if card.image_path %>">
+                  <%= image_tag card.image_path, alt: "", class: "card-image", decoding: "async" if card.image_path %>
+                  <span class="brand"><%= render "shared/wordmark", link: false %></span>
                   <span class="chip"></span>
                 </div>
               <% end %>
@@ -31,16 +43,23 @@
                 <%= link_to card_path(card) do %>
                   <p class="name"><%= card.name %></p>
                 <% end %>
-                <p class="issuer"><%= card.issuer %> · <%= card.card_type %></p>
+                <p class="issuer"><%= card.issuer %> · <%= card.card_type.to_s.humanize %></p>
+                <p class="stack-role"><%= member.role %></p>
               </div>
               <div class="figures">
-                <strong><%= card.reward_rate %>x</strong>
-                <small><%= number_to_currency(card.annual_fee, precision: 0) %> a year</small>
+                <strong><%= card.reward_summary %></strong>
+                <small><%= card_annual_fee(card) %> a year</small>
               </div>
             </li>
           <% end %>
         </ul>
       </div>
+      <% if @stack.notes.present? %>
+        <section class="detail-section">
+          <h2>How to use this stack</h2>
+          <p class="lede"><%= @stack.notes %></p>
+        </section>
+      <% end %>
     </div>
   </div>
 

@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "answer", "heading", "status", "done", "option", "ordered", "board", "slots", "pool"]
-  static values = { limit: Number, ranked: Boolean }
+  static targets = ["form", "answer", "heading", "status", "done", "option", "ordered", "board", "slots", "pool", "budgetField", "budgetInput"]
+  static values = { limit: Number, ranked: Boolean, budget: Boolean }
 
   // Separator chosen because it cannot appear in an option label.
   static SEPARATOR = "\u001F"
@@ -30,11 +30,17 @@ export default class extends Controller {
   choose(event) {
     if (this.busy) return
     this.cancel()
+    if (event?.target.checked && event.target.type === "checkbox" && !this.rankedValue) {
+      this.answerTargets.forEach(input => {
+        if (input !== event.target && (event.target.dataset.exclusive === "true" || input.dataset.exclusive === "true")) input.checked = false
+      })
+    }
     if (this.rankedValue && event) this.track(event.target)
     const count = this.update()
     // A ranked question is finished by the Done button, not by hitting the cap:
     // two ranked choices is a legitimate answer and should not auto-advance.
-    if (!this.rankedValue && count === this.limitValue) {
+    if (!this.rankedValue && this.limitValue === 1 && count === 1 &&
+        (!this.budgetValue || !this.answerTargets.some(input => input.checked && input.value === "Custom"))) {
       this.statusTarget.textContent = "Answer selected. Moving on…"
       // Briefly show the selected state before navigating; never submit on focus.
       this.timer = setTimeout(() => this.formTarget.requestSubmit(), 250)
@@ -61,6 +67,14 @@ export default class extends Controller {
     }
     if (this.rankedValue) { this.paintRanks(); if (this.hasBoardTarget) this.renderRanking() }
     if (this.hasDoneTarget) this.doneTarget.disabled = count === 0
+    if (this.budgetValue) {
+      const custom = this.answerTargets.some(input => input.checked && input.value === "Custom")
+      this.doneTarget.hidden = !custom
+      this.budgetFieldTarget.hidden = !custom
+      this.budgetInputTarget.disabled = !custom
+      this.budgetInputTarget.required = custom
+      this.doneTarget.disabled = count === 0 || (custom && !this.budgetInputTarget.checkValidity())
+    }
     return count
   }
 

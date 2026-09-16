@@ -12,14 +12,19 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
     @user = User.create!(first_name: "Results", email: "results-test@example.com", password: "password123")
   end
 
-  test "results retain recommendations and initialize spending from quiz" do
+  test "results retain recommendations without inventing category spending" do
     get quiz_response_path(@quiz)
     assert_response :success
     assert_select '[data-controller~="results"]'
     assert_select 'nav.site-nav'
     payload = ResultsStack.new(@quiz).payload
     assert_equal @card.id, payload[:cards][payload[:selected].first][:id]
-    assert_equal 1750, payload[:amounts].sum
+    refute payload.key?(:amounts)
+    refute payload.key?(:spendingPlan)
+    assert_select '#confirm-spending', count: 0
+    assert_select '#spend', count: 0
+    assert_select '#spending-guide', count: 0
+    assert_select 'aside.summary', count: 0
     assert_equal [0.0] * 6, payload[:cards].find { |card| card[:id] == @other.id }[:rates]
   end
 

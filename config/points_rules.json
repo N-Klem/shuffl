@@ -1,0 +1,254 @@
+{
+  "us-chase-sapphire-preferred": {
+    "programme": "chase",
+    "label": "Chase Ultimate Rewards",
+    "unit": "points",
+    "base_rule": 3,
+    "categories": {
+      "dining": {
+        "rule": 1,
+        "annual_cap": null
+      },
+      "travel": {
+        "rule": 2,
+        "annual_cap": null
+      },
+      "gas": {
+        "rule": 1,
+        "annual_cap": null
+      },
+      "streaming": {
+        "rule": 1,
+        "annual_cap": null
+      }
+    },
+    "notes": {
+      "groceries": "In-store supermarket spending uses the base rate. Online grocery bonuses need a separate spending amount."
+    },
+    "reviewed_rewards": [
+      {
+        "rate": "5",
+        "unit": "points_per_USD",
+        "category": "Chase Travel",
+        "conditions": "Excludes purchases reimbursed by the annual hotel credit."
+      },
+      {
+        "rate": "3",
+        "unit": "points_per_USD",
+        "category": "Dining; gas; EV charging; selected vacation homes; streaming; online groceries",
+        "conditions": "Online groceries exclude Target, Walmart and wholesale clubs; selected providers only."
+      },
+      {
+        "rate": "2",
+        "unit": "points_per_USD",
+        "category": "Other travel",
+        "conditions": ""
+      },
+      {
+        "rate": "1",
+        "unit": "points_per_USD",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "5",
+        "unit": "points_per_USD",
+        "category": "Lyft promotion",
+        "temporary": true,
+        "conditions": "Eligible Lyft purchases through September 2027.",
+        "effective_until": "2027-09-30"
+      }
+    ],
+    "source_url": "https://creditcards.chase.com/rewards-credit-cards/sapphire/preferred",
+    "checked_on": "2026-09-16",
+    "category_conditions": {
+      "dining": "Eligible restaurants, takeout and delivery.",
+      "gas": "Eligible gas stations; merchant classification applies.",
+      "streaming": "Only selected streaming providers qualify."
+    }
+  },
+  "us-amex-gold": {
+    "programme": "amex",
+    "label": "Amex Membership Rewards",
+    "unit": "points",
+    "base_rule": 5,
+    "categories": {
+      "dining": {
+        "rule": 0,
+        "annual_cap": 50000
+      },
+      "groceries": {
+        "rule": 1,
+        "annual_cap": 25000
+      }
+    },
+    "notes": {
+      "travel": "Uses the base rate for this broad travel budget. Flight and portal bonuses need separate booking amounts."
+    },
+    "reviewed_rewards": [
+      {
+        "rate": "4",
+        "unit": "points_per_USD",
+        "category": "Restaurants worldwide",
+        "conditions": "USD 50,000 calendar-year cap; then 1x."
+      },
+      {
+        "rate": "4",
+        "unit": "points_per_USD",
+        "category": "US supermarkets",
+        "conditions": "USD 25,000 calendar-year cap; then 1x."
+      },
+      {
+        "rate": "5",
+        "unit": "points_per_USD",
+        "category": "Prepaid hotels through Amex Travel",
+        "conditions": ""
+      },
+      {
+        "rate": "3",
+        "unit": "points_per_USD",
+        "category": "Direct flights or Amex Travel flights",
+        "conditions": ""
+      },
+      {
+        "rate": "2",
+        "unit": "points_per_USD",
+        "category": "Amex Travel prepaid car rentals and eligible cruises",
+        "conditions": ""
+      },
+      {
+        "rate": "1",
+        "unit": "points_per_USD",
+        "category": "Other purchases",
+        "conditions": ""
+      }
+    ],
+    "source_url": "https://www.americanexpress.com/us/credit-cards/card/gold-card/",
+    "checked_on": "2026-09-16"
+  },
+  "us-capital-one-venture": {
+    "programme": "capital-one",
+    "label": "Capital One",
+    "unit": "miles",
+    "base_rule": 1,
+    "categories": {},
+    "notes": {},
+    "reviewed_rewards": [
+      {
+        "rate": "5",
+        "unit": "miles_per_USD",
+        "category": "Capital One Travel hotels, vacation rentals and rental cars",
+        "conditions": ""
+      },
+      {
+        "rate": "2",
+        "unit": "miles_per_USD",
+        "category": "Other purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "5",
+        "unit": "miles_per_USD",
+        "category": "Capital One Entertainment bookings",
+        "conditions": ""
+      }
+    ],
+    "source_url": "https://www.capitalone.com/credit-cards/venture/",
+    "checked_on": "2026-09-16"
+  },
+  "us-capital-one-venture-x": {
+    "programme": "capital-one",
+    "label": "Capital One",
+    "unit": "miles",
+    "base_rule": 2,
+    "categories": {},
+    "notes": {},
+    "reviewed_rewards": [
+      {
+        "rate": "10",
+        "unit": "miles_per_USD",
+        "category": "Capital One Travel hotels and rental cars",
+        "conditions": ""
+      },
+      {
+        "rate": "5",
+        "unit": "miles_per_USD",
+        "category": "Capital One Travel flights and vacation rentals",
+        "conditions": ""
+      },
+      {
+        "rate": "2",
+        "unit": "miles_per_USD",
+        "category": "Other purchases",
+        "conditions": ""
+      }
+    ],
+    "source_url": "https://www.capitalone.com/credit-cards/venture-x/",
+    "checked_on": "2026-09-16"
+  },
+  "us-wells-fargo-autograph": {
+    "programme": "wells-fargo",
+    "label": "Wells Fargo Rewards",
+    "unit": "points",
+    "base_rule": 1,
+    "categories": {
+      "dining": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "travel": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "gas": {
+        "rule": 0,
+        "annual_cap": null
+      },
+      "streaming": {
+        "rule": 0,
+        "annual_cap": null
+      }
+    },
+    "notes": {},
+    "reviewed_rewards": [
+      {
+        "rate": "3",
+        "unit": "points_per_USD",
+        "category": "Restaurants, travel, gas/EV charging, transit, selected streaming and phone plans",
+        "conditions": "Merchant/provider exclusions apply."
+      },
+      {
+        "rate": "1",
+        "unit": "points_per_USD",
+        "category": "Other purchases",
+        "conditions": ""
+      }
+    ],
+    "source_url": "https://creditcards.wellsfargo.com/autograph-visa-credit-card/",
+    "checked_on": "2026-09-16"
+  },
+  "us-bofa-student-travel": {
+    "programme": "bofa-travel",
+    "label": "Bank of America Travel Rewards",
+    "unit": "points",
+    "base_rule": 0,
+    "categories": {},
+    "notes": {},
+    "reviewed_rewards": [
+      {
+        "rate": "1.5",
+        "unit": "points_per_USD",
+        "category": "Everyday purchases",
+        "conditions": ""
+      },
+      {
+        "rate": "3",
+        "unit": "points_per_USD",
+        "category": "Eligible BofA Travel bookings",
+        "conditions": ""
+      }
+    ],
+    "source_url": "https://www.bankofamerica.com/credit-cards/products/student-rewards-credit-card/",
+    "checked_on": "2026-09-16"
+  }
+}

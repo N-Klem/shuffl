@@ -878,3 +878,30 @@
   background: var(--surface);
   box-shadow: 0 1px 0 var(--hairline-strong);
 }
+
+.browse-page .stack-members { margin: 24px 0; }
+.browse-page .stack-member {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+  text-decoration: none;
+}
+.browse-page .stack-member p { color: var(--body-color); }
+.browse-page .stack-member:hover h3 { text-decoration: underline; }
+@media (max-width: 480px) {
+  .browse-page .stack-member { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .browse-page .stack-member .art { max-width: 160px; }
+}
+.browse-page .stack-member .art {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1.586;
+  margin: 0;
+  background: transparent;
+  align-self: start;
+}
+.browse-page .stack-member .credit { width: 100%; transform: none; }

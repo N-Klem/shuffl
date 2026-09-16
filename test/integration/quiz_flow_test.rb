@@ -26,8 +26,9 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
   end
 
   def answer_current(choice = :last)
-    question = Card::QUESTION_POOL.fetch(current_question_key)
+    question = Card::QUIZ_QUESTION_POOL.fetch(current_question_key)
     answer = question[:type] == :ranked ? question[:options].first(3) : (choice == :first ? question[:options].first : question[:options].last)
+    answer = "300" if question[:type] == :budget
     submit_answer(answer)
     question
   end
@@ -52,9 +53,45 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
         assert_equal 10, result.answers_hash.size
         assert_equal [goal], result.answers_hash["priorities"]
         assert result.completed_at
-        assert result.answers_hash.key?("pays_in_full")
+        assert_equal "Recommend for me", result.answers_hash["stack_size"]
+        refute result.answers_hash.key?("pays_in_full")
       end
     end
+  end
+
+  test "real catalogue returns no match instead of aspirational cards" do
+    CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
+    Card.publish_us_demo!
+    get new_quiz_response_path
+    submit_answer(["Travel rewards"]); follow_redirect!
+    submit_answer("1–2"); follow_redirect!
+    submit_answer("Building (300–579)"); follow_redirect!
+    7.times { answer_current; follow_redirect! }
+    assert_response :success
+    assert_equal [], JSON.parse(QuizResponse.order(:id).last.top_card_ids)
+    assert_select "h1", "No matching stack yet."
+    assert_select "#save-stack", count: 0
+    assert_select '[data-controller~="results"]', count: 0
+  end
+
+  test "first-card quiz recommends a supported real card and saves it to Planned" do
+    CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
+    Card.publish_us_demo!
+    user = User.create!(first_name: "Starter", email: "starter-quiz@example.com", password: "password123")
+    sign_in user
+    get new_quiz_response_path
+    answers = [["Building credit"], "None right now", "No credit history", "1",
+               ["Groceries"], "Under $500", "0", "Not a student", "No annual fee", "Supermarkets"]
+    answers.each { |answer| submit_answer(answer); follow_redirect! }
+    quiz = QuizResponse.order(:id).last
+    ids = JSON.parse(quiz.top_card_ids)
+    assert_equal [Card.find_by!(source_key: "us-chase-freedom-rise").id], ids
+    2.times do
+      post save_stack_wallet_items_path, params: { quiz_response_id: quiz.id, card_ids: ids }, as: :json
+      assert_response :success
+    end
+    assert_equal ids.first, user.wallet_items.sole.card_id
+    assert_equal "planned", user.wallet_items.sole.status
   end
 
   test "back allows edits and preserves compatible answers" do
@@ -77,14 +114,14 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     get new_quiz_response_path
     submit_answer(["Travel rewards"]); follow_redirect!
     8.times { answer_current; follow_redirect! }
-    # Travel frequency is answered; the final bonus question is still open.
+    # Programme preferences are answered; travel frequency is still open.
     get new_quiz_response_path(step: 0)
     submit_answer(["Building credit"]); follow_redirect!
     7.times { answer_current; follow_redirect! }
-    assert_equal "documented_income", current_question_key
+    assert_equal "next_card_management", current_question_key
     2.times { answer_current; follow_redirect! }
     answers = QuizResponse.order(:id).last.answers_hash
-    assert answers.key?("documented_income")
+    assert answers.key?("next_card_management")
     refute answers.key?("international_travel")
     assert_equal 10, answers.size
   end
@@ -111,14 +148,85 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select "input[name='ordered'][value='Cashback']"
   end
 
-  test "new cardholders see prospective repayment wording" do
+  test "stack size replaces repayment and limits saved recommendations" do
+    3.times do |i|
+      Card.create!(name: "Extra card #{i}", issuer: "Test", network: "Visa",
+                   card_type: "Credit", annual_fee: 0, reward_rate: 1)
+    end
     get new_quiz_response_path
     submit_answer(["Useful perks"]); follow_redirect!
     submit_answer("None right now"); follow_redirect!
     answer_current; follow_redirect!
-    assert_select "h1", /Would you expect to pay/
-    submit_answer("I'm not sure yet")
-    assert_response :see_other
+    assert_equal "stack_size", current_question_key
+    assert_select "h1", /maximum number of cards/
+    submit_answer("2"); follow_redirect!
+    6.times { answer_current; follow_redirect! }
+    result = QuizResponse.order(:id).last
+    assert_equal "2", result.answers_hash["stack_size"]
+    assert_operator JSON.parse(result.top_card_ids).size, :<=, 2
+    assert_operator JSON.parse(result.top_card_ids).size, :>=, 1
+    assert_equal 10, result.answers_hash.size
+  end
+
+  test "custom combined budget is validated, restored and respected" do
+    Card.create!(name: "Fee card A", issuer: "Test", network: "Visa", card_type: "Credit", annual_fee: 95, reward_rate: 5)
+    Card.create!(name: "Fee card B", issuer: "Test", network: "Visa", card_type: "Credit", annual_fee: 95, reward_rate: 5)
+    get new_quiz_response_path
+    6.times { answer_current; follow_redirect! }
+    assert_equal "annual_fee_budget", current_question_key
+    ["", "-1", "Infinity", "100.123"].each do |invalid|
+      post quiz_responses_path, params: { step: current_index, answer: "Custom", custom_budget: invalid,
+        quiz_token: css_select("input[name='quiz_token']").first["value"] }
+      assert_response :unprocessable_entity
+    end
+    post quiz_responses_path, params: { step: current_index, answer: "Custom", custom_budget: "150.50",
+      quiz_token: css_select("input[name='quiz_token']").first["value"] }
+    follow_redirect!
+    get new_quiz_response_path(step: 6)
+    assert_select "input[checked][value='Custom']"
+    assert_select "input[name='custom_budget'][value='150.50']"
+    submit_answer("100"); follow_redirect!
+    3.times { answer_current; follow_redirect! }
+    result = QuizResponse.order(:id).last
+    assert_equal "100", result.answers_hash["annual_fee_budget"]
+    assert_operator Card.where(id: JSON.parse(result.top_card_ids)).sum(:annual_fee), :<=, 100
+  end
+
+  test "changing perk priority replaces the tenth question and drops the old answer" do
+    get new_quiz_response_path
+    submit_answer(["Useful perks"]); follow_redirect!
+    7.times { answer_current; follow_redirect! }
+    submit_answer(["Dining credits"]); follow_redirect!
+    assert_equal "dining_providers", current_question_key
+    # Simulate a previously saved final answer, then revise its parent question.
+    post save_progress_quiz_responses_path
+    draft = QuizResponse.drafts.order(:id).last
+    draft.update!(answers: draft.answers_hash.merge("dining_providers" => "Uber Eats").to_json)
+    reset!
+    user = User.create!(first_name: "Branch", email: "branch-test@example.com", password: "password123")
+    draft.update!(user: user)
+    sign_in user
+    get new_quiz_response_path(step: 8)
+    submit_answer(["Shopping or subscription credits"]); follow_redirect!
+    assert_equal "credit_providers", current_question_key
+    answer_current; follow_redirect!
+    result = QuizResponse.order(:id).last
+    assert result.answers_hash.key?("credit_providers")
+    refute result.answers_hash.key?("dining_providers")
+    assert_equal 10, result.answers_hash.size
+  end
+
+  test "travel no preference cannot be combined with a named programme" do
+    get new_quiz_response_path
+    submit_answer(["Travel rewards"]); follow_redirect!
+    7.times { answer_current; follow_redirect! }
+    assert_equal "travel_programs", current_question_key
+    submit_answer(["United MileagePlus", "No preference"])
+    assert_response :unprocessable_entity
+    submit_answer(["United MileagePlus", "World of Hyatt"]); follow_redirect!
+    assert_equal "international_travel", current_question_key
+    answer_current; follow_redirect!
+    assert_equal ["United MileagePlus", "World of Hyatt"], QuizResponse.order(:id).last.answers_hash["travel_programs"]
   end
 
   test "ranked goals all contribute and the first one has more weight" do

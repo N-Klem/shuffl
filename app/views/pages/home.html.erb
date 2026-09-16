@@ -14,15 +14,16 @@
       <div id="hero-stack-<%= index %>" data-hero-stacks-target="panel" data-label="Stack <%= index + 1 %> of <%= @featured_stacks.size %> · <%= stack.name %>" <%= "hidden" unless index.zero? %>>
         <div class="stack-tile" data-controller="stack">
           <div class="stack-fan">
-            <% stack.cards.first(4).each do |card| %>
-              <div class="fan-card <%= card_finish(card) %>" data-card-name="<%= card.name %>" data-card-benefit="<%= card_benefit(card) %>" data-card-fee="<%= number_to_currency(card.annual_fee, precision: 0) %>">
+            <% stack.stack_cards.each do |member| %>
+              <% card = member.card %>
+              <div class="fan-card <%= card_finish(card) %> <%= "has-card-image" if card.image_path %>" data-card-name="<%= card.name %>" data-card-benefit="<%= member.role.presence || card_benefit(card) %>" data-card-fee="<%= number_to_currency(card.annual_fee, precision: 0) %>">
+                <%= image_tag card.image_path, alt: "", class: "card-image", decoding: "async" if card.image_path %>
                 <div class="chip"></div>
-                <span class="card-wordmark">shuffl.</span>
-                <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= card_benefit(card) %></span></div>
+                <span class="card-wordmark"><%= render "shared/wordmark", link: false %></span>
+                <div class="card-reveal"><span class="name"><%= card.name %></span><span class="benefit"><%= member.role.presence || card_benefit(card) %></span></div>
               </div>
             <% end %>
           </div>
-          <div class="stack-card-info" aria-live="polite"></div>
           <div class="stack-tile-footer"><h2><button type="button" data-stack-target="toggle" aria-expanded="false" aria-label="Reveal <%= stack.name %> cards"><%= stack.name %><span class="stack-hint" aria-hidden="true">Explore stack <span>↗</span></span></button></h2></div>
         </div>
         <%= link_to "View #{stack.name} stack →", stack_path(stack), class: "hero-stack-link" %>
@@ -32,8 +33,8 @@
       <div class="ghost-stack" aria-hidden="true">
         <% 4.times do %><span class="ghost-card"><span class="ghost-chip"></span><span class="ghost-wordmark"><%= render "shared/wordmark", link: false %></span></span><% end %>
       </div>
-      <%= link_to stacks_path, class: "ghost-stack-link tertiary-link" do %>
-        <span>Explore more stacks</span><span aria-hidden="true">↗</span>
+      <%= link_to (@featured_stacks.any? ? stacks_path : cards_path), class: "ghost-stack-link tertiary-link" do %>
+        <span><%= @featured_stacks.any? ? "Explore more stacks" : "Explore the real cards" %></span><span aria-hidden="true">↗</span>
       <% end %>
     </div>
     <div class="hero-stacks-controls">

@@ -9,17 +9,17 @@ class CardCandidateTest < ActiveSupport::TestCase
     @document = JSON.parse(File.read(@path))
   end
 
-  test "imports all 50 into review without changing the live catalogue" do
+  test "imports all 30 into review without changing the live catalogue" do
     assert_no_difference [ "Card.count", "WalletItem.count", "StackCard.count" ] do
-      assert_difference "CardCandidate.count", 50 do
-        assert_equal({ added: 50, preserved: 0 }, CardCandidate.import_file!(@path))
+      assert_difference "CardCandidate.count", 30 do
+        assert_equal({ added: 30, preserved: 0 }, CardCandidate.import_file!(@path))
       end
     end
     assert_equal 30, CardCandidate.where(country: "US", currency: "USD").count
-    assert_equal 20, CardCandidate.where(country: "GB", currency: "GBP").count
+    assert_equal 0, CardCandidate.where(country: "GB", currency: "GBP").count
     assert_equal [ "pending" ], CardCandidate.distinct.pluck(:review_status)
-    candidate = CardCandidate.find_by!(source_key: "gb-ms-shopping-plus")
-    assert_nil candidate.research.dig("fees", "annual")
+    candidate = CardCandidate.find_by!(source_key: "us-chase-freedom-unlimited")
+    assert_equal "3", candidate.research.dig("fees", "foreign_purchase_percent")
     assert_nil candidate.research["credit_score_min"]
   end
 
@@ -29,7 +29,7 @@ class CardCandidateTest < ActiveSupport::TestCase
     candidate.update!(name: "Manually corrected name", review_status: "reviewed", reviewed_by: "Noah", reviewed_at: Time.current, review_notes: "Checked against issuer")
     original_time = candidate.updated_at
     assert_no_difference "CardCandidate.count" do
-      assert_equal({ added: 0, preserved: 50 }, CardCandidate.import_file!(@path))
+      assert_equal({ added: 0, preserved: 30 }, CardCandidate.import_file!(@path))
     end
     assert_equal "Manually corrected name", candidate.reload.name
     assert_equal "reviewed", candidate.review_status

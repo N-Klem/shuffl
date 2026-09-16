@@ -425,3 +425,66 @@ a:focus-visible .nav-roll-line + .nav-roll-line .nav-roll-letter {
   font-size: 15px;
 }
 .flash-alert { border-color: var(--burgundy); color: var(--burgundy); }
+
+/* Supplied issuer artwork shares the existing card geometry and interactions. */
+html body .has-card-image { background: transparent; }
+.has-card-image > .card-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.has-card-image > :is(.chip, .brand, .card-brand, .card-wordmark, .masked, .name, .card-name, .card-reveal) { visibility: hidden; }
+
+/* These source images include pale margins outside the physical card edges.
+   Crop only their presentation; retain the original issuer artwork on disk. */
+.has-card-image:has(> .card-image[src$="us-chase-sapphire-reserve.jpeg"]),
+.has-card-image:has(> .card-image[src$="us-chase-freedom-unlimited.jpeg"]),
+.has-card-image:has(> .card-image[src$="us-chase-freedom-flex.jpeg"]),
+.has-card-image:has(> .card-image[src$="us-chase-freedom-rise.jpeg"]),
+.has-card-image:has(> .card-image[src$="us-united-explorer.jpeg"]),
+.has-card-image:has(> .card-image[src$="us-citi-strata-premier.jpeg"]) {
+  overflow: hidden;
+}
+.has-card-image > .card-image:is(
+  [src$="us-chase-sapphire-reserve.jpeg"],
+  [src$="us-chase-freedom-unlimited.jpeg"],
+  [src$="us-chase-freedom-flex.jpeg"],
+  [src$="us-chase-freedom-rise.jpeg"]
+) {
+  object-fit: cover;
+  transform: scale(1.025);
+}
+.has-card-image > .card-image:is(
+  [src$="us-united-explorer.jpeg"],
+  [src$="us-citi-strata-premier.jpeg"]
+) {
+  object-fit: cover;
+  transform: scale(1.08);
+}
+
+/* Category spending guide shared by Results and Wallet. */
+.spending-guide { margin-block: 0 40px; }
+.spending-guide > h2 { margin-bottom: 8px; }
+.spending-guide-row { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr); gap: 24px; padding-block: 24px; border-bottom: 1px solid var(--hairline); }
+.spending-guide-row:first-child { border-top: 1px solid var(--hairline); }
+.spending-guide-category h3 { font-size: var(--text-dense); font-weight: 600; margin: 0 0 8px; }
+.spending-guide-category > span, .spending-guide-use .caption { color: var(--muted); font-size: var(--text-dense); }
+.spending-guide-use strong { color: var(--ink); font-size: var(--text-dense); }
+.spending-guide-use p { margin: 8px 0; font-size: var(--text-dense); }
+.spending-guide-use > div + div { margin-top: 24px; }
+.programme-choice { display: block; margin-top: 16px; color: var(--muted); font-size: var(--text-dense); }
+.programme-choice select { display: block; width: 100%; min-height: 44px; margin-top: 8px; padding: 8px; color: var(--ink); background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--radius-button); font: inherit; }
+.programme-choice select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.spending-earned { display: block; font-variant-numeric: tabular-nums; }
+.spending-totals { list-style: none; padding: 0; margin: 16px 0; }
+.spending-totals li { border-bottom: 1px solid var(--hairline); padding-block: 12px; }
+.spending-totals strong, .spending-totals span { display: block; }
+.spending-totals strong { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
+.spending-totals span { font-size: var(--text-dense); color: var(--muted); margin-top: 8px; }
+@media (max-width: 640px) {
+  .spending-guide-row { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}

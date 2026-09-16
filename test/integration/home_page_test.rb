@@ -10,6 +10,11 @@ class HomePageTest < ActionDispatch::IntegrationTest
                          annual_fee: 0, reward_rate: 3, best_for: "Dining", perks: "Standout home perk")
     @stack = Stack.create!(name: "Home Feature Stack", category: "Dining", description: "For testing the home page.")
     @stack.stack_cards.create!(card: @card)
+    2.times do |index|
+      card = Card.create!(name: "Home companion #{index}", issuer: "Test", network: "Visa", card_type: "Credit",
+                          annual_fee: 0, reward_rate: 1, best_for: "Cashback")
+      @stack.stack_cards.create!(card: card, position: index + 1)
+    end
   end
 
   test "home page features real stacks and their real cards, not hardcoded names" do

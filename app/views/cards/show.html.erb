@@ -1,16 +1,17 @@
 <% content_for :body_class, "detail-page" %>
 <% content_for :title, "#{@card.name} · Shuffl" %>
-<% content_for :meta_description, "#{@card.name} from #{@card.issuer}: #{@card.reward_rate}x rewards, #{number_to_currency(@card.annual_fee, precision: 0)} annual fee. #{@card.description}" %>
+<% content_for :meta_description, "#{@card.name} from #{@card.issuer}: #{@card.reward_summary}, #{card_annual_fee(@card)} annual fee. #{@card.description}" %>
 
 <main>
-  <p class="eyebrow"><%= @card.issuer %> · <%= @card.network %> · <%= @card.card_type %></p>
+  <p class="eyebrow"><%= [@card.issuer, @card.network.presence, @card.card_type.humanize].compact.join(" · ") %></p>
   <h1><%= @card.name %></h1>
-  <p class="lede"><%= @card.description %></p>
+  <p class="lede"><%= @card.real_catalogue? ? @card.value_profile[:title] : @card.description %></p>
 
   <div class="detail-layout">
     <div class="detail-aside">
-      <div class="detail-art <%= card_finish(@card) %>">
-        <span class="brand">shuffl.</span>
+      <div class="detail-art <%= card_finish(@card) %> <%= "has-card-image" if @card.image_path %>">
+        <%= image_tag @card.image_path, alt: "", class: "card-image", decoding: "async" if @card.image_path %>
+        <span class="brand"><%= render "shared/wordmark", link: false %></span>
         <span class="chip"></span>
         <span class="masked"><%= @card.name %></span>
       </div>
@@ -38,17 +39,40 @@
     </div>
 
     <div>
-      <p class="detail-figure"><%= number_with_precision(@card.reward_rate, strip_insignificant_zeros: true) %>x</p>
-      <p class="detail-figure-label">Top reward rate</p>
+      <p class="detail-figure"><%= @card.real_catalogue? ? @card.value_profile[:value] : @card.headline_reward %></p>
+      <p class="detail-figure-label"><%= @card.real_catalogue? ? @card.value_profile[:label] : @card.reward_summary %></p>
 
       <ul class="detail-facts">
-        <li><span class="key">Annual fee</span><span class="value"><%= @card.annual_fee.to_i.zero? ? "None" : number_to_currency(@card.annual_fee, precision: 0) %></span></li>
-        <li><span class="key">Welcome bonus</span><span class="value"><%= @card.welcome_bonus.presence || "None" %></span></li>
-        <li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min.presence || "Not specified" %></span></li>
-        <li><span class="key">Foreign transaction fee</span><span class="value"><%= @card.foreign_transaction_fee? ? "Yes" : "None" %></span></li>
+        <li><span class="key">Annual fee</span><span class="value"><%= card_annual_fee(@card) %></span></li>
+        <% if @card.displayed_welcome_offer.present? %><li><span class="key">Welcome offer</span><span class="value"><%= @card.displayed_welcome_offer %></span></li><% end %>
+        <% if @card.credit_score_min.present? %><li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min %></span></li><% end %>
+        <li><span class="key">Foreign transaction fee</span><span class="value"><%= card_foreign_fee(@card) %></span></li>
       </ul>
 
-      <% perks = @card.perks.to_s.split(",").map(&:strip).reject(&:blank?) %>
+      <% if @card.catalogue_status == "retired" %>
+        <p>This is a retired demo card, kept for your saved history.</p>
+      <% end %>
+      <% if @card.real_catalogue? %>
+        <section class="detail-section">
+          <h2><%= @card.reward_rules.any? ? "How the rewards work" : "How this card works" %></h2>
+          <% if @card.reward_rules.empty? %><p><%= @card.value_profile[:detail] %></p><% end %>
+          <ul class="detail-perks">
+            <% @card.reward_rules.each do |rule| %>
+              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> — <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
+            <% end %>
+          </ul>
+          <% if @card.catalogue_terms.dig("fees", "intro").present? %><p>First-year fee terms: <%= @card.catalogue_terms.dig("fees", "intro") %></p><% end %>
+          <% if @card.catalogue_terms["eligibility"].present? %><p><%= @card.catalogue_terms["eligibility"] %></p><% end %>
+          <p>Check current application terms with the issuer. Approval and any personalised offer depend on the issuer’s checks.</p>
+          <% Array(@card.catalogue_terms["recommendation_conditions"]).each do |condition| %><p><%= condition %></p><% end %>
+          <ul>
+            <% Array(@card.catalogue_terms["sources"]).each do |source| %>
+              <li><%= link_to source["label"].presence || "Issuer source", source["url"], target: "_blank", rel: "noopener noreferrer" %> · checked <%= source["checked_on"] %></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+      <% perks = @card.perk_list %>
       <% if perks.any? %>
         <div class="detail-section">
           <h2>Perks</h2>
@@ -73,7 +97,9 @@
       <% end %>
 
       <div class="detail-actions">
-        <% if !user_signed_in? %>
+        <% if @card.catalogue_status == "retired" %>
+          <span class="owned">This card is no longer available to add.</span>
+        <% elsif !user_signed_in? %>
           <%= link_to "Sign in to save this card", new_user_session_path, class: "btn-wallet" %>
           <span class="owned">Saving keeps it in My Wallet. No application is made.</span>
         <% elsif current_user.cards.exists?(@card.id) %>
@@ -112,12 +138,13 @@
             <% @similar_cards.each do |card| %>
               <li>
                 <%= link_to card_path(card) do %>
-                  <div class="detail-art <%= card_finish(card) %>">
-                    <span class="brand">shuffl.</span>
+                  <div class="detail-art <%= card_finish(card) %> <%= "has-card-image" if card.image_path %>">
+                    <%= image_tag card.image_path, alt: "", class: "card-image", decoding: "async" if card.image_path %>
+                    <span class="brand"><%= render "shared/wordmark", link: false %></span>
                     <span class="chip"></span>
                   </div>
                   <span class="name"><%= card.name %></span>
-                  <span class="meta"><%= card.reward_rate %>x · <%= number_to_currency(card.annual_fee, precision: 0) %> a year</span>
+                  <span class="meta"><%= card.reward_summary %> · <%= card_annual_fee(card) %> a year</span>
                 <% end %>
               </li>
             <% end %>

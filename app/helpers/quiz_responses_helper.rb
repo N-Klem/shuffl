@@ -22,14 +22,29 @@ module QuizResponsesHelper
   }.freeze
 
   def quiz_question_explanation(question)
+    return "Choose up to three. Choose No preference on its own." if question[:type] == :multi
     return "Choose up to three. One is enough if that's all you need." if question[:type] == :ranked
     {
-      "open_credit_cards" => "A little context for your next card. Every goal is open to you.",
-      "credit_score" => "This helps compare cards' typical credit requirements. No credit check.",
+      "open_credit_cards" => "If you choose Recommend for me, this helps us balance extra coverage against the number of cards to manage.",
+      "credit_score" => "We only recommend cards with recorded guidance matching your range. If you don’t know it, we can’t establish a match. No credit check or approval guarantee.",
+      "reward_management" => "Changing categories add work. We count them only as flexible opportunities, never as permanent rewards for your spending.",
+      "first_card_management" => "This helps us choose between everyday simplicity, no annual fee and a focused spending role.",
+      "next_card_management" => "This changes how we weigh category management, fees and a clear spending role.",
+      "groceries_where" => "Supermarket bonuses may exclude superstores, wholesale clubs or online orders. Your answer changes which rewards count.",
+      "shopping_where" => "We only count retailer and membership rewards when your answer supports them.",
+      "dining_where" => "We distinguish restaurant rewards from explicitly supported delivery rewards.",
+      "travel_booking" => "Portal-only rewards do not count as direct-booking rewards.",
+      "transport_spending" => "Gas, EV charging and transit have different recorded reward rules.",
+      "entertainment_spending" => "Streaming rewards do not automatically cover events or cinemas.",
+      "bills_spending" => "Phone plans may have specific rewards. We do not assume rent accepts credit cards or earns rewards.",
+      "foreign_purchases" => "More frequent foreign-currency use gives fee-free coverage more weight.",
+      "dining_providers" => "We only count a provider credit when that provider is named in our recorded terms.",
+      "credit_providers" => "Credits count only where they match your existing spending, with the recorded enrolment conditions.",
       "pays_in_full" => "How you repay matters alongside rewards and fees.",
-      "monthly_card_spend" => "An estimate is fine. You can adjust your spending on the results page.",
-      "annual_fee_tolerance" => "We'll use this to weigh the cost against the benefits.",
-      "employment_status" => "This helps us consider student and more accessible cards.",
+      "monthly_card_spend" => "This helps us weigh ongoing annual fees against your spending level. It is not a reward or bonus estimate.",
+      "annual_fee_budget" => "The total ongoing annual fees across all recommended cards must fit this budget. Enter 0 for no annual fees.",
+      "stack_size" => "This is a maximum, not a target. We can recommend fewer if extra cards would add little value.",
+      "employment_status" => "Student-only cards are considered only when you select Student. We do not infer your income.",
       "documented_income" => "This helps us consider more accessible options.",
       "annual_income" => "A rough range helps us weigh annual fees. We don't need an exact figure.",
       "international_travel" => "This helps us weigh foreign transaction fees.",

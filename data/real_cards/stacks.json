@@ -1,0 +1,103 @@
+[
+  {
+    "source_key": "starter",
+    "name": "The Starter",
+    "category": "Student",
+    "description": "Two cards to find your feet. Everyday student spending, with a second card for changing bonus categories.",
+    "notes": "For students. Discover categories require quarterly activation and share a $1,500 quarterly spending cap, then earn the base rate. Use Discover when an activated category offers more; otherwise use Savor Student. Grocery superstores are excluded. Approval is subject to each issuer.",
+    "cards": [
+      {
+        "source_key": "us-capital-one-savor-student",
+        "role": "Your everyday card for dining, eligible groceries, entertainment and streaming."
+      },
+      {
+        "source_key": "us-discover-it-student",
+        "role": "Your quarterly specialist: use it for activated bonus categories when they beat your everyday rate."
+      }
+    ]
+  },
+  {
+    "source_key": "everyday-cashback",
+    "name": "Everyday Cashback",
+    "category": "Cashback",
+    "description": "Three clear jobs. Everyday favourites, online shopping and gas, then everything else. No annual fees.",
+    "notes": "Blue Cash Everyday has separate $6,000 annual spending caps for eligible US supermarkets, gas and online retail, then 1%. Savor grocery rewards exclude superstores such as Walmart and Target. No rotating categories to activate.",
+    "cards": [
+      {
+        "source_key": "us-capital-one-savor",
+        "role": "Dining, eligible groceries, entertainment and streaming."
+      },
+      {
+        "source_key": "us-amex-blue-cash-everyday",
+        "role": "Eligible US online retail and gas purchases."
+      },
+      {
+        "source_key": "us-wells-fargo-active-cash",
+        "role": "Other eligible purchases outside the first two cards’ bonus categories."
+      }
+    ]
+  },
+  {
+    "source_key": "foodie",
+    "name": "The Foodie",
+    "category": "Dining",
+    "description": "For eating in and going out. A supermarket specialist, a dining card and a simple everyday backup.",
+    "notes": "Blue Cash Preferred earns its supermarket bonus on up to $6,000 of eligible US supermarket spending per year, then 1%; use Savor for eligible groceries after that cap. Selected streaming and merchant exclusions apply. The $95 ongoing fee is before any introductory waiver. For lighter grocery spending, compare Everyday Cashback.",
+    "cards": [
+      {
+        "source_key": "us-amex-blue-cash-preferred",
+        "role": "Eligible US supermarkets, selected streaming, US gas and transit."
+      },
+      {
+        "source_key": "us-capital-one-savor",
+        "role": "Dining and entertainment, plus eligible groceries after the supermarket specialist’s cap."
+      },
+      {
+        "source_key": "us-wells-fargo-active-cash",
+        "role": "Other eligible purchases, including spending outside qualifying supermarket categories."
+      }
+    ]
+  },
+  {
+    "source_key": "traveler",
+    "name": "The Traveler",
+    "category": "Travel",
+    "description": "Everyday spending for future trips. Broad travel categories, a catch-all and a quarterly specialist.",
+    "notes": "Freedom Flex needs quarterly activation, with a shared $1,500 quarterly spending cap, then the base rate. Its categories change: use it where the current category fits, not as permanent grocery or gas coverage. Double Cash earns 1% when buying and 1% when paying. Points and cashback are shown separately, without assuming equal cash value.",
+    "cards": [
+      {
+        "source_key": "us-citi-strata-premier",
+        "role": "Travel, restaurants, supermarkets, gas and EV charging in its eligible bonus categories."
+      },
+      {
+        "source_key": "us-citi-double-cash",
+        "role": "Other purchases outside the stack’s bonus categories; rewards include purchase and repayment components."
+      },
+      {
+        "source_key": "us-chase-freedom-flex",
+        "role": "Activated quarterly categories that complement your regular spending; compare the reward type as well as the rate."
+      }
+    ]
+  },
+  {
+    "source_key": "frequent-flyer",
+    "name": "The Frequent Flyer",
+    "category": "Travel",
+    "description": "Travel benefits away. Useful spending coverage at home. Three cards for people who travel regularly.",
+    "notes": "Venture X’s $300 annual travel credit requires Capital One Travel bookings; lounge enrolment and access restrictions apply. The full $395 fee is shown without subtracting credits. Blue Cash Everyday is for eligible US purchases, with separate $6,000 annual gas and online-retail caps, then 1%. Grocery exclusions apply to Savor. Cashback and miles are not treated as equal cash values.",
+    "cards": [
+      {
+        "source_key": "us-capital-one-venture-x",
+        "role": "Travel bookings, airport benefits and everyday miles outside the other cards’ specialist categories."
+      },
+      {
+        "source_key": "us-capital-one-savor",
+        "role": "Dining, eligible groceries, entertainment and streaming."
+      },
+      {
+        "source_key": "us-amex-blue-cash-everyday",
+        "role": "Eligible US online retail and gas at home; check foreign purchase fees before using abroad."
+      }
+    ]
+  }
+]

@@ -659,3 +659,90 @@
   color: var(--muted);
   word-break: break-all;
 }
+.results-page .category input[type="number"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-button);
+  font: inherit;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.results-page .spending-confirmation {
+  display: block;
+  margin-top: 16px;
+}
+
+.results-page .spending-confirmation input {
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  accent-color: var(--ink);
+}
+
+.results-page .total.negative { color: var(--brick); }
+.results-page .total.unavailable { color: var(--muted); font-size: 22px; letter-spacing: 0; }
+.results-page .total.benefit-heading { color: var(--ink); font-size: 22px; letter-spacing: 0; }
+.results-page [hidden] { display: none !important; }
+.results-page .card-bottom .benefit-metric { color: var(--ink); }
+.results-page .reward small { display: block; }
+.results-page #stack-benefits ul { list-style: none; padding: 0; margin: 16px 0; }
+.results-page #stack-benefits li { padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+.results-page #stack-benefits strong, .results-page #stack-benefits span { display: block; }
+.results-page #stack-benefits span { color: var(--muted); margin-top: 8px; }
+.results-page .reward-pence { color: var(--muted); letter-spacing: 0; }
+.results-page .total .reward-pence { font-size: 0.55em; }
+.results-page .total:not(.negative) .reward-pence { color: var(--pine-pence); }
+.results-page .spending-help { margin-block: 16px; font-size: var(--text-dense); }
+.results-page .reward { white-space: normal; }
+.results-page #reward-allocation { font-size: var(--text-dense); }
+.results-page #reward-allocation li { margin-bottom: 8px; }
+.results-page input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Compact recommendations keep the whole stack easy to scan. */
+.results-page .results-main { margin-top: 32px; }
+.results-page .results-recommendations { max-width: 100%; }
+.results-page .results-recommendations .recommendation {
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 28px;
+  padding: 24px 0;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  border-radius: 0;
+}
+.results-page .results-recommendations .art-column { justify-content: flex-start; margin: 0; width: 100%; }
+.results-page .recommendation-copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 120px; gap: 16px 24px; }
+.results-page .card-hook { margin: 0 0 8px; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.025em; color: var(--ink); }
+.results-page .card-identity h2 { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.4; letter-spacing: 0; }
+.results-page .recommended-use { margin: 0; }
+.results-page .recommended-use h3 { margin: 4px 0 8px; font-size: 16px; line-height: 1.4; font-weight: 500; letter-spacing: 0; }
+.results-page .recommended-use .use-reward { margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; color: var(--pine); font-variant-numeric: tabular-nums; }
+.results-page .recommended-use .caption { margin: 0; }
+.results-page .card-benefit { margin: 0; font-size: 16px; line-height: 1.5; color: var(--muted); }
+.results-page .card-fee { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+.results-page .card-fee strong { color: var(--ink); font-size: 22px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; }
+.results-page .card-fee.has-fee strong { color: var(--brick); }
+.results-page .card-fee span { color: var(--muted); font-size: var(--text-dense); }
+.results-page .results-recommendations .card-bottom { grid-column: 1 / -1; align-items: flex-start; border: 0; padding: 0; gap: 16px; flex-wrap: nowrap; }
+.results-page .results-recommendations .why { flex: 1; min-width: 0; margin: 0; }
+.results-page .results-recommendations .why summary { justify-content: flex-start; width: fit-content; }
+.results-page .results-recommendations .actions { flex-shrink: 0; }
+@media (max-width: 1000px) {
+  .results-page .results-recommendations .recommendation { grid-template-columns: 130px minmax(0, 1fr); gap: 24px; }
+  .results-page .recommendation-copy { grid-template-columns: minmax(0, 1fr) 110px; }
+  .results-page .card-identity { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .results-page .results-recommendations .recommendation { grid-template-columns: 80px minmax(0, 1fr); gap: 16px; padding-block: 24px; }
+  .results-page .recommendation-copy { display: contents; }
+  .results-page .card-identity { grid-column: 2; }
+  .results-page .card-hook { font-size: 22px; }
+  .results-page .recommended-use, .results-page .card-benefit { grid-column: 1 / -1; }
+  .results-page .card-fee { grid-column: 1 / -1; flex-direction: row; align-items: baseline; gap: 8px; }
+  .results-page .card-fee strong { font-size: 16px; }
+  .results-page .results-recommendations .card-bottom { grid-column: 1 / -1; width: 100%; }
+}
