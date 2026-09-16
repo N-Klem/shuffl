@@ -17,7 +17,9 @@ html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.9
 .floating-assistant .assistant-panel { width: min(440px, calc(100vw - 24px)); padding: 24px; background: var(--surface); }
 .assistant-panel header { margin-bottom: 12px; }
 .assistant-panel .assistant-close { min-width: 44px; min-height: 44px; }
-.assistant-panel .assistant-intro, .assistant-panel .assistant-disclosure { margin: 8px 0; font-size: 13px; }
+.assistant-panel .assistant-disclosure { margin: 8px 0; font-size: 13px; }
+/* The greeting is the first message in the transcript, so no divider above it. */
+.assistant-message.assistant-intro { border-top: 0; padding-top: 0; }
 .assistant-messages { max-height: min(48dvh, 440px); overflow-y: auto; overscroll-behavior: contain; overflow-wrap: anywhere; }
 .assistant-message { padding: 12px 0; border-top: 1px solid var(--hairline); font-size: 14px; }
 .assistant-message > strong { font-size: 13px; color: var(--muted); }

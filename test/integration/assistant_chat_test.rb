@@ -21,6 +21,7 @@ class AssistantChatTest < ActionDispatch::IntegrationTest
   test "panel names the assistant and offers starter prompts once signed in" do
     get root_path
     assert_select "#assistant-title", text: CardAssistant::NAME
+    assert_select ".assistant-intro p", text: /\Ahi, i'm #{CardAssistant::NAME}\./
     assert_select ".assistant-starters", 0
     sign_in @user
     get root_path

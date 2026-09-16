@@ -4,8 +4,11 @@
   </button>
   <section id="assistant-panel" class="assistant-panel" data-assistant-target="panel" role="region" aria-labelledby="assistant-title" hidden>
     <header><h2 id="assistant-title"><%= CardAssistant::NAME %></h2><button type="button" class="assistant-close" data-action="assistant#close" aria-label="Close assistant">×</button></header>
+    <article class="assistant-message assistant-intro" data-assistant-target="intro">
+      <strong><%= CardAssistant::NAME %></strong>
+      <p>hi, i'm <%= CardAssistant::NAME %>. I compare cards, explore stacks and find a card for how you spend, using catalogue facts and issuer sources. If I don't know, I'll say so.</p>
+    </article>
     <% if user_signed_in? %>
-      <p class="assistant-intro" data-assistant-target="intro"><%= CardAssistant::NAME %> compares cards, explores stacks and finds a card for your spending, using catalogue facts and issuer sources. Unknowns stay unknown.</p>
       <div class="assistant-messages" data-assistant-target="messages" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions"></div>
       <div class="assistant-starters" data-assistant-target="starters">
         <p>Try one to start</p>
@@ -25,7 +28,7 @@
       <p class="assistant-status" data-assistant-target="status"></p>
       <p class="assistant-disclosure">AI can make mistakes: check issuer terms before applying. Don't share account details. Questions are sent to OpenAI.</p>
     <% else %>
-      <p>Ask <%= CardAssistant::NAME %> about our cards and stacks, then save your shortlist right here.</p>
+      <p>Sign in and I'll keep your shortlist right here.</p>
       <%= link_to "Sign in to chat →", new_user_session_path, class: "tertiary-link" %>
     <% end %>
   </section>
