@@ -5,7 +5,9 @@ export default class extends Controller {
   static values = { url: String, saveUrl: String, walletUrl: String, name: String }
 
   connect() {
-    this.x = 24
+    // Bottom-right by default, where DESIGN.md puts it and where left-aligned
+    // headings and links are never underneath it. Dragging still moves it anywhere.
+    this.x = innerWidth - 84
     this.y = innerHeight - 88
     try {
       const saved = JSON.parse(localStorage.getItem("shuffl-assistant-position"))
