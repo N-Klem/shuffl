@@ -20,6 +20,27 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     fit(key, extra.merge("spending_priorities" => [category])).features.fetch("spend:#{category}", 0)
   end
 
+  test "closest relaxes the credit filter, then the budget, and says which" do
+    stack, relaxed = QuizRecommendation.new(@answers).closest
+    assert_equal QuizRecommendation.new(@answers).cards.map(&:id), stack.map(&:id)
+    assert_empty relaxed
+
+    stack, relaxed = QuizRecommendation.new(@answers.merge("credit_score" => "Building (300–579)")).closest
+    refute_empty stack
+    assert_equal [ :credit ], relaxed
+
+    Card.update_all(catalogue_status: "retired")
+    Card.find_by!(source_key: "us-chase-sapphire-preferred").update!(catalogue_status: "published", annual_fee: 95)
+    assert_empty QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0")).cards
+    stack, relaxed = QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0")).closest
+    assert_equal [ "us-chase-sapphire-preferred" ], stack.map(&:source_key)
+    assert_equal [ :budget ], relaxed
+
+    stack, relaxed = QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0", "credit_score" => "Building (300–579)")).closest
+    assert_equal [ "us-chase-sapphire-preferred" ], stack.map(&:source_key)
+    assert_equal [ :credit, :budget ], relaxed
+  end
+
   test "supermarket bonuses are not counted at superstores or wholesale clubs" do
     key = "us-amex-blue-cash-preferred"
     regular = spending(key, "Groceries", "groceries_where" => "Supermarkets")
@@ -123,7 +144,7 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     credits = { "priorities" => ["Useful perks"], "useful_benefits" => ["Shopping or subscription credits"] }
     assert fit("us-amex-platinum", credits.merge("credit_providers" => "Streaming subscriptions")).features.key?("benefit:Shopping or subscription credits")
     refute fit("us-amex-platinum", credits.merge("credit_providers" => "Retail purchases")).features.key?("benefit:Shopping or subscription credits")
-    refute fit("us-amex-platinum", credits.merge("credit_providers" => "Neither — I wouldn’t spend just to use a credit")).features.key?("benefit:Shopping or subscription credits")
+    refute fit("us-amex-platinum", credits.merge("credit_providers" => "Neither, I wouldn’t spend just to use a credit")).features.key?("benefit:Shopping or subscription credits")
     first = fit("us-capital-one-venture-x", "useful_benefits" => ["Airport lounge access", "Dining credits"])
     second = fit("us-capital-one-venture-x", "useful_benefits" => ["Dining credits", "Airport lounge access"])
     assert_operator first.features["benefit:Airport lounge access"], :>, second.features["benefit:Airport lounge access"]
@@ -166,7 +187,7 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     second.update!(catalogue_status: "published", annual_fee: 60)
     assert_equal 1, QuizRecommendation.new(@answers.merge("annual_fee_budget" => "100")).cards.size
     assert_equal 2, QuizRecommendation.new(@answers.merge("annual_fee_budget" => "120")).cards.size
-    assert_empty QuizRecommendation.new(@answers.merge("credit_score" => "I don't know")).cards
+    refute_empty QuizRecommendation.new(@answers.merge("credit_score" => "I don't know")).cards
     second.update!(catalogue_status: "retired")
     assert_equal [first.id], QuizRecommendation.new(@answers).cards.map(&:id)
   end
@@ -222,5 +243,26 @@ class QuizRecommendationTest < ActiveSupport::TestCase
       assert payload[:cards][index][:matchReasons].present?
       assert_equal false, payload[:cards][index][:estimatesAvailable]
     end
+    assert_equal ["Groceries", "Dining out", "Online shopping"], payload[:spending]
+  end
+
+  test "a relaxed result still offers swaps from the same relaxed pool" do
+    answers = @answers.merge("credit_score" => "Building (300–579)")
+    stack, relaxed = QuizRecommendation.new(answers).closest
+    assert_equal [ :credit ], relaxed
+    quiz = QuizResponse.create!(answers: answers.to_json, top_card_ids: stack.map(&:id).to_json, completed_at: Time.current)
+    payload = ResultsStack.new(quiz).payload
+    assert_operator payload[:cards].size, :>, payload[:selected].size
+  end
+
+  test "preferences met are read back as short fragments, strongest first" do
+    assert_equal ["cashback"], fit("us-citi-double-cash").preferences_met
+    assert_equal ["cashback", "no annual fee"], fit("us-citi-double-cash", "priorities" => ["Cashback", "Keeping costs down"]).preferences_met
+    assert_equal ["no annual fee", "cashback"], fit("us-citi-double-cash", "priorities" => ["Keeping costs down", "Cashback"]).preferences_met
+    assert_empty fit("us-chase-sapphire-preferred").preferences_met
+    travel = fit("us-chase-sapphire-preferred", "priorities" => ["Travel rewards"], "international_travel" => "Monthly or more").preferences_met
+    assert_equal ["travel rewards", "no foreign transaction fee"], travel
+    assert_equal ["help building credit", "no annual fee"],
+      fit("us-chase-freedom-rise", "priorities" => ["Building credit", "Keeping costs down"], "credit_score" => "No credit history").preferences_met
   end
 end

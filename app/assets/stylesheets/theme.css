@@ -13,7 +13,7 @@ html[data-theme="dark"] {
   --bs-body-bg:#191619; --bs-body-color:#d2cbcd; --bs-border-color:#443b3f; --bs-link-color:#f2eeee; --bs-link-hover-color:#e5a6b1;
 }
 html[data-theme="dark"] body { background: var(--surface); color: var(--body-color); }
-html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { background: var(--surface); color: var(--ink); --ink:#f2eeee; --muted:#afa5a8; }
+html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { background: var(--surface); color: var(--ink); }
 html[data-theme="dark"] .site-nav { background: rgba(30,25,29,.94); border-color: var(--hairline); box-shadow: 0 8px 32px #0003; }
 html[data-theme="dark"] :is(.site-nav .wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color: var(--ink); }
 html[data-theme="dark"] :is(.hero-description,.hero-carousel-footer,.eyebrow,.muted,.perks,.issuer,.note,.stack-names,.list-head,.results-top,.summary small,.metrics small,.detail-layout p,.hero p,.heading p,.home-continue p) { color: var(--muted); }
@@ -30,7 +30,7 @@ html[data-theme="dark"] :is(.tertiary-link,.text,.link) { color: #e5ccd2; }
 html[data-theme="dark"] .dropdown-item:hover { background: #382b32; }
 html[data-theme="dark"] .nav-links a.active { border-bottom-color: #e5ccd2; }
 html[data-theme="dark"] .progress { background: var(--hairline); }
-html[data-theme="dark"] :is(.wallet-app,.browse-app,.auth-page,.quiz-page) { background: var(--surface); color: var(--ink); --ink:#f2eeee; --muted:#afa5a8; }
+html[data-theme="dark"] :is(.wallet-app,.browse-app,.auth-page,.quiz-page) { background: var(--surface); color: var(--ink); }
 html[data-theme="dark"] .auth-page .stack-panel { background: var(--surface-raised); }
 html[data-theme="dark"] :is(.auth-page .stack-panel > p,.auth-page .stack-caption p,.auth-page .tabs a,.auth-page label,.quiz-page label,.wallet-app p) { color: #c3b8be; }
 html[data-theme="dark"] .auth-page .tabs a.active { color: var(--ink); border-color: #e5a6b1; }

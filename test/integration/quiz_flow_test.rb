@@ -59,7 +59,7 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "real catalogue returns no match instead of aspirational cards" do
+  test "a credit range with no exact match still gets the closest stack, with a note" do
     CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
     Card.publish_us_demo!
     get new_quiz_response_path
@@ -68,10 +68,40 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     submit_answer("Building (300–579)"); follow_redirect!
     7.times { answer_current; follow_redirect! }
     assert_response :success
-    assert_equal [], JSON.parse(QuizResponse.order(:id).last.top_card_ids)
-    assert_select "h1", "No matching stack yet."
-    assert_select "#save-stack", count: 0
-    assert_select '[data-controller~="results"]', count: 0
+    refute_empty JSON.parse(QuizResponse.order(:id).last.top_card_ids)
+    assert_select "h1", text: /rewarding/
+    assert_select ".footnote", text: /couldn't match your credit range exactly/
+    assert_select "#save-stack", count: 1
+  end
+
+  test "a missing result redirects to the quiz instead of erroring" do
+    get quiz_response_path(id: 999_999)
+    assert_redirected_to new_quiz_response_path
+    follow_redirect!
+    assert_select ".quiz-bubble", count: 10
+  end
+
+  test "ranked questions render as tap-in-order pills with no board" do
+    get new_quiz_response_path
+    assert_select ".quiz-options-ranked .quiz-answer input[type=checkbox]", count: 5
+    assert_select ".quiz-options-ranked .quiz-rank", count: 5
+    assert_select "input[name=ordered]", count: 1
+    assert_select ".rank-board", count: 0
+    assert_select ".quiz-heading p", text: /Tap up to three, in order/
+  end
+
+  test "not knowing the credit score still produces a stack, with a note" do
+    CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
+    Card.publish_us_demo!
+    get new_quiz_response_path
+    submit_answer([ "Cashback" ]); follow_redirect!
+    submit_answer("1–2"); follow_redirect!
+    submit_answer("I don't know"); follow_redirect!
+    7.times { answer_current; follow_redirect! }
+    assert_response :success
+    assert_select "h1", text: /rewarding/
+    assert_select ".footnote", text: /skipped your credit score/
+    refute_empty JSON.parse(QuizResponse.order(:id).last.top_card_ids)
   end
 
   test "first-card quiz recommends a supported real card and saves it to Planned" do
@@ -140,6 +170,7 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     get new_quiz_response_path
     submit_answer(["unknown"])
     assert_response :unprocessable_entity
+    assert_select ".quiz-status.is-error"
     old_token = css_select("input[name='quiz_token']").first["value"]
     submit_answer(["Cashback"]); follow_redirect!
     post quiz_responses_path, params: { step: 0, answer: ["Travel rewards"], quiz_token: old_token }

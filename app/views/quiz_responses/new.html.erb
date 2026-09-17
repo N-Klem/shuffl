@@ -1,6 +1,6 @@
 <% content_for :body_class, "quiz-page" %>
 <% content_for :hide_footer, true %>
-<% content_for :title, "Question #{@step} of #{@total} — Shuffl" %>
+<% content_for :title, "Question #{@step} of #{@total} · Shuffl" %>
 <main class="quiz-shell" data-controller="quiz" data-quiz-limit-value="<%= [ :multi, :ranked ].include?(@question[:type]) ? @question[:max_select] : 1 %>"
   data-quiz-ranked-value="<%= @question[:type] == :ranked %>"
   data-quiz-budget-value="<%= @question[:type] == :budget %>">
@@ -25,15 +25,9 @@
     <% if @question[:type] == :ranked %>
       <%= hidden_field_tag :ordered, @selected.join(""), data: { quiz_target: "ordered" } %>
     <% end %>
-    <% if @question[:type] == :ranked %>
-      <div class="rank-board" data-quiz-target="board" hidden>
-        <div class="rank-column"><p class="rank-caption">YOUR TOP THREE <span>Most important first</span></p><div data-quiz-target="slots" class="rank-slots"></div></div>
-        <div class="rank-cloud-column"><p class="rank-caption">MAKE IT YOURS <span>Drag a choice into a slot, or tap to add</span></p><div data-quiz-target="pool" class="rank-cloud" aria-label="Available choices"></div></div>
-      </div>
-    <% end %>
-    <fieldset aria-describedby="quiz-status" class="<%= 'rank-fallback' if @question[:type] == :ranked %>">
+    <fieldset aria-describedby="quiz-status">
       <legend class="visually-hidden"><%= @question[:prompt] %></legend>
-      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %>">
+      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %> <%= "quiz-options-ranked" if @question[:type] == :ranked %>">
         <% @question[:options].each_with_index do |option, index| %>
           <% budget_custom = @question[:type] == :budget && option == "Custom" && @selected.any? && !%w[0 100 300].include?(@selected.first) %>
           <% rank = @question[:type] == :ranked ? @selected.index(option) : nil %>
@@ -57,7 +51,7 @@
         <%= number_field_tag :custom_budget, (params[:custom_budget].presence || (@selected.first unless %w[0 100 300].include?(@selected.first))), min: 0, max: 999999.99, step: 0.01, class: "form-control", data: { quiz_target: "budgetInput", action: "input->quiz#update" } %>
       </div>
     <% end %>
-    <p class="quiz-status" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
+    <p class="quiz-status <%= "is-error" if @error %>" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
     <div class="quiz-controls">
       <% if @previous_step %>
         <%= link_to "Back", new_quiz_response_path(step: @previous_step), class: "quiz-back", data: { action: "click->quiz#cancel", turbo_prefetch: false } %>
@@ -76,7 +70,7 @@
   <% if @step > 1 %>
     <%= form_with url: save_progress_quiz_responses_path, method: :post, class: "quiz-save" do %>
       <button type="submit" class="quiz-save-link">
-        <%= user_signed_in? ? "Save and finish later" : "Save and finish later — we'll ask you to sign in" %>
+        <%= user_signed_in? ? "Save and finish later" : "Save and finish later (you'll sign in first)" %>
       </button>
     <% end %>
   <% end %>

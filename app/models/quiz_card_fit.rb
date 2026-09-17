@@ -49,6 +49,27 @@ class QuizCardFit
     reasons.sort_by { |key, _| -features.fetch(key, 0) }.first(3).map(&:last)
   end
 
+  # What the user asked for that this card provides, as short fragments the
+  # results page reads back to them ("you wanted cashback and no annual fee"),
+  # strongest first. Spending categories are left out: the page ties those to
+  # the role each card is given in the stack, which can change on a swap.
+  def preferences_met
+    fragments = features.sort_by { |_, value| -value }.filter_map do |key, _|
+      case key
+      when "goal:Cashback" then "cashback"
+      when "goal:Travel rewards" then "travel rewards"
+      when "goal:Keeping costs down", "no_fee" then "no annual fee"
+      when "goal:Building credit" then "help building credit" if Array(card.catalogue_terms["quiz_tags"]).include?("Building credit")
+      when "simple" then "simple everyday rewards"
+      when "flexible" then "categories you can activate"
+      when "foreign" then "no foreign transaction fee"
+      when /\Aprogram:(.+)/ then Regexp.last_match(1)
+      when /\A(benefit:|goal:Useful perks)/ then reasons[key].split(":").first.downcase
+      end
+    end
+    fragments.uniq.first(2)
+  end
+
   # One concrete use for the Results card, in its original earning unit. This
   # describes a qualifying purchase, not a spending allocation or dollar estimate.
   def recommended_uses
@@ -192,7 +213,7 @@ class QuizCardFit
 
   def follow_up_label(category)
     answer = @answers[FOLLOW_UP_CATEGORIES.key(category)]
-    answer.present? ? " — #{answer.downcase}" : ""
+    answer.present? ? " (#{answer.downcase})" : ""
   end
 
   def rule_channels(rule)

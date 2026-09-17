@@ -675,3 +675,23 @@
   accent-color: var(--ink);
 }
 .wallet-page .benefit-heading { color: var(--ink); font-size: var(--text-dense); letter-spacing: 0; }
+
+/* Coverage map: where the wallet earns extra, by everyday category. Dividers, not boxes;
+   each card's rate stays in its own unit. A gap offers chip rather than a dead end. */
+.wallet-app .coverage { margin-block: 8px 32px; }
+.wallet-app .coverage .timeline-intro { margin-bottom: 8px; }
+.wallet-app .coverage-map { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0 24px; margin: 0; padding: 0; list-style: none; }
+@media (max-width: 1000px) { .wallet-app .coverage-map { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .wallet-app .coverage-map { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; } }
+.wallet-app .coverage-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 124px; padding: 14px 0 18px; border-top: 1px solid var(--hairline-strong); }
+.wallet-app .coverage-category { font-size: 13px; color: var(--muted); }
+.wallet-app .coverage-card { display: flex; flex-direction: column; gap: 2px; }
+.wallet-app .coverage-card strong { font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--ink); }
+.wallet-app .coverage-note { white-space: nowrap; font-size: 13px; font-weight: 400; color: var(--muted); }
+.wallet-app .coverage-card .reward { font-size: 15px; font-weight: 500; color: var(--pine); font-variant-numeric: tabular-nums; }
+.wallet-app .coverage-gap { font-size: 14px; color: var(--muted); }
+.wallet-app .coverage-cell .text { min-height: 36px; margin-top: auto; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 480px) {
+  .wallet-app .coverage-map { grid-template-columns: 1fr; }
+  .wallet-app .coverage-cell { min-height: 0; }
+}

@@ -18,6 +18,22 @@ class AssistantChatTest < ActionDispatch::IntegrationTest
     @reply = { paragraphs: [ { text: "What card would you like to inspect?", kind: "question", evidence_ids: [] } ], sources: [], cards: [], stacks: [] }
   end
 
+  # A question's reply streams as newline-delimited JSON; the last line is the outcome.
+  def streamed
+    response.body.lines.map { |line| JSON.parse(line) }
+  end
+
+  test "panel names the assistant and offers starter prompts once signed in" do
+    get root_path
+    assert_select "#assistant-title", text: CardAssistant::NAME
+    assert_select ".assistant-intro p", text: /\Ahi, i'm #{CardAssistant::NAME}\./
+    assert_select ".assistant-starters", 0
+    sign_in @user
+    get root_path
+    assert_select ".assistant-starters button[data-prompt]", 3
+    assert_select "[data-assistant-name-value=?]", CardAssistant::NAME
+  end
+
   test "all chat endpoints require sign in" do
     get assistant_chat_path, as: :json
     assert_response :unauthorized
@@ -56,7 +72,7 @@ class AssistantChatTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal @user, captured[:user]
     assert_empty captured[:history]
-    assert_equal 19, response.parsed_body["remaining"]
+    assert_equal 19, streamed.last["remaining"]
     get assistant_chat_path, as: :json
     assert_equal "hello", response.parsed_body["messages"].first["question"]
     delete assistant_chat_path, as: :json
@@ -65,6 +81,34 @@ class AssistantChatTest < ActionDispatch::IntegrationTest
     get assistant_chat_path, as: :json
     assert_empty response.parsed_body["messages"]
     assert_equal 19, response.parsed_body["remaining"]
+  end
+
+  test "progress streams ahead of the reply, and a failure after it stays in the stream" do
+    sign_in @user
+    assistant = Object.new
+    captured = nil
+    expected = @reply
+    assistant.define_singleton_method(:reply) { |_question| captured[:progress].call("Checking issuer sites"); expected }
+    stub(Assistant::OpenaiClient, :configured?, true) do
+      stub(CardAssistant, :new, ->(**args) { captured = args; assistant }) do
+        post assistant_chat_path, params: { message: "hello" }, as: :json
+      end
+    end
+    assert_response :success
+    assert_equal "application/x-ndjson", response.media_type
+    assert_equal [ { "progress" => "Checking issuer sites" } ], streamed[0..-2]
+    assert_equal "What card would you like to inspect?", streamed.last.dig("reply", "paragraphs", 0, "text")
+
+    assistant.define_singleton_method(:reply) { |_question| captured[:progress].call("Writing"); raise Assistant::OpenaiClient::Unavailable }
+    stub(Assistant::OpenaiClient, :configured?, true) do
+      stub(CardAssistant, :new, ->(**args) { captured = args; assistant }) do
+        post assistant_chat_path, params: { message: "hello again" }, as: :json
+      end
+    end
+    assert_response :success
+    assert_equal "Writing", streamed.first["progress"]
+    assert_match(/couldn't verify/, streamed.last["error"])
+    assert_equal "failed", AssistantMessage.where(user: @user).last.status
   end
 
   test "provider failures fail closed and consume one quota reservation" do

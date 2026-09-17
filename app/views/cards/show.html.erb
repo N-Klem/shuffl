@@ -58,7 +58,7 @@
           <% if @card.reward_rules.empty? %><p><%= @card.value_profile[:detail] %></p><% end %>
           <ul class="detail-perks">
             <% @card.reward_rules.each do |rule| %>
-              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> — <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
+              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> · <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
             <% end %>
           </ul>
           <% if @card.catalogue_terms.dig("fees", "intro").present? %><p>First-year fee terms: <%= @card.catalogue_terms.dig("fees", "intro") %></p><% end %>
@@ -108,6 +108,7 @@
         <% else %>
           <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post, class: "btn-wallet" %>
         <% end %>
+        <button type="button" class="detail-back detail-back--tight detail-ask" data-assistant-ask="From the catalogue, what does the <%= @card.name %> offer, and who suits it?">Ask <%= CardAssistant::NAME %> about this card</button>
       </div>
     </div>
   </div>

@@ -256,10 +256,11 @@ links on dark, and others) are currently written as literals inside `theme.css` 
 tokens. That is the single largest concentration of raw hex in the project and is recorded under
 *Known violations*. When you touch one, promote it to a token rather than adding another literal.
 
-Two things are missing and are *not* open questions, just unbuilt: there is no
-`prefers-color-scheme` query, so a reader whose OS is dark gets the light theme until they find the
-toggle; and `browse.css` and `results.css` hardcode `#fff` backgrounds, so they ignore the theme
-entirely. Both are recorded under *Known violations*.
+The system preference is followed: with no stored choice, the inline script in the layout head
+reads `prefers-color-scheme` before first paint and `theme_controller.js` tracks later OS changes.
+An explicit toggle always wins. One thing is still missing and is *not* an open question, just
+unbuilt: `browse.css` and `results.css` hardcode `#fff` backgrounds, so they ignore the theme
+entirely. It is recorded under *Known violations*.
 
 ### Structure
 
@@ -650,10 +651,6 @@ in the project at 53.
 **`.ai-bubble` is dead.** A full component's worth of rules across `application.css`, `home.css`
 and `theme.css` that no view references. Safe to delete.
 
-**Dark mode does not follow the system preference.** `theme.css` responds only to the
-`data-theme` attribute set by the navbar toggle. There is no `prefers-color-scheme` query, so a
-reader whose OS is in dark mode gets the light theme until they find the control.
-
 ---
 
 ## Open decisions
@@ -780,12 +777,15 @@ goals contribute to scoring at descending weights. Every path asks about
 repayment, spending, fees and credit context. First-card repayment wording is
 prospective. Loyalty and wallet-gap claims are absent from the new flow.
 
-Goals and spending share a spatial ranking control: three outlined slots on the
-left, and a wrapping choice cluster on the right. On narrow screens, choices
-follow the slots vertically. Pointer dragging supports touch; tapping adds a
-choice, and move/remove buttons plus keyboard arrows provide alternatives.
+Goals and spending share one ranking control: the choices are a wrapping row of
+pills, and tapping a pill ranks it next. A ranked pill fills burgundy and carries
+its number in a small badge; tapping it again removes it and the ranks close up.
+Once the cap is reached the remaining pills dim until one is removed. A status
+line under the pills repeats the order in words. There are no slots, no dragging
+and no reorder buttons: to change the order, remove and re-tap. This replaced
+the earlier slots-and-cluster control, which testers found unintuitive.
 There is no automatic advancement after ranking. Continue submits the order.
-A checkbox fallback remains available without JavaScript.
+The pills are the checkboxes, so the control works without JavaScript.
 
 Back preserves answers. Only answers incompatible with a changed path are
 removed on submission; saved drafts retain the ranking. Per-form tokens reject

@@ -1,25 +1,53 @@
-<div class="floating-assistant" data-controller="assistant" data-assistant-url-value="<%= assistant_chat_path %>" data-assistant-save-url-value="<%= save_browse_wallet_items_path %>" data-action="keydown.esc@window->assistant#close resize@window->assistant#resize scroll@window->assistant#resize">
-  <button type="button" class="assistant-orb" data-assistant-target="orb" data-action="pointerdown->assistant#start pointermove->assistant#move pointerup->assistant#end pointercancel->assistant#cancel click->assistant#toggle keydown->assistant#keyboard" aria-label="Ask shuffl. Drag to move, or use arrow keys when focused." aria-expanded="false" aria-controls="assistant-panel">
+<div class="floating-assistant" data-controller="assistant" data-assistant-url-value="<%= assistant_chat_path %>" data-assistant-save-url-value="<%= save_browse_wallet_items_path %>" data-assistant-wallet-url-value="<%= wallet_items_path %>" data-assistant-name-value="<%= CardAssistant::NAME %>" data-action="keydown.esc@window->assistant#close resize@window->assistant#resize scroll@window->assistant#resize">
+  <button type="button" class="assistant-orb" data-assistant-target="orb" data-action="pointerdown->assistant#start pointermove->assistant#move pointerup->assistant#end pointercancel->assistant#cancel click->assistant#toggle keydown->assistant#keyboard" aria-label="Ask <%= CardAssistant::NAME %>. Drag to move, or use arrow keys when focused." aria-expanded="false" aria-controls="assistant-panel">
     <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Z"/><path d="M7 9h10M7 13h6"/></svg>
   </button>
+  <%# The avatar is cloned by the controller for every reply, so it lives in one place. %>
+  <template data-assistant-target="avatar"><span class="assistant-avatar" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 11h18M3 15h18M9.5 5v14M14.5 5v14"/></svg></span></template>
   <section id="assistant-panel" class="assistant-panel" data-assistant-target="panel" role="region" aria-labelledby="assistant-title" hidden>
-    <header><h2 id="assistant-title">Ask <%= render "shared/wordmark", link: false %></h2><button type="button" class="assistant-close" data-action="assistant#close" aria-label="Close assistant">×</button></header>
-    <% if user_signed_in? %>
-      <p class="assistant-intro">Compare cards, explore stacks, or find a card for your spending. Catalogue facts and issuer sources; unknowns stay unknown.</p>
-      <div class="assistant-messages" data-assistant-target="messages" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions"></div>
-      <p class="assistant-feedback" data-assistant-target="feedback" role="status"></p>
-      <form data-assistant-target="form" data-action="submit->assistant#send">
-        <label for="assistant-question">Your card question</label>
-        <textarea id="assistant-question" data-assistant-target="input" maxlength="1500" rows="2" required placeholder="Which cards have no foreign transaction fee?"></textarea>
-        <div class="assistant-compose-actions">
-          <button type="button" data-assistant-target="clear" data-action="assistant#clearChat">Clear chat</button>
-          <button type="submit" data-assistant-target="send">Send</button>
+    <header class="assistant-header">
+      <span class="assistant-avatar assistant-avatar-lg" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 11h18M3 15h18M9.5 5v14M14.5 5v14"/></svg></span>
+      <div class="assistant-identity">
+        <h2 id="assistant-title"><%= CardAssistant::NAME %></h2>
+        <p>Catalogue facts and issuer sources</p>
+      </div>
+      <div class="assistant-header-actions">
+        <% if user_signed_in? %>
+          <button type="button" class="assistant-icon" data-assistant-target="clear" data-action="assistant#clearChat" aria-label="Clear conversation" title="Clear conversation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg></button>
+        <% end %>
+        <button type="button" class="assistant-icon assistant-close" data-action="assistant#close" aria-label="Close chat" title="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </header>
+    <div class="assistant-transcript" data-assistant-target="transcript">
+      <article class="assistant-message assistant-answer assistant-intro" data-assistant-target="intro">
+        <span class="assistant-avatar" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 11h18M3 15h18M9.5 5v14M14.5 5v14"/></svg></span>
+        <div class="assistant-body">
+          <strong class="assistant-who"><%= CardAssistant::NAME %></strong>
+          <p>hi, i'm <%= CardAssistant::NAME %>. Ask me about cards, stacks, or how you spend.</p>
         </div>
-      </form>
-      <p class="assistant-disclosure">AI can make mistakes. Check issuer terms before applying. Don't share account details. Messages are sent to OpenAI to answer your question.</p>
-    <% else %>
-      <p>Ask about our cards and stacks, then save your shortlist right here.</p>
-      <%= link_to "Sign in to chat →", new_user_session_path, class: "tertiary-link" %>
+      </article>
+      <% if user_signed_in? %>
+        <div class="assistant-messages" data-assistant-target="messages" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions"></div>
+        <div class="assistant-starters" data-assistant-target="starters">
+          <button type="button" data-action="assistant#starter" data-prompt="Which cards have no foreign transaction fee?">Cards with no foreign transaction fee</button>
+          <button type="button" data-action="assistant#starter" data-prompt="What's in the Everyday Cashback stack, and who is it for?">Inside the Everyday Cashback stack</button>
+          <button type="button" data-action="assistant#starter" data-prompt="What are the latest terms for the Chase Sapphire Preferred?">Latest Sapphire Preferred terms</button>
+        </div>
+      <% else %>
+        <p class="assistant-signin">Sign in and I'll keep your shortlist right here.</p>
+        <%= link_to "Sign in to chat →", new_user_session_path, class: "tertiary-link" %>
+      <% end %>
+    </div>
+    <% if user_signed_in? %>
+      <div class="assistant-composer">
+        <p class="assistant-feedback" data-assistant-target="feedback" role="status"></p>
+        <form class="assistant-field" data-assistant-target="form" data-action="submit->assistant#send">
+          <label for="assistant-question" class="assistant-who">Ask <%= CardAssistant::NAME %></label>
+          <textarea id="assistant-question" data-assistant-target="input" data-action="keydown->assistant#keydown input->assistant#grow" maxlength="1500" rows="1" required placeholder="Ask about a card or a stack…"></textarea>
+          <button type="submit" class="assistant-send" data-assistant-target="send" aria-label="Send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+        </form>
+        <p class="assistant-fineprint"><span data-assistant-target="status"></span>AI can make mistakes. Check issuer terms before applying.</p>
+      </div>
     <% end %>
   </section>
 </div>

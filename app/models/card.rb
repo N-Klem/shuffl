@@ -135,7 +135,7 @@ class Card < ApplicationRecord
     rule = reward_rules.max_by { |reward| reward.fetch("rate").to_d }
     return value_profile[:detail] unless rule
     unit = rule["unit"] == "cashback_percent" ? "% cashback" : " #{rule['unit'].tr('_', ' ')}"
-    "#{rule['rate']}#{unit} — #{rule['category']}"
+    "#{rule['rate']}#{unit} on #{rule['category']}"
   end
 
   EXPENSE_OPTIONS = [
@@ -246,7 +246,7 @@ class Card < ApplicationRecord
       key: "loyalty_program",
       type: :single,
       prompt: "Do you have a preferred airline or hotel chain?",
-      options: [ "Yes — I'm loyal to one brand", "I have a slight preference", "No, whatever is cheapest" ]
+      options: [ "Yes, I'm loyal to one brand", "I have a slight preference", "No, whatever is cheapest" ]
     }
   }.freeze
 
@@ -319,7 +319,7 @@ class Card < ApplicationRecord
     },
     "credit_providers" => {
       key: "credit_providers", type: :single, prompt: "Where would you naturally use shopping or subscription credits?",
-      options: [ "Streaming subscriptions", "Retail purchases", "Both", "Neither — I wouldn’t spend just to use a credit" ]
+      options: [ "Streaming subscriptions", "Retail purchases", "Both", "Neither, I wouldn’t spend just to use a credit" ]
     }
   }.freeze
   QUIZ_QUESTION_POOL = QUESTION_POOL.merge(FOLLOW_UP_QUESTIONS).freeze
@@ -443,8 +443,10 @@ class Card < ApplicationRecord
   def recommendable_for?(answers)
     return true unless real_catalogue?
 
+    # "I don't know" skips the credit-profile filter rather than ending the quiz
+    # with nothing; the results page says the matches don't account for it.
     band = catalogue_terms.dig("editorial_credit_guidance", "band")
-    return false unless CREDIT_PROFILE_MATCHES.fetch(band, []).include?(answers["credit_score"])
+    return false unless answers["credit_score"] == "I don't know" || CREDIT_PROFILE_MATCHES.fetch(band, []).include?(answers["credit_score"])
 
     # A suitability tag (e.g. Freedom Rise's Student tag) is not a requirement.
     conditions = Array(catalogue_terms["recommendation_conditions"])
@@ -644,7 +646,7 @@ class Card < ApplicationRecord
   end
 
   def loyalty_bonus(answer, cats)
-    answer == "Yes — I'm loyal to one brand" && cats.include?("Travel") ? 1 : 0
+    answer == "Yes, I'm loyal to one brand" && cats.include?("Travel") ? 1 : 0
   end
 
   def online_shopping_bonus(answer, cats)

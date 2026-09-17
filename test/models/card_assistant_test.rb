@@ -10,7 +10,10 @@ class CardAssistantTest < ActiveSupport::TestCase
     end
     def call(**args)
       @calls << args
-      value = @replies.shift or raise "Unexpected API call"
+      # The one correction retry repeats the model's previous reply, so the
+      # fail-closed tests stay as strict as before.
+      value = @replies.shift || (@last if args[:input].to_s.include?('"correction"')) or raise "Unexpected API call"
+      @last = value
       return value if value.key?("output")
       { "output" => [ { "type" => "message", "content" => [ { "type" => "output_text", "text" => value.to_json } ] } ] }
     end
@@ -44,6 +47,13 @@ class CardAssistantTest < ActiveSupport::TestCase
     context = JSON.parse(client.calls.last[:input])
     assert_includes context["eligible_recommendation_ids"], @card.id
     refute_includes client.calls.last[:input], @user.email
+  end
+
+  test "progress reports each stage as it starts, with the matching count" do
+    notes = []
+    CardAssistant.new(user: @user, client: FakeClient.new(@screen, @answer), progress: ->(text) { notes << text })
+      .reply("Find 3% dining cashback with no foreign fees")
+    assert_equal [ "Reading your question", "1 card matches", "Writing" ], notes
   end
 
   test "off-topic refusal stops before catalogue answer and web search" do

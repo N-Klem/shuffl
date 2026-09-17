@@ -3,21 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>That page isn't in the deck. · Shuffl</title>
+  <title>That page isn't in the deck · Shuffl</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <style>
-    :root { --ink:#0A0A0A; --muted:#6B6B6B; --hairline:#E5E5E5; --burgundy:#7B1622; }
+    /* Static fallback for when the app itself cannot render. Mirrors application.css tokens. */
+    :root { --ink:#0A0A0A; --body:#4A4A4A; --muted:#6B6B6B; --hairline:#E5E5E5; --burgundy:#601020; --burgundy-hover:#4C0D1A; }
     * { box-sizing:border-box; }
-    body { margin:0; background:#fff; color:var(--ink); font:18px/1.55 "Helvetica Now Display","Helvetica Neue",Helvetica,"Inter Tight",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+    body { margin:0; background:#fff; color:var(--ink); font:18px/1.55 Geist,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
     main { max-width:1320px; margin:0 auto; padding:clamp(40px,7vw,96px) clamp(16px,3.5vw,56px); min-height:100vh; display:flex; flex-direction:column; }
-    .wordmark { font-weight:700; font-size:36px; letter-spacing:-0.06em; color:var(--ink); text-decoration:none; }
+    .wordmark { display:inline-flex; align-items:baseline; font-weight:700; font-size:36px; letter-spacing:-0.06em; color:var(--ink); text-decoration:none; }
+    .wordmark i { display:inline-block; width:.22em; height:.22em; margin-left:.04em; border-radius:50%; background:currentColor; }
     .eyebrow { margin:clamp(48px,8vw,120px) 0 16px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-    h1 { margin:0 0 16px; font-size:clamp(44px,8vw,104px); font-weight:700; letter-spacing:-0.045em; line-height:0.95; }
-    p { margin:0; max-width:52ch; color:#4A4A4A; }
-    .actions { margin-top:40px; padding-top:24px; border-top:1px solid var(--ink); display:flex; gap:16px; flex-wrap:wrap; }
-    .btn { display:inline-block; padding:13px 24px; border-radius:6px; text-decoration:none; font-size:16px; letter-spacing:-0.015em; }
+    h1 { margin:0 0 16px; font-size:clamp(44px,8vw,104px); font-weight:600; letter-spacing:-0.045em; line-height:0.95; }
+    p { margin:0; max-width:52ch; color:var(--body); }
+    .actions { margin-top:40px; padding-top:24px; border-top:1px solid var(--hairline); display:flex; gap:16px; flex-wrap:wrap; }
+    .btn { display:inline-block; padding:13px 24px; border-radius:999px; text-decoration:none; font-size:16px; letter-spacing:-0.015em; }
     .btn-primary { background:var(--burgundy); color:#fff; border:1px solid var(--burgundy); }
-    .btn-primary:hover { background:#63111B; }
+    .btn-primary:hover { background:var(--burgundy-hover); border-color:var(--burgundy-hover); }
     .btn-ghost { color:var(--ink); border:1px solid var(--ink); }
     .btn-ghost:hover { background:var(--ink); color:#fff; }
     footer { margin-top:auto; padding-top:40px; font-size:13px; color:var(--muted); display:flex; justify-content:space-between; gap:24px; }
@@ -25,7 +27,7 @@
 </head>
 <body>
   <main>
-    <a class="wordmark" href="/">shuffl</a>
+    <a class="wordmark" href="/">shuffl<i></i></a>
     <p class="eyebrow">Error 404</p>
     <h1>That page isn't in the deck.</h1>
     <p>The link may be old, or the card or stack may have moved. Everything we have is a click away.</p>

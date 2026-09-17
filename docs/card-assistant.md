@@ -41,6 +41,14 @@ Only user questions, bounded conversation context, published catalogue data and 
 
 Messages are stored in `assistant_messages` with usage counters. Clear chat erases the current conversation's question/reply content while retaining quota metadata. Deleting a user cascades their assistant rows. To enforce 30-day retention, schedule `bundle exec rake assistant:prune` daily in the deployment's scheduler; the task is provided but no production schedule has been created. Rails logs filter `message` and `history` request parameters.
 
+## Progress
+
+`POST /assistant_chat` streams its reply as newline-delimited JSON (`application/x-ndjson`): one `{"progress": "…"}` line as each stage of the work starts ("Reading your question", "Read 30 cards and 5 stacks" or "4 cards match", "Checking issuer sites", "Checked chase.com", "Writing", "Shortening", "Correcting"), then one final line holding `reply` and `remaining`, or `error`. Failures before the first line keep their ordinary HTTP status (401, 422, 429, 503); once a line has gone out the status is already 200 and the outcome travels in that final line. The panel shows the lines as a trail in the transcript while it waits.
+
+## Follow-ups
+
+Beneath the latest reply the panel offers up to two follow-up pills, templated in the browser from the cards and stacks the reply named: compare the first two cards, who a stack is for, a card's welcome offer, its foreign transaction fees, its perks, who it is for. A template is dropped when the question or the reply already covered it. They are ordinary questions sent through the same endpoint and checks; nothing about the model call changes.
+
 ## Verification
 
 Run:

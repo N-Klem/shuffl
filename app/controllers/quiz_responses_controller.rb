@@ -72,16 +72,19 @@ class QuizResponsesController < ApplicationController
       redirect_to root_path, notice: "Saved. Pick up where you left off whenever you're ready."
     else
       redirect_to new_user_session_path,
-                  notice: "Sign in and we'll keep your answers so far — you can finish the quiz later."
+                  notice: "Sign in and we'll keep your answers so far. You can finish the quiz later."
     end
   end
 
   def show
-    @quiz_response = QuizResponse.find(params[:id])
+    @quiz_response = QuizResponse.find_by(id: params[:id])
+    # A bookmarked or shared result that no longer exists should not be a dead end.
+    return redirect_to new_quiz_response_path, alert: "That result is no longer available. Take the quiz again and we'll build you a fresh stack." unless @quiz_response
     @show_quiz_finish = session[:quiz_finish_id].to_s == @quiz_response.id.to_s
     session.delete(:quiz_finish_id) if @show_quiz_finish
     ids = JSON.parse(@quiz_response.top_card_ids)
     @cards = ids.filter_map { |id| Card.find_by(id: id) }
+    @relaxed = relaxed_limits(@quiz_response.answers_hash, @cards)
     @results_payload = ResultsStack.new(@quiz_response).payload
   end
 
@@ -123,7 +126,7 @@ class QuizResponsesController < ApplicationController
       question && Card.valid_quiz_answer?(question, value)
     end
     session[:quiz_step] = resolve_step(current_questions)
-    flash.now[:notice] = "Welcome back — picking up where you left off."
+    flash.now[:notice] = "Welcome back. Picking up where you left off."
   end
 
   def submitted_values(question)
@@ -150,9 +153,19 @@ class QuizResponsesController < ApplicationController
     @selected = Array(session[:quiz_answers][@question[:key]])
   end
 
+  # Derived rather than stored: a strict result passes both checks, so a saved
+  # stack that fails one can only have come from the relaxed selection.
+  def relaxed_limits(answers, cards)
+    return {} unless answers.key?("annual_fee_budget") && cards.any?
+    {
+      credit: answers["credit_score"] != "I don't know" && cards.any? { |card| !card.recommendable_for?(answers) },
+      budget: cards.sum { |card| card.annual_fee.to_d } > answers["annual_fee_budget"].to_d
+    }
+  end
+
   def finish_quiz
     answers = session[:quiz_answers]
-    top_cards = QuizRecommendation.new(answers).cards
+    top_cards, _relaxed = QuizRecommendation.new(answers).closest
 
     @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
     @quiz_response.update!(

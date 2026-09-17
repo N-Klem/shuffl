@@ -38,5 +38,9 @@ module Shuffl
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Production 404 and 500 responses render the branded pages in app/views/errors
+    # through the routes; public/404.html and 500.html stay as the last-resort fallback.
+    config.exceptions_app = routes
   end
 end

@@ -871,7 +871,14 @@
 .browse-page > .site-nav {
   position: static;
 }
-.browse-page main.list > .toolbar {
+/* The toolbar and its filter panel pin together, so Filters opens under the
+   pinned bar wherever the list is scrolled to, not back at the top of the page. */
+/* List rows: the fee always sits in its own right-hand column, and a reward's label
+   and its conditions stack instead of running into each other. */
+.browse-page .list .metrics { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 25px; align-items: start; }
+.browse-page .list .metrics small { display: block; }
+.browse-page .list .metrics small + small { margin-top: 2px; }
+.browse-page main.list > .controls {
   position: sticky;
   top: 0;
   z-index: 20;
