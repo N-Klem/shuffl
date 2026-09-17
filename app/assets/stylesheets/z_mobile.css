@@ -30,7 +30,8 @@
   .browse-page .browse-app main.list { padding: 24px 20px 40px; }
   .browse-app .list h1 { font-size: clamp(34px,9vw,48px); }
   .browse-app .hero aside { display: none; }
-  .browse-page main.list > .toolbar { top: 84px; gap: 10px; padding: 12px 0; flex-wrap: wrap; }
+  .browse-page main.list > .controls { top: 84px; }
+  .browse-page main.list .toolbar { gap: 10px; padding: 12px 0; flex-wrap: wrap; }
   .browse-app .search { flex: 1 1 100%; max-width: none; }
   .browse-app .sort { min-width: 0; max-width: 65%; }
   .browse-app .filter-extra { flex-wrap: wrap; gap: 12px; }

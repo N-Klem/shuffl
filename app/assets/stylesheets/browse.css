@@ -871,7 +871,9 @@
 .browse-page > .site-nav {
   position: static;
 }
-.browse-page main.list > .toolbar {
+/* The toolbar and its filter panel pin together, so Filters opens under the
+   pinned bar wherever the list is scrolled to, not back at the top of the page. */
+.browse-page main.list > .controls {
   position: sticky;
   top: 0;
   z-index: 20;
