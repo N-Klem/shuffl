@@ -429,6 +429,14 @@ a:focus-visible .nav-roll-line + .nav-roll-line .nav-roll-letter {
 /* Turbo's navigation progress bar ships in Bootstrap blue; it is the one accent here. */
 .turbo-progress-bar { height: 3px; background: var(--burgundy); }
 
+/* One keyboard focus ring everywhere, at zero specificity so any page rule still wins.
+   Without it the pages that set no ring fell back to the browser's blue one. */
+:where(:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+
+/* Error pages borrow the detail page's type and rhythm; only the actions row is theirs. */
+.error-page main { min-height: 60vh; }
+.error-page .error-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--hairline); }
+
 /* Supplied issuer artwork shares the existing card geometry and interactions. */
 html body .has-card-image { background: transparent; }
 .has-card-image > .card-image {

@@ -1,0 +1,11 @@
+<% content_for :body_class, "detail-page error-page" %>
+<% content_for :title, "Something went wrong · Shuffl" %>
+<main>
+  <p class="eyebrow">Error 500</p>
+  <h1>Something went wrong on our side.</h1>
+  <p class="lede">Nothing you did caused it, and nothing was saved or applied for. Try again in a moment.</p>
+  <div class="error-actions">
+    <%= link_to "Back to home", root_path, class: "btn btn-primary" %>
+    <%= link_to "Browse cards", cards_path, class: "btn btn-outline-dark" %>
+  </div>
+</main>

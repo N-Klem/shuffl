@@ -1,0 +1,11 @@
+<% content_for :body_class, "detail-page error-page" %>
+<% content_for :title, "That page isn't in the deck · Shuffl" %>
+<main>
+  <p class="eyebrow">Error 404</p>
+  <h1>That page isn't in the deck.</h1>
+  <p class="lede">The link may be old, or the card or stack may have moved. Everything we have is a click away.</p>
+  <div class="error-actions">
+    <%= link_to "Back to home", root_path, class: "btn btn-primary" %>
+    <%= link_to "Browse cards", cards_path, class: "btn btn-outline-dark" %>
+  </div>
+</main>

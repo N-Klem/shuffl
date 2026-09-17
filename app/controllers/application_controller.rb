@@ -10,6 +10,16 @@ class ApplicationController < ActionController::Base
 
   helper_method :latest_quiz_response, :draft_quiz_response
 
+  # A missing card, stack or result gets the branded page, in development too.
+  # JSON callers (the wallet and chat endpoints) still get a bare 404.
+  rescue_from ActiveRecord::RecordNotFound do
+    if request.format.symbol.in?(%i[html turbo_stream])
+      render "errors/not_found", status: :not_found, formats: :html
+    else
+      head :not_found
+    end
+  end
+
   protected
 
   def configure_permitted_parameters
