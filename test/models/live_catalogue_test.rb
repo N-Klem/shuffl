@@ -31,6 +31,20 @@ class LiveCatalogueTest < ActiveSupport::TestCase
     assert_nil BrowseCatalogue.new.payload[:cards].find { |row| row[:id] == card.id.to_s }
   end
 
+  test "wallet coverage lists each card's extra earning by category and the gaps" do
+    Card.publish_us_demo!
+    @user.wallet_items.create!(card: Card.find_by!(source_key: "us-amex-blue-cash-everyday"), status: "owned")
+    coverage = WalletDashboard.new(@user).payload[:coverage]
+    assert_equal [ "Groceries", "Dining out", "Travel", "Gas & transport", "Online shopping", "Entertainment & subscriptions" ],
+      coverage.map { |row| row[:category] }
+    groceries = coverage.find { |row| row[:category] == "Groceries" }[:cards]
+    assert_equal 1, groceries.size, "the legacy card has no recorded earning rules, so only the catalogue card counts"
+    assert_equal "Blue Cash Everyday", groceries.first[:name]
+    assert_equal false, groceries.first[:planned]
+    assert_equal [ "3", "cashback_percent" ], [ groceries.first[:rate].to_s, groceries.first[:unit] ]
+    assert_empty coverage.find { |row| row[:category] == "Travel" }[:cards]
+  end
+
   test "publication and repeat import preserve identities and historical references" do
     Card.publish_us_demo!
     assert_equal 30, Card.available.count

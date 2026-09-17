@@ -36,7 +36,24 @@ class WalletDashboard
       estimate: RewardsCalculator.new(cards: items.select { |item| item.status == "owned" }.map(&:card),
         amounts: amounts, confirmed: confirmed).call,
       notifications: ActiveModel::Type::Boolean.new.cast(@user.wallet_preferences["notifications"]),
+      coverage: coverage(items),
       today: Date.current.iso8601
     }
+  end
+
+  private
+
+  # Which everyday categories the wallet earns extra on, and where the gaps are.
+  # Uses the same "use it for" matching as the results page, in each card's own
+  # earning unit: cashback and points are listed side by side, never ranked.
+  def coverage(items)
+    uses = items.map { |item| [ item, QuizCardFit.new(item.card, {}).recommended_uses ] }
+    QuizCardFit::SPENDING_CHANNELS.keys.first(6).map do |category|
+      cards = uses.filter_map do |item, options|
+        use = options.find { |option| option["use_key"] == category }
+        { name: item.card.name, planned: item.status != "owned", rate: use["rate"], unit: use["unit"] } if use
+      end
+      { category: category, cards: cards }
+    end
   end
 end
