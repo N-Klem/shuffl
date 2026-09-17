@@ -9,11 +9,15 @@ class ResultsStack
   def payload
     answers = JSON.parse(@quiz_response.answers.presence || "{}")
     ids = JSON.parse(@quiz_response.top_card_ids.presence || "[]")
+    selected = ids.filter_map { |id| Card.find_by(id: id) }
     ranked = Card.ranked_for(answers)
-    # A stack built by relaxing the credit filter offers swaps from that same
-    # relaxed pool; otherwise every Swap button would be disabled.
-    ranked = Card.ranked_for(answers.merge("credit_score" => "I don't know")) if ranked.empty?
-    cards = (ids.filter_map { |id| Card.find_by(id: id) } + ranked).uniq
+    # A stack built by relaxing the credit filter (its cards fail the strict
+    # check) offers swaps from that same relaxed pool; otherwise every Swap
+    # button would be disabled. A strict stack keeps the filtered catalogue.
+    if ranked.empty? && selected.any? { |card| !card.recommendable_for?(answers) }
+      ranked = Card.ranked_for(answers.merge("credit_score" => "I don't know"))
+    end
+    cards = (selected + ranked).uniq
     {
       cards: cards.map.with_index do |card, index|
         data = card.results_data(index)
