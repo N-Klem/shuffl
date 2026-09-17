@@ -117,10 +117,11 @@ Fourteen stylesheets in `app/assets/stylesheets/`:
 > building on `application.css`. This is the largest piece of frontend debt in the project and it
 > is recorded under *Known violations* in DESIGN.md. Do not add a seventh.
 
-Twelve Stimulus controllers in `app/javascript/controllers/`:
+Eleven Stimulus controllers in `app/javascript/controllers/`:
 
-`assistant`, `browse`, `dialog`, `hero_carousel`, `password_visibility`, `quiz`, `quiz_finish`,
-`results`, `share`, `stack`, `theme`, `wallet`, plus a shared `motion_helpers.js`.
+`assistant`, `browse`, `hero_stacks`, `nav_roll`, `password_visibility`, `quiz`, `quiz_finish`,
+`results`, `stack`, `theme`, `wallet`, plus the shared helpers `motion_helpers.js`,
+`reward_estimate_helpers.js` and `spending_plan_helpers.js`.
 `app/javascript/application.js` stays minimal — add behaviour as a Stimulus controller, never
 as an inline script or ad-hoc JS in that file.
 
@@ -134,8 +135,6 @@ as an inline script or ad-hoc JS in that file.
 - **Quiz length** — the quiz is now 10 questions (cut from the original 16). A future
   "keep refining" path could reopen removed questions. Would need `:edit`/`:update` on
   `quiz_responses`, since the record is currently created once at the end.
-- **Dark mode ignores the system preference** — `theme.css` responds only to the navbar toggle;
-  there is no `prefers-color-scheme` query.
 - **Pundit authorization** — not yet added; user-owned resources still rely on `current_user`
   scoping in the controllers.
 - **Quiz UX** — no per-question "required" validation; skipping a question scores 0 for it.
