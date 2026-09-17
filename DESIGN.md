@@ -777,15 +777,13 @@ goals contribute to scoring at descending weights. Every path asks about
 repayment, spending, fees and credit context. First-card repayment wording is
 prospective. Loyalty and wallet-gap claims are absent from the new flow.
 
-Goals and spending share one ranking control: the choices are a wrapping row of
-pills, and tapping a pill ranks it next. A ranked pill fills burgundy and carries
-its number in a small badge; tapping it again removes it and the ranks close up.
-Once the cap is reached the remaining pills dim until one is removed. A status
-line under the pills repeats the order in words. There are no slots, no dragging
-and no reorder buttons: to change the order, remove and re-tap. This replaced
-the earlier slots-and-cluster control, which testers found unintuitive.
-There is no automatic advancement after ranking. Continue submits the order.
-The pills are the checkboxes, so the control works without JavaScript.
+Goals and spending share one ranking control: tapping a choice moves its pill
+into a separate ordered selection area above the remaining options. Up to three
+choices can be selected. Drag a selected pill by its handle to reorder it on
+mouse or touch; keyboard users can use the handle's arrow keys. Tapping a selected
+pill removes it. Selection stays neutral, and Continue submits the final order.
+There is no automatic advancement. Without JavaScript the checkboxes remain
+available and submit in option order.
 
 Back preserves answers. Only answers incompatible with a changed path are
 removed on submission; saved drafts retain the ranking. Per-form tokens reject
