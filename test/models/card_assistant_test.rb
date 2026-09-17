@@ -10,7 +10,10 @@ class CardAssistantTest < ActiveSupport::TestCase
     end
     def call(**args)
       @calls << args
-      value = @replies.shift or raise "Unexpected API call"
+      # The one correction retry repeats the model's previous reply, so the
+      # fail-closed tests stay as strict as before.
+      value = @replies.shift || (@last if args[:input].to_s.include?('"correction"')) or raise "Unexpected API call"
+      @last = value
       return value if value.key?("output")
       { "output" => [ { "type" => "message", "content" => [ { "type" => "output_text", "text" => value.to_json } ] } ] }
     end
