@@ -32,7 +32,7 @@
 <% @cards.each do |card| %>
   <article class="recommendation"><div><h2><%= card.name %></h2><p><%= card.issuer %></p><%= link_to "Explore this card", card_path(card) %></div><p>Annual fee: <%= number_to_currency(card.annual_fee) %></p></article>
 <% end %>
-</div><p class="status" id="status" role="status">Keep your favourites. Swap anything that doesn’t feel right.</p><p class="footnote">Save your shortlist to revisit these cards in My Wallet.</p></section></div>
+</div><p class="status" id="status" role="status">Keep your favourites. Swap anything that doesn’t feel right.</p><% if @quiz_response.answers_hash["credit_score"] == "I don't know" %><p class="footnote">You skipped your credit score, so these matches don't account for it. Check each issuer's guidance before applying.</p><% end %><p class="footnote">Save your shortlist to revisit these cards in My Wallet.</p></section></div>
 <footer class="bottom"><p id="results-notes">Compare the researched card benefits and earning conditions. Check current fees, eligibility and offer terms with the issuer before applying.</p><span><%= render "shared/wordmark", link: false %> · Your results</span></footer>
 </main>
 

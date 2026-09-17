@@ -74,6 +74,20 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select '[data-controller~="results"]', count: 0
   end
 
+  test "not knowing the credit score still produces a stack, with a note" do
+    CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
+    Card.publish_us_demo!
+    get new_quiz_response_path
+    submit_answer([ "Cashback" ]); follow_redirect!
+    submit_answer("1–2"); follow_redirect!
+    submit_answer("I don't know"); follow_redirect!
+    7.times { answer_current; follow_redirect! }
+    assert_response :success
+    assert_select "h1", text: /rewarding/
+    assert_select ".footnote", text: /skipped your credit score/
+    refute_empty JSON.parse(QuizResponse.order(:id).last.top_card_ids)
+  end
+
   test "first-card quiz recommends a supported real card and saves it to Planned" do
     CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
     Card.publish_us_demo!

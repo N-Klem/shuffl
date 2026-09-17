@@ -15,8 +15,10 @@ class QuizEligibilityTest < ActiveSupport::TestCase
   test "no history and damaged credit are separate profiles" do
     assert_equal ["us-chase-freedom-rise"], keys("No credit history")
     assert_empty keys("Building (300–579)")
-    assert_empty keys("I don't know")
     assert_empty keys(nil)
+    # Not knowing the score skips the profile filter instead of ruling everything out.
+    assert_includes keys("I don't know"), "us-chase-freedom-rise"
+    assert_includes keys("I don't know"), "us-capital-one-platinum"
     assert_equal ["us-capital-one-platinum"], keys("Fair (580–669)")
   end
 

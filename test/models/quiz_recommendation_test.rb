@@ -166,7 +166,7 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     second.update!(catalogue_status: "published", annual_fee: 60)
     assert_equal 1, QuizRecommendation.new(@answers.merge("annual_fee_budget" => "100")).cards.size
     assert_equal 2, QuizRecommendation.new(@answers.merge("annual_fee_budget" => "120")).cards.size
-    assert_empty QuizRecommendation.new(@answers.merge("credit_score" => "I don't know")).cards
+    refute_empty QuizRecommendation.new(@answers.merge("credit_score" => "I don't know")).cards
     second.update!(catalogue_status: "retired")
     assert_equal [first.id], QuizRecommendation.new(@answers).cards.map(&:id)
   end

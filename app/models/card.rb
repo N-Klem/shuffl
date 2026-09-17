@@ -443,8 +443,10 @@ class Card < ApplicationRecord
   def recommendable_for?(answers)
     return true unless real_catalogue?
 
+    # "I don't know" skips the credit-profile filter rather than ending the quiz
+    # with nothing; the results page says the matches don't account for it.
     band = catalogue_terms.dig("editorial_credit_guidance", "band")
-    return false unless CREDIT_PROFILE_MATCHES.fetch(band, []).include?(answers["credit_score"])
+    return false unless answers["credit_score"] == "I don't know" || CREDIT_PROFILE_MATCHES.fetch(band, []).include?(answers["credit_score"])
 
     # A suitability tag (e.g. Freedom Rise's Student tag) is not a requirement.
     conditions = Array(catalogue_terms["recommendation_conditions"])
