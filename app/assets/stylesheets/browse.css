@@ -473,6 +473,41 @@
     justify-content: space-between;
     font-size: 13px;
   }
+  .card-inspection {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    margin-top: 0;
+    padding-top: 24px;
+    border-color: var(--hairline);
+    color: var(--body-color);
+  }
+  .card-inspection .art { height: auto; aspect-ratio: 1.58; }
+  .card-inspection .inspection-issuer { margin: 16px 0 24px; font-size: 13px; }
+  .card-inspection .inspection-section + .inspection-section {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hairline);
+  }
+  .card-inspection h3 { color: var(--ink); font-size: 19px; font-weight: 600; margin-bottom: 16px; }
+  .card-inspection .inspection-costs { margin: 0; }
+  .inspection-costs > div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+  .inspection-costs dt { font-weight: 400; font-size: 13px; }
+  .inspection-costs dd { margin: 0; text-align: right; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums lining-nums; }
+  .inspection-costs dd.fee { color: var(--brick); }
+  .card-inspection :is(.inspection-rates, .inspection-perks) { list-style: none; padding: 0; margin: 0; line-height: 1.5; }
+  .inspection-rates li + li { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--hairline); }
+  .inspection-rates strong { display: block; font-size: 25px; font-weight: 600; font-variant-numeric: tabular-nums lining-nums; }
+  .inspection-category { display: block; margin-top: 4px; color: var(--ink); }
+  .inspection-perks li { padding: 12px 0; border-bottom: 1px solid var(--hairline); }
+  .card-inspection p.inspection-condition { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .card-inspection p.inspection-offer { color: var(--body-color); margin: 0; line-height: 1.55; }
+  .inspection-actions { display: flex; flex-direction: column; align-items: flex-start; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--hairline); }
+  .inspection-actions a { text-decoration: underline; text-underline-offset: 4px; font-size: 13px; }
+  .compare-condition { display: block; color: var(--muted); margin-top: 8px; }
+  @media (max-width: 640px) {
+    dialog:has(.card-inspection) { padding: 24px 16px; }
+    .card-inspection { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .card-inspection .art { max-width: 320px; margin-inline: auto; }
+  }
   .note {
     font-size: 11px;
     color: var(--muted);

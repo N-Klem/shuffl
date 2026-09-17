@@ -17,6 +17,7 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '[data-controller~="results"]'
     assert_select 'nav.site-nav'
+    assert_select '#save-stack[disabled][aria-describedby="save-status"]'
     payload = ResultsStack.new(@quiz).payload
     assert_equal @card.id, payload[:cards][payload[:selected].first][:id]
     refute payload.key?(:amounts)
@@ -26,6 +27,17 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
     assert_select '#spending-guide', count: 0
     assert_select 'aside.summary', count: 0
     assert_equal [0.0] * 6, payload[:cards].find { |card| card[:id] == @other.id }[:rates]
+  end
+
+  test "direct authentication does not promise to save a stack" do
+    get new_user_session_path
+    assert_select 'input[type="submit"][value="sign in"]'
+    assert_select '.intro', text: 'sign in to access your wallet.'
+    assert_select '.assurance', count: 0
+
+    get new_user_registration_path
+    assert_select 'input[type="submit"][value="create account"]'
+    assert_select '.assurance', count: 0
   end
 
   test "anonymous save requires login and creates no wallet items" do
@@ -59,6 +71,8 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
     post save_stack_wallet_items_path, params: { quiz_response_id: @quiz.id, card_ids: [@card.id, @other.id] }, as: :json
     get new_user_session_path
     assert_select '.stack-caption span', text: '2 cards'
+    assert_select 'input[type="submit"][value="sign in & save my stack"]'
+    assert_select '.intro', text: 'sign in to add your selected cards to my wallet.'
     post user_session_path, params: { user: { email: @user.email, password: "wrong" } }
     assert_response :unprocessable_entity
     post user_session_path, params: { user: { email: @user.email, password: "password123" } }
@@ -75,6 +89,7 @@ class ResultsStackTest < ActionDispatch::IntegrationTest
     post save_stack_wallet_items_path, params: { quiz_response_id: @quiz.id, card_ids: [@other.id] }, as: :json
     get new_user_session_path
     get new_user_registration_path
+    assert_select 'input[type="submit"][value="create account & save my stack"]'
     attributes = { first_name: "New", email: "new-wallet@example.com", password: "password123", password_confirmation: "mismatch" }
     post user_registration_path, params: { user: attributes }
     assert_response :unprocessable_entity

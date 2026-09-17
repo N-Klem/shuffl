@@ -1,5 +1,6 @@
 <% content_for :body_class, "auth-page" %>
 <% content_for :title, "Create account · Shuffl" %>
+<% saving_stack = session[:pending_wallet_card_ids].present? %>
 
 <main class="auth-shell">
   <%= render "devise/shared/stack_panel" %>
@@ -40,10 +41,12 @@
           <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "re-enter your password" %>
         </div>
 
-        <%= f.submit "create account & save my stack", class: "primary" %>
+        <%= f.submit saving_stack ? "create account & save my stack" : "create account", class: "primary" %>
       <% end %>
 
-      <p class="assurance">this only saves your picks. no card applications are submitted.</p>
+      <% if saving_stack %>
+        <p class="assurance">this only saves your picks. no card applications are submitted.</p>
+      <% end %>
     </div>
   </section>
 </main>

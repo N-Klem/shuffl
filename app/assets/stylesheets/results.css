@@ -534,8 +534,13 @@
     min-height: 48px;
     white-space: nowrap;
   }
-  #save-stack:hover {
+  #save-stack:not(:disabled):hover {
     background: var(--burgundy-hover);
+  }
+  #save-stack:disabled {
+    background: var(--hairline);
+    color: var(--muted);
+    cursor: not-allowed;
   }
   #save-status {
     font-size: 12px;

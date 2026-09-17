@@ -1,5 +1,6 @@
 <% content_for :body_class, "auth-page" %>
 <% content_for :title, "Sign in · Shuffl" %>
+<% saving_stack = session[:pending_wallet_card_ids].present? %>
 
 <main class="auth-shell">
   <%= render "devise/shared/stack_panel" %>
@@ -9,7 +10,7 @@
       <%= render "devise/shared/auth_tabs", active: :sign_in %>
 
       <h2>welcome back.</h2>
-      <p class="intro">sign in to add your selected cards to my wallet.</p>
+      <p class="intro"><%= saving_stack ? "sign in to add your selected cards to my wallet." : "sign in to access your wallet." %></p>
 
       <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
@@ -36,10 +37,12 @@
           </div>
         <% end %>
 
-        <%= f.submit "sign in & save my stack", class: "primary" %>
+        <%= f.submit saving_stack ? "sign in & save my stack" : "sign in", class: "primary" %>
       <% end %>
 
-      <p class="assurance">this only saves your picks. no card applications are submitted.</p>
+      <% if saving_stack %>
+        <p class="assurance">this only saves your picks. no card applications are submitted.</p>
+      <% end %>
     </div>
   </section>
 </main>

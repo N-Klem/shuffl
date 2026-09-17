@@ -78,7 +78,17 @@
   from { background-position: 0% 50%; }
   to { background-position: 100% 50%; }
 }
+/* The animated line replaces existing text underlines and tab/nav borders.
+   Keep their resting indicators and border dimensions, but never draw both. */
+:is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]):focus-visible {
+  text-decoration: none !important;
+  border-bottom-color: transparent !important;
+}
 @media (hover: hover) and (pointer: fine) {
+  :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover {
+    text-decoration: none !important;
+    border-bottom-color: transparent !important;
+  }
   :is(.nav-links a, .tertiary-link, .btn-link, button.text, button.link, a.text, a.link, .browse-tabs button, [role="tab"]):not(:disabled, [aria-disabled="true"]):hover::after {
     opacity: 1;
     animation: shuffl-underline-light 1.5s ease-in-out infinite alternate;

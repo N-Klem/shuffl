@@ -25,7 +25,7 @@
 <noscript><p>Enable JavaScript to keep or swap cards and save this stack.</p></noscript>
 <header>
   <div><h1>Your spending. More <span class="keyword-emphasis">rewarding.</span></h1><p><%= @cards.one? ? "Your recommended card, and how to use it." : "Your recommended cards, and what to use each one for." %></p></div>
-  <div class="save-area"><button id="save-stack" type="button" disabled>Save my stack</button><p id="save-status" role="status">Keep the cards you want to save.</p></div>
+  <div class="save-area"><button id="save-stack" type="button" aria-describedby="save-status" disabled>Save my stack</button><p id="save-status" role="status">Keep the cards you want to save.</p></div>
 </header>
 <section class="results-recommendations" aria-label="Your recommended cards">
 <div class="cards-heading"><strong>Your recommended stack</strong><span id="kept-count"></span></div><div id="cards">

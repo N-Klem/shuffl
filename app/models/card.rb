@@ -92,6 +92,17 @@ class Card < ApplicationRecord
     catalogue_terms.fetch("rewards", [])
   end
 
+  def reward_rate_label(rule)
+    rate = rule["rate"].to_d.to_s("F").delete_suffix(".0")
+    unit = case rule["unit"]
+           when "cashback_percent" then "% cashback"
+           when "points_per_USD" then rule["rate"].to_d == 1 ? " point per $1" : " points per $1"
+           when "miles_per_USD" then rule["rate"].to_d == 1 ? " mile per $1" : " miles per $1"
+           else " #{rule['unit'].to_s.tr('_', ' ')}"
+           end
+    "#{rate}#{unit}"
+  end
+
   # Presentation uses known product facts; a missing earning schedule is never
   # interpreted as a no-rewards card. Calculation support remains separate.
   def displayed_welcome_offer
@@ -110,10 +121,9 @@ class Card < ApplicationRecord
         detail: "A card for building credit through responsible use. It does not earn purchase rewards.",
         conditions: nil, estimateSupported: false }
     elsif rule
-      unit = { "cashback_percent" => "% cashback", "points_per_USD" => " points / $1", "miles_per_USD" => " miles / $1" }.fetch(rule["unit"], " #{rule['unit'].to_s.tr('_', ' ')}")
       kind = rule["unit"] == "cashback_percent" ? "cashback" : "travel"
       { kind: kind, title: kind == "cashback" ? "Cashback on your spending" : "Earn toward your next trip",
-        value: "#{rule['rate']}#{unit}", label: rule["category"], detail: rule["category"],
+        value: reward_rate_label(rule), label: rule["category"], detail: rule["category"],
         conditions: rule["conditions"].presence,
         estimateSupported: RewardsCalculator.unavailable_reason(self).nil? }
     else
@@ -134,8 +144,7 @@ class Card < ApplicationRecord
     return "#{reward_rate.to_f.to_s.delete_suffix('.0')}x rewards" unless real_catalogue?
     rule = reward_rules.max_by { |reward| reward.fetch("rate").to_d }
     return value_profile[:detail] unless rule
-    unit = rule["unit"] == "cashback_percent" ? "% cashback" : " #{rule['unit'].tr('_', ' ')}"
-    "#{rule['rate']}#{unit} on #{rule['category']}"
+    "#{reward_rate_label(rule)} on #{rule['category']}"
   end
 
   EXPENSE_OPTIONS = [

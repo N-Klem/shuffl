@@ -3,7 +3,7 @@ class BrowseCatalogue
     cards = Card.available.order(:id).map do |card|
       { id: card.id.to_s, name: card.name, imageUrl: card.image_path, issuer: card.issuer,
         annualFee: card.annual_fee&.to_f, cardNetwork: card.network,
-        rewards: {}, rewardSummary: card.reward_summary, rewardRules: card.reward_rules,
+        rewards: {}, rewardSummary: card.reward_summary, rewardRules: card.reward_rules.map { |rule| rule.merge("label" => card.reward_rate_label(rule)) },
         welcomeOffer: card.displayed_welcome_offer, valueProfile: card.value_profile,
         perks: card.perk_list,
         categories: card.best_for.to_s.split(",").map { |category| category.strip.downcase },

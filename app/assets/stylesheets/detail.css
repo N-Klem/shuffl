@@ -132,6 +132,8 @@
 
 .detail-facts dt, .detail-facts .key { color: var(--muted); }
 .detail-facts .value { font-variant-numeric: tabular-nums lining-nums; text-align: right; }
+.detail-page .detail-facts .detail-cost { color: var(--brick); }
+.detail-page .detail-benefit, .detail-page .detail-benefits li { color: var(--pine); }
 
 .detail-section { margin-top: 40px; }
 .detail-section h2 {

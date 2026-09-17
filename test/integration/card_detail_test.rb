@@ -58,6 +58,18 @@ class CardDetailTest < ActionDispatch::IntegrationTest
     assert_select "form[action='#{wallet_items_path}']", count: 0
   end
 
+  test "benefits and actual charges have separate semantic colours" do
+    @card.update!(foreign_transaction_fee: true)
+    get card_path(@card)
+    assert_select ".detail-facts .detail-cost", count: 2
+    assert_select ".detail-benefits li", count: 2
+
+    @card.update!(annual_fee: 0, foreign_transaction_fee: false)
+    get card_path(@card)
+    assert_select ".detail-facts .detail-cost", count: 0
+    assert_select ".detail-facts .value", text: /\$0/
+  end
+
   test "card page invites visitors without a quiz result to take the quiz" do
     get card_path(@card)
     assert_select ".detail-foryou--empty a", "Take the quiz"

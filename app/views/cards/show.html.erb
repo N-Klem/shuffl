@@ -43,10 +43,10 @@
       <p class="detail-figure-label"><%= @card.real_catalogue? ? @card.value_profile[:label] : @card.reward_summary %></p>
 
       <ul class="detail-facts">
-        <li><span class="key">Annual fee</span><span class="value"><%= card_annual_fee(@card) %></span></li>
+        <li><span class="key">Annual fee</span><span class="value <%= "detail-cost" if @card.annual_fee.to_f.positive? %>"><%= card_annual_fee(@card) %></span></li>
         <% if @card.displayed_welcome_offer.present? %><li><span class="key">Welcome offer</span><span class="value"><%= @card.displayed_welcome_offer %></span></li><% end %>
         <% if @card.credit_score_min.present? %><li><span class="key">Minimum credit score</span><span class="value"><%= @card.credit_score_min %></span></li><% end %>
-        <li><span class="key">Foreign transaction fee</span><span class="value"><%= card_foreign_fee(@card) %></span></li>
+        <li><span class="key">Foreign transaction fee</span><span class="value <%= "detail-cost" if @card.foreign_transaction_fee == true %>"><%= card_foreign_fee(@card) %></span></li>
       </ul>
 
       <% if @card.catalogue_status == "retired" %>
@@ -58,7 +58,7 @@
           <% if @card.reward_rules.empty? %><p><%= @card.value_profile[:detail] %></p><% end %>
           <ul class="detail-perks">
             <% @card.reward_rules.each do |rule| %>
-              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> · <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
+              <li><strong class="detail-benefit"><%= @card.reward_rate_label(rule) %></strong> · <%= rule["category"] %><br><%= rule["conditions"] %></li>
             <% end %>
           </ul>
           <% if @card.catalogue_terms.dig("fees", "intro").present? %><p>First-year fee terms: <%= @card.catalogue_terms.dig("fees", "intro") %></p><% end %>
@@ -76,7 +76,7 @@
       <% if perks.any? %>
         <div class="detail-section">
           <h2>Perks</h2>
-          <ul class="detail-perks">
+          <ul class="detail-perks detail-benefits">
             <% perks.each do |perk| %>
               <li><%= perk %></li>
             <% end %>
