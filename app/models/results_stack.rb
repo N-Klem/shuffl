@@ -10,6 +10,9 @@ class ResultsStack
     answers = JSON.parse(@quiz_response.answers.presence || "{}")
     ids = JSON.parse(@quiz_response.top_card_ids.presence || "[]")
     ranked = Card.ranked_for(answers)
+    # A stack built by relaxing the credit filter offers swaps from that same
+    # relaxed pool; otherwise every Swap button would be disabled.
+    ranked = Card.ranked_for(answers.merge("credit_score" => "I don't know")) if ranked.empty?
     cards = (ids.filter_map { |id| Card.find_by(id: id) } + ranked).uniq
     {
       cards: cards.map.with_index do |card, index|

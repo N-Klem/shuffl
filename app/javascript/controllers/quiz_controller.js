@@ -78,8 +78,10 @@ export default class extends Controller {
     return count
   }
 
+  // Before the first tap the question's own explanation carries the instruction,
+  // so the status stays empty rather than saying it twice.
   rankSummary(count) {
-    if (count === 0) return `Tap up to ${this.limitValue}, most important first.`
+    if (count === 0) return ""
     const names = this.order.map((value, index) => `${index + 1} ${value}`).join(" · ")
     const next = count < this.limitValue ? "Tap one more, or continue." : "Tap a choice again to remove it."
     return `${names} · ${next}`

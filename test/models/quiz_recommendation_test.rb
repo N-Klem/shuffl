@@ -246,6 +246,15 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     assert_equal ["Groceries", "Dining out", "Online shopping"], payload[:spending]
   end
 
+  test "a relaxed result still offers swaps from the same relaxed pool" do
+    answers = @answers.merge("credit_score" => "Building (300–579)")
+    stack, relaxed = QuizRecommendation.new(answers).closest
+    assert_equal [ :credit ], relaxed
+    quiz = QuizResponse.create!(answers: answers.to_json, top_card_ids: stack.map(&:id).to_json, completed_at: Time.current)
+    payload = ResultsStack.new(quiz).payload
+    assert_operator payload[:cards].size, :>, payload[:selected].size
+  end
+
   test "preferences met are read back as short fragments, strongest first" do
     assert_equal ["cashback"], fit("us-citi-double-cash").preferences_met
     assert_equal ["cashback", "no annual fee"], fit("us-citi-double-cash", "priorities" => ["Cashback", "Keeping costs down"]).preferences_met
