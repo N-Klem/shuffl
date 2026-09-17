@@ -57,6 +57,7 @@ export default class extends Controller {
   }
 
   update() {
+    this.statusTarget.classList.remove("is-error")
     const count = this.answerTargets.filter(answer => answer.checked).length
     if (this.limitValue > 1) {
       this.answerTargets.forEach(answer => { answer.disabled = count >= this.limitValue && !answer.checked })
@@ -106,6 +107,7 @@ export default class extends Controller {
     if (!event.detail.success) {
       this.busy = false
       this.formTarget.removeAttribute("aria-busy")
+      this.statusTarget.classList.add("is-error")
       this.statusTarget.textContent = "Your answer wasn't saved. Please select it again."
     }
   }

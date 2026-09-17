@@ -51,7 +51,7 @@
         <%= number_field_tag :custom_budget, (params[:custom_budget].presence || (@selected.first unless %w[0 100 300].include?(@selected.first))), min: 0, max: 999999.99, step: 0.01, class: "form-control", data: { quiz_target: "budgetInput", action: "input->quiz#update" } %>
       </div>
     <% end %>
-    <p class="quiz-status" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
+    <p class="quiz-status <%= "is-error" if @error %>" id="quiz-status" role="status" data-quiz-target="status"><%= @error %></p>
     <div class="quiz-controls">
       <% if @previous_step %>
         <%= link_to "Back", new_quiz_response_path(step: @previous_step), class: "quiz-back", data: { action: "click->quiz#cancel", turbo_prefetch: false } %>

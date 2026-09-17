@@ -170,6 +170,7 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     get new_quiz_response_path
     submit_answer(["unknown"])
     assert_response :unprocessable_entity
+    assert_select ".quiz-status.is-error"
     old_token = css_select("input[name='quiz_token']").first["value"]
     submit_answer(["Cashback"]); follow_redirect!
     post quiz_responses_path, params: { step: 0, answer: ["Travel rewards"], quiz_token: old_token }
