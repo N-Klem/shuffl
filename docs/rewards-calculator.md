@@ -1,4 +1,4 @@
-# Cashback calculator — first supported version
+# Cashback calculator: first supported version
 
 ## Product presentation
 

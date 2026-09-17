@@ -243,7 +243,7 @@
     justify-content: center;
   }
   /* The card art is a link to the card's detail page. It used to flip on hover
-     (rotateY) to reveal an "Explore this card more" back face — a 1.15s reveal
+     (rotateY) to reveal an "Explore this card more" back face: a 1.15s reveal
      of a single text link that touch users never saw. Per DESIGN.md the row is
      already the target and card art carries no visible link at rest, so the
      face simply stays put and the whole tile links through. */

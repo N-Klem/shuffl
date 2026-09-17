@@ -108,8 +108,8 @@ class CardDetailTest < ActionDispatch::IntegrationTest
   test "navbar reflects sign-in state and shows flash messages" do
     get root_path
     assert_select ".nav-account a", text: "Sign in"
-    assert_select '.account-toggle[aria-expanded="false"]'
-    assert_select '.account-menu a', text: "Create account"
+    assert_select '.nav-account:not([open]) summary.account-toggle'
+    assert_select '.account-menu a', text: "Create an account"
     assert_select '.nav-links a', text: "Browse"
     assert_select '.nav-links a', text: "Cards", count: 0
     assert_select '.nav-links a', text: "Stacks", count: 0
@@ -129,7 +129,7 @@ class CardDetailTest < ActionDispatch::IntegrationTest
 
   test "results page offers saving without the retired share control" do
     complete_quiz
-    assert_select "button#save-stack", text: "Save this stack"
+    assert_select "button#save-stack", text: "Save my stack"
     assert_select "[data-controller='share'] button", count: 0
   end
 end

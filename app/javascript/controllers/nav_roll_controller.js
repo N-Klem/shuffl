@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Staggered text-roll hover effect for navigation links.
 // Attach to the <nav> (or any wrapper whose links get the effect).
-// Each link's visible text is replaced by two copies — on hover the
+// Each link's visible text is replaced by two copies: on hover the
 // first slides up while the second slides in from below, one letter at
 // a time radiating from the centre.
 

@@ -27,14 +27,21 @@
     <% end %>
     <fieldset aria-describedby="quiz-status">
       <legend class="visually-hidden"><%= @question[:prompt] %></legend>
-      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %> <%= "quiz-options-ranked" if @question[:type] == :ranked %>">
+      <% if @question[:type] == :ranked %>
+        <section class="quiz-ranking" data-quiz-target="ranking" hidden aria-label="Selected priorities">
+          <p>Your priorities · highest first</p>
+          <div class="quiz-selected" data-quiz-target="selected"></div>
+          <p class="quiz-ranking-hint">Drag the handles to reorder. Tap a choice to remove it.</p>
+        </section>
+      <% end %>
+      <div data-quiz-target="choices" class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %> <%= "quiz-options-ranked" if @question[:type] == :ranked %>">
         <% @question[:options].each_with_index do |option, index| %>
           <% budget_custom = @question[:type] == :budget && option == "Custom" && @selected.any? && !%w[0 100 300].include?(@selected.first) %>
           <% rank = @question[:type] == :ranked ? @selected.index(option) : nil %>
           <label class="quiz-answer <%= "is-ranked" if rank %>" for="quiz-answer-<%= index %>" data-quiz-target="option">
             <% if @question[:type] == :ranked %>
               <%= check_box_tag "answer[]", option, rank.present?, id: "quiz-answer-#{index}", data: { quiz_target: "answer", exclusive: Array(@question[:exclusive]).include?(option), action: "change->quiz#choose" } %>
-              <span class="quiz-rank" aria-hidden="true"><%= rank ? rank + 1 : "" %></span>
+              <button type="button" class="quiz-drag-handle" hidden aria-label="Reorder <%= option %>. Use arrow keys to move." data-action="click->quiz#handleClick pointerdown->quiz#dragStart pointermove->quiz#dragMove pointerup->quiz#dragEnd pointercancel->quiz#dragEnd keydown->quiz#reorderKey">⠿</button>
             <% elsif @question[:type] == :multi %>
               <%= check_box_tag "answer[]", option, @selected.include?(option), id: "quiz-answer-#{index}", data: { quiz_target: "answer", exclusive: Array(@question[:exclusive]).include?(option), action: "change->quiz#choose" } %>
             <% else %>

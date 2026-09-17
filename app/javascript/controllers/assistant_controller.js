@@ -411,7 +411,7 @@ export default class extends Controller {
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
       // The site uses no em dashes; the model is told so, and this catches any that slip through.
-      const p = this.node("p", String(paragraph.text ?? "").replace(/\s*—\s*/g, ", "))
+      const p = this.node("p", String(paragraph.text ?? "").replace(/\s*\u{2014}\s*/gu, ", "))
       const cited = (paragraph.evidence_ids || []).map(id => sources.find(item => item.id === id)).filter(Boolean)
       // Three inline markers at most; a long run of citations reads as noise, so the
       // rest fold into the Sources list below.

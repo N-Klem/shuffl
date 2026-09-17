@@ -164,7 +164,6 @@
 .home-page .hero-stacks .stack-tile.is-expanded .stack-fan { height: 320px; }
 .home-page .hero-stacks .fan-card { width: 54%; top: 64px; }
 .home-page .hero-stacks .stack-hint { opacity: 1; color: var(--muted); }
-.hero-stack-link { display: block; width: fit-content; margin: 8px auto 0; color: var(--ink); font-size: 14px; text-underline-offset: 4px; }
 .hero-stacks-controls { margin-top: 24px; }
 .hero-stacks-rail { display: grid; grid-template-columns: repeat(var(--stack-count), 1fr); gap: 4px; }
 .hero-stacks-rail button { position: relative; min-height: 44px; padding: 0; border: 0; background: none; }

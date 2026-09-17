@@ -1,7 +1,7 @@
 /* Shuffl – "Quiet Interface" design system (see DESIGN.md) */
 
 :root {
-  /* Bootstrap theme overrides — see DESIGN.md's CSS Implementation Notes */
+  /* Bootstrap theme overrides: see DESIGN.md's CSS Implementation Notes */
   --bs-primary: var(--burgundy);
   --bs-body-color: #4A4A4A;
   --bs-body-bg: #FFFFFF;
@@ -398,7 +398,10 @@ a:focus-visible .nav-roll-line + .nav-roll-line .nav-roll-letter {
 .nav-right { display: flex; align-items: center; justify-content: flex-end; gap: clamp(20px,2.8vw,36px); margin-left: auto; }
 .nav-links a { white-space: nowrap; }
 .account-toggle { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid #c7c7cb; background: #f0eff0; color: var(--ink); font: 500 17px/1 inherit; padding: 0; }
-.account-toggle:hover,.account-toggle[aria-expanded=true] { background: #e5e2e3; border-color: #777; }
+.account-toggle:hover,.nav-account[open] .account-toggle { background: var(--hairline); border-color: var(--muted); }
+.account-toggle { list-style: none; cursor: pointer; }
+.account-toggle::-webkit-details-marker { display: none; }
+.nav-account[open] > .account-menu { display: block; top: 100%; right: 0; }
 .account-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 .account-menu { min-width: 190px; padding: 8px; border: 1px solid var(--hairline); border-radius: 12px; box-shadow: 0 12px 30px #00000014; margin-top: 12px!important; }
 .account-menu .dropdown-item { border-radius: 6px; padding: 10px 12px; font-size: 15px; }

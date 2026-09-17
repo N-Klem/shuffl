@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["form", "answer", "heading", "status", "done", "option", "ordered", "budgetField", "budgetInput"]
+  static targets = ["form", "answer", "heading", "status", "done", "option", "ordered", "budgetField", "budgetInput", "ranking", "selected", "choices"]
   static values = { limit: Number, ranked: Boolean, budget: Boolean }
 
   // Separator chosen because it cannot appear in an option label.
@@ -9,8 +9,7 @@ export default class extends Controller {
 
   connect() {
     this.busy = false
-    // Tap order is the answer for a ranked question, so it is tracked here
-    // rather than read back off the DOM, which only knows document order.
+    // Keep the selected order separate from the original option order.
     this.order = this.rankedValue && this.hasOrderedTarget
       ? this.orderedTarget.value.split(this.constructor.SEPARATOR).filter(Boolean)
       : []
@@ -34,8 +33,17 @@ export default class extends Controller {
         if (input !== event.target && (event.target.dataset.exclusive === "true" || input.dataset.exclusive === "true")) input.checked = false
       })
     }
+    const pill = this.rankedValue && event ? event.target.closest(".quiz-answer") : null
+    const before = pill?.getBoundingClientRect()
     if (this.rankedValue && event) this.track(event.target)
     const count = this.update()
+    if (pill && before && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const after = pill.getBoundingClientRect()
+      pill.animate([
+        { transform: `translate(${before.left - after.left}px, ${before.top - after.top}px)` },
+        { transform: "translate(0, 0)" }
+      ], { duration: 200, easing: "ease-out" })
+    }
     // A ranked question is finished by the Continue button, not by hitting the cap:
     // two ranked choices is a legitimate answer and should not auto-advance.
     if (!this.rankedValue && this.limitValue === 1 && count === 1 &&
@@ -81,21 +89,75 @@ export default class extends Controller {
   // Before the first tap the question's own explanation carries the instruction,
   // so the status stays empty rather than saying it twice.
   rankSummary(count) {
-    if (count === 0) return ""
-    const names = this.order.map((value, index) => `${index + 1} ${value}`).join(" · ")
-    const next = count < this.limitValue ? "Tap one more, or continue." : "Tap a choice again to remove it."
-    return `${names} · ${next}`
+    return count ? `${count} of ${this.limitValue} selected. Continue when you're ready.` : ""
   }
 
   paintRanks() {
-    this.answerTargets.forEach(answer => {
-      const label = this.optionTargets.find(option => option.control === answer || option.contains(answer))
-      if (!label) return
-      const position = this.order.indexOf(answer.value)
-      const badge = label.querySelector(".quiz-rank")
-      if (badge) badge.textContent = position === -1 ? "" : String(position + 1)
-      label.classList.toggle("is-ranked", position !== -1)
+    this.rankingTarget.hidden = false
+    this.optionTargets.forEach(label => {
+      const input = label.querySelector("input")
+      const selected = this.order.includes(input.value)
+      label.classList.toggle("is-ranked", selected)
+      label.querySelector(".quiz-drag-handle").hidden = !selected
+      if (!selected) this.choicesTarget.append(label)
     })
+    this.order.forEach(value => {
+      const label = this.optionTargets.find(option => option.querySelector("input").value === value)
+      if (label) this.selectedTarget.append(label)
+    })
+    this.orderedTarget.value = this.order.join(this.constructor.SEPARATOR)
+  }
+
+  handleClick(event) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
+  dragStart(event) {
+    if (event.button !== 0 || this.busy) return
+    event.preventDefault()
+    this.dragged = event.currentTarget.closest(".quiz-answer")
+    this.dragged.classList.add("is-dragging")
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  dragMove(event) {
+    if (!this.dragged) return
+    event.preventDefault()
+    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".quiz-answer")
+    if (!target || target === this.dragged || !this.selectedTarget.contains(target)) return
+    const value = this.dragged.querySelector("input").value
+    const destination = this.order.indexOf(target.querySelector("input").value)
+    this.order.splice(this.order.indexOf(value), 1)
+    this.order.splice(destination, 0, value)
+    // Move the other pills around the captured handle to keep touch capture intact.
+    const labels = this.order.map(item => this.optionTargets.find(label => label.querySelector("input").value === item))
+    const pivot = labels.indexOf(this.dragged)
+    labels.slice(0, pivot).forEach(label => this.selectedTarget.insertBefore(label, this.dragged))
+    labels.slice(pivot + 1).forEach(label => this.selectedTarget.append(label))
+    this.orderedTarget.value = this.order.join(this.constructor.SEPARATOR)
+  }
+
+  dragEnd() {
+    if (!this.dragged) return
+    this.dragged.classList.remove("is-dragging")
+    this.dragged = null
+    this.statusTarget.textContent = "Priority order updated."
+  }
+
+  reorderKey(event) {
+    const direction = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 }[event.key]
+    if (!direction) return
+    event.preventDefault()
+    const value = event.currentTarget.closest(".quiz-answer").querySelector("input").value
+    const index = this.order.indexOf(value)
+    const next = index + direction
+    if (next < 0 || next >= this.order.length) return
+    this.order.splice(index, 1)
+    this.order.splice(next, 0, value)
+    this.paintRanks()
+    event.currentTarget.focus()
+    this.statusTarget.textContent = `${value} moved to priority ${next + 1}.`
   }
 
   submitting(event) {

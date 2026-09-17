@@ -23,7 +23,7 @@ module QuizResponsesHelper
 
   def quiz_question_explanation(question)
     return "Choose up to three. Choose No preference on its own." if question[:type] == :multi
-    return "Tap up to three, in order. Your first tap is your top priority." if question[:type] == :ranked
+    return "Choose up to three, then drag your selections into priority order." if question[:type] == :ranked
     {
       "open_credit_cards" => "If you choose Recommend for me, this helps us balance extra coverage against the number of cards to manage.",
       "credit_score" => "We only recommend cards with recorded guidance matching your range. If you don’t know it, we can’t establish a match. No credit check or approval guarantee.",

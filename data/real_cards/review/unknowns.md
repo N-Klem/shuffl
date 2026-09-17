@@ -1,4 +1,4 @@
-# Missing information — 30-card lookup checklist
+# Missing information: 30-card lookup checklist
 
 Based on the initial research catalogue dated 15 September 2026. These are gaps in our research, not statements that issuers withhold the information.
 
@@ -20,7 +20,7 @@ If an annual fee is known, a blank monthly-fee field does not automatically mean
 
 ## Card-by-card checklist
 
-### 1. Chase Sapphire Preferred — US
+### 1. Chase Sapphire Preferred: US
 
 Reference: `us-chase-sapphire-preferred` · Currency: USD
 
@@ -34,7 +34,7 @@ Reference: `us-chase-sapphire-preferred` · Currency: USD
 
 - [ ] New benefits observed; review their effective dates and provider exclusions.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95; foreign_purchase_percent: 0
 - Rewards: Chase Travel: 5 points_per_USD. Excludes purchases reimbursed by the annual hotel credit. | Dining; gas; EV charging; selected vacation homes; streaming; online groceries: 3 points_per_USD. Online groceries exclude Target, Walmart and wholesale clubs; selected providers only. | Other travel: 2 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -50,7 +50,7 @@ Reference: `us-chase-sapphire-preferred` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 2. Chase Sapphire Reserve — US
+### 2. Chase Sapphire Reserve: US
 
 Reference: `us-chase-sapphire-reserve` · Currency: USD
 
@@ -65,7 +65,7 @@ Reference: `us-chase-sapphire-reserve` · Currency: USD
 
 - [ ] Confirm foreign purchase fee and exclusions for purchases covered by credits.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 795
 - Rewards: Chase Travel: 8 points_per_USD.  | Flights and hotels booked directly: 4 points_per_USD.  | Dining: 3 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -81,7 +81,7 @@ Reference: `us-chase-sapphire-reserve` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 3. Chase Freedom Unlimited — US
+### 3. Chase Freedom Unlimited: US
 
 Reference: `us-chase-freedom-unlimited` · Currency: USD
 
@@ -96,7 +96,7 @@ Reference: `us-chase-freedom-unlimited` · Currency: USD
 
 - [ ] Foreign purchase fee not extracted.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Chase Travel: 5 cashback_percent.  | Dining and drugstores: 3 cashback_percent.  | Other purchases: 1.5 cashback_percent. 
@@ -112,7 +112,7 @@ Reference: `us-chase-freedom-unlimited` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 4. Chase Freedom Flex — US
+### 4. Chase Freedom Flex: US
 
 Reference: `us-chase-freedom-flex` · Currency: USD
 
@@ -127,7 +127,7 @@ Reference: `us-chase-freedom-flex` · Currency: USD
 
 - [ ] Foreign fee and current quarterly calendar need review.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Quarterly categories: 5 cashback_percent. Activation required; USD 1,500 combined quarterly spending cap, then base rate. Category calendar changes. | Chase Travel: 5 cashback_percent.  | Dining and drugstores: 3 cashback_percent.  | Other purchases: 1 cashback_percent. 
@@ -143,7 +143,7 @@ Reference: `us-chase-freedom-flex` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 5. Chase Freedom Rise — US
+### 5. Chase Freedom Rise: US
 
 Reference: `us-chase-freedom-rise` · Currency: USD
 
@@ -159,7 +159,7 @@ Reference: `us-chase-freedom-rise` · Currency: USD
 - [ ] Confirm application channel and introductory offer expiry; no numerical approval score is assumed.
 - [ ] Foreign purchase fee is unknown.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Other purchases: 1.5 cashback_percent.  | Dining introductory offer: 3 cashback_percent. First 6 months; USD 6,000 dining cap; then normal rate.
@@ -175,7 +175,7 @@ Reference: `us-chase-freedom-rise` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 6. United Explorer — US
+### 6. United Explorer: US
 
 Reference: `us-united-explorer` · Currency: USD
 
@@ -189,7 +189,7 @@ Reference: `us-united-explorer` · Currency: USD
 
 - [ ] Remaining earning categories and foreign fee require review.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 150; intro: USD 0 annual fee in year one
 - Rewards: Eligible United purchases: 3 miles_per_USD. Advertised 9x flight total also includes MileagePlus flight earnings; do not import 9x as card-only rewards.
@@ -205,7 +205,7 @@ Reference: `us-united-explorer` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 7. Southwest Rapid Rewards Plus — US
+### 7. Southwest Rapid Rewards Plus: US
 
 Reference: `us-southwest-plus` · Currency: USD
 
@@ -220,7 +220,7 @@ Reference: `us-southwest-plus` · Currency: USD
 
 - [ ] Comparison page includes multiple tiers: confirm Plus category caps, new-applicant offer and current benefits.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 99; foreign_purchase_percent: 0
 - Rewards: Direct Southwest purchases: 2 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -236,7 +236,7 @@ Reference: `us-southwest-plus` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 8. Marriott Bonvoy Boundless — US
+### 8. Marriott Bonvoy Boundless: US
 
 Reference: `us-marriott-boundless` · Currency: USD
 
@@ -252,7 +252,7 @@ Reference: `us-marriott-boundless` · Currency: USD
 - [ ] Rewards source is an existing-cardmember guide; confirm current new-applicant terms.
 - [ ] Foreign purchase fee is unknown.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95
 - Rewards: Participating Marriott hotels: 6 points_per_USD. Card earnings only, excluding hotel loyalty earnings. | Groceries, gas and dining: 3 points_per_USD. Shared USD 6,000 annual spending cap; then 2 points per USD. | Other purchases: 2 points_per_USD. 
@@ -269,7 +269,7 @@ Reference: `us-marriott-boundless` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 9. World of Hyatt Credit Card — US
+### 9. World of Hyatt Credit Card: US
 
 Reference: `us-world-of-hyatt` · Currency: USD
 
@@ -284,7 +284,7 @@ Reference: `us-world-of-hyatt` · Currency: USD
 
 - [ ] Foreign fee and free-night restrictions need review.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95
 - Rewards: Hyatt hotels: 4 points_per_USD. Do not include the additional hotel-program base points in card earnings. | Dining, direct airline tickets, local transit and gyms: 2 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -300,7 +300,7 @@ Reference: `us-world-of-hyatt` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 10. Prime Visa — US
+### 10. Prime Visa: US
 
 Reference: `us-prime-visa` · Currency: USD
 
@@ -316,7 +316,7 @@ Reference: `us-prime-visa` · Currency: USD
 
 - [ ] Extract base rate, foreign fee and current welcome offer; Prime subscription cost is separate.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Eligible Amazon.com, Whole Foods and Chase Travel: 5 cashback_percent. Requires eligible Prime membership; 3% without. Retailer exclusions apply. | Dining, gas and local transit: 2 cashback_percent. 
@@ -332,7 +332,7 @@ Reference: `us-prime-visa` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 11. American Express Platinum — US
+### 11. American Express Platinum: US
 
 Reference: `us-amex-platinum` · Currency: USD
 
@@ -349,7 +349,7 @@ Reference: `us-amex-platinum` · Currency: USD
 - [ ] Extract flight cap, base rate, benefit enrolments, foreign fee and personalised welcome offer.
 - [ ] Preserve Pay Over Time terms; do not treat this as a conventional fixed-limit revolving card.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 895
 - Rewards: Prepaid hotels through Amex Travel: 5 points_per_USD. 
@@ -365,7 +365,7 @@ Reference: `us-amex-platinum` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 12. American Express Gold — US
+### 12. American Express Gold: US
 
 Reference: `us-amex-gold` · Currency: USD
 
@@ -381,7 +381,7 @@ Reference: `us-amex-gold` · Currency: USD
 
 - [ ] Welcome offer and foreign fee need review; retain Pay Over Time conditions.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 325
 - Rewards: Restaurants worldwide: 4 points_per_USD. USD 50,000 calendar-year cap; then 1x. | US supermarkets: 4 points_per_USD. USD 25,000 calendar-year cap; then 1x. | Prepaid hotels through Amex Travel: 5 points_per_USD.  | Direct flights or Amex Travel flights: 3 points_per_USD.  | Amex Travel prepaid car rentals and eligible cruises: 2 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -397,7 +397,7 @@ Reference: `us-amex-gold` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 13. Blue Cash Preferred — US
+### 13. Blue Cash Preferred: US
 
 Reference: `us-amex-blue-cash-preferred` · Currency: USD
 
@@ -412,7 +412,7 @@ Reference: `us-amex-blue-cash-preferred` · Currency: USD
 
 - [ ] Extract transit, gas and base rewards; foreign fee and welcome offer remain unknown.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95; intro: USD 0 annual fee in year one
 - Rewards: US supermarkets: 6 cashback_percent. USD 6,000 per year, then 1%. | Selected US streaming: 6 cashback_percent. 
@@ -428,7 +428,7 @@ Reference: `us-amex-blue-cash-preferred` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 14. Blue Cash Everyday — US
+### 14. Blue Cash Everyday: US
 
 Reference: `us-amex-blue-cash-everyday` · Currency: USD
 
@@ -444,7 +444,7 @@ Reference: `us-amex-blue-cash-everyday` · Currency: USD
 
 - [ ] Extract foreign fee and personalised welcome offer.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: US supermarkets: 3 cashback_percent. USD 6,000 annual category cap, then 1%. | US gas: 3 cashback_percent. Separate USD 6,000 annual category cap, then 1%. | US online retail: 3 cashback_percent. Separate USD 6,000 annual category cap, then 1%. | Other purchases: 1 cashback_percent. 
@@ -460,7 +460,7 @@ Reference: `us-amex-blue-cash-everyday` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 15. Delta SkyMiles Gold — US
+### 15. Delta SkyMiles Gold: US
 
 Reference: `us-delta-gold` · Currency: USD
 
@@ -475,7 +475,7 @@ Reference: `us-delta-gold` · Currency: USD
 
 - [ ] Welcome offer varies by applicant; foreign fee and benefit restrictions need review.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 150; intro: USD 0 annual fee in year one
 - Rewards: Restaurants, US supermarkets and direct Delta purchases: 2 miles_per_USD. US takeout and delivery included. | Other purchases: 1 miles_per_USD. 
@@ -491,7 +491,7 @@ Reference: `us-delta-gold` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 16. Hilton Honors American Express Aspire — US
+### 16. Hilton Honors American Express Aspire: US
 
 Reference: `us-hilton-aspire` · Currency: USD
 
@@ -507,7 +507,7 @@ Reference: `us-hilton-aspire` · Currency: USD
 
 - [ ] Extract remaining categories, foreign fee, current offer and benefit restrictions.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 550
 - Rewards: Direct Hilton hotel and resort purchases: 14 points_per_USD. Card earnings; do not add hotel-program points.
@@ -523,7 +523,7 @@ Reference: `us-hilton-aspire` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 17. Capital One Venture Rewards — US
+### 17. Capital One Venture Rewards: US
 
 Reference: `us-capital-one-venture` · Currency: USD
 
@@ -537,7 +537,7 @@ Reference: `us-capital-one-venture` · Currency: USD
 
 - [ ] Confirm limited offer expiry and credit restrictions; bonus restriction references Venture and Venture X in past 48 months.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95; foreign_purchase_percent: 0
 - Rewards: Capital One Travel hotels, vacation rentals and rental cars: 5 miles_per_USD.  | Other purchases: 2 miles_per_USD. 
@@ -553,7 +553,7 @@ Reference: `us-capital-one-venture` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 18. Capital One Venture X — US
+### 18. Capital One Venture X: US
 
 Reference: `us-capital-one-venture-x` · Currency: USD
 
@@ -568,7 +568,7 @@ Reference: `us-capital-one-venture-x` · Currency: USD
 
 - [ ] Welcome offer did not render; review lounge guest and authorised-user restrictions.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 395; foreign_purchase_percent: 0
 - Rewards: Capital One Travel hotels and rental cars: 10 miles_per_USD.  | Capital One Travel flights and vacation rentals: 5 miles_per_USD.  | Other purchases: 2 miles_per_USD. 
@@ -584,7 +584,7 @@ Reference: `us-capital-one-venture-x` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 19. Capital One Savor Cash Rewards — US
+### 19. Capital One Savor Cash Rewards: US
 
 Reference: `us-capital-one-savor` · Currency: USD
 
@@ -594,7 +594,7 @@ Reference: `us-capital-one-savor` · Currency: USD
 - [ ] First-year fee treatment: normal fee, waiver or discount
 - [ ] Shared checks above: network, benefits, complete reward rules, application availability and published eligibility.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0; foreign_purchase_percent: 0
 - Rewards: Dining, groceries, entertainment and eligible streaming: 3 cashback_percent. Groceries exclude superstores such as Walmart and Target. | Capital One Travel hotels, vacation rentals and rental cars: 5 cashback_percent.  | Other purchases: 1 cashback_percent. 
@@ -610,7 +610,7 @@ Reference: `us-capital-one-savor` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 20. Capital One Quicksilver — US
+### 20. Capital One Quicksilver: US
 
 Reference: `us-capital-one-quicksilver` · Currency: USD
 
@@ -624,7 +624,7 @@ Reference: `us-capital-one-quicksilver` · Currency: USD
 
 - [ ] Main product hero did not render; fee and rewards supported by the current issuer cashback catalogue.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0; foreign_purchase_percent: 0
 - Rewards: Eligible purchases: 1.5 cashback_percent. Standard Quicksilver Rewards variant.
@@ -641,7 +641,7 @@ Reference: `us-capital-one-quicksilver` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 21. Capital One Savor Student — US
+### 21. Capital One Savor Student: US
 
 Reference: `us-capital-one-savor-student` · Currency: USD
 
@@ -651,7 +651,7 @@ Reference: `us-capital-one-savor-student` · Currency: USD
 - [ ] First-year fee treatment: normal fee, waiver or discount
 - [ ] Shared checks above: network, benefits, complete reward rules, application availability and published eligibility.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0; foreign_purchase_percent: 0
 - Rewards: Groceries, dining, entertainment and eligible streaming: 3 cashback_percent. Superstores excluded. | Other purchases: 1 cashback_percent. 
@@ -667,7 +667,7 @@ Reference: `us-capital-one-savor-student` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 22. Capital One Platinum — US
+### 22. Capital One Platinum: US
 
 Reference: `us-capital-one-platinum` · Currency: USD
 
@@ -684,7 +684,7 @@ Reference: `us-capital-one-platinum` · Currency: USD
 
 - [ ] No reward schedule captured; verify absence of ongoing rewards and welcome bonus, and foreign fee.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: None captured (not confirmation of no rewards)
@@ -700,7 +700,7 @@ Reference: `us-capital-one-platinum` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 23. Citi Strata Premier — US
+### 23. Citi Strata Premier: US
 
 Reference: `us-citi-strata-premier` · Currency: USD
 
@@ -715,7 +715,7 @@ Reference: `us-citi-strata-premier` · Currency: USD
 
 - [ ] Welcome offer numbers did not render. Current/previous Premier and Strata Premier bonus restrictions need review.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 95; foreign_purchase_percent: 0
 - Rewards: Citi Travel hotels, car rentals and attractions: 10 points_per_USD.  | Air travel, other hotels, restaurants, supermarkets, gas and EV charging: 3 points_per_USD.  | Other purchases: 1 points_per_USD. 
@@ -731,7 +731,7 @@ Reference: `us-citi-strata-premier` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 24. Citi Double Cash — US
+### 24. Citi Double Cash: US
 
 Reference: `us-citi-double-cash` · Currency: USD
 
@@ -747,7 +747,7 @@ Reference: `us-citi-double-cash` · Currency: USD
 
 - [ ] Dynamic pricing and bonus values missing; confirm foreign fee.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Purchases and repayment combined: 2 cashback_percent. 1% when buying plus 1% when paying; pay at least minimum on time. | Citi Travel hotels, rental cars and attractions: 5 cashback_percent. Includes purchase and repayment components; not 5% plus the base 2%.
@@ -763,7 +763,7 @@ Reference: `us-citi-double-cash` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 25. Discover it Cash Back — US
+### 25. Discover it Cash Back: US
 
 Reference: `us-discover-it-cash-back` · Currency: USD
 
@@ -778,7 +778,7 @@ Reference: `us-discover-it-cash-back` · Currency: USD
 
 - [ ] Confirm quarterly cap, foreign fee and legal issuer after Capital One transition.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Activated quarterly categories: 5 cashback_percent. Quarterly maximum applies; amount not extracted. | Other purchases: 1 cashback_percent. 
@@ -794,7 +794,7 @@ Reference: `us-discover-it-cash-back` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 26. Discover it Student Cash Back — US
+### 26. Discover it Student Cash Back: US
 
 Reference: `us-discover-it-student` · Currency: USD
 
@@ -809,7 +809,7 @@ Reference: `us-discover-it-student` · Currency: USD
 
 - [ ] Verify quarterly cap, foreign fee, legal issuer and offer combination.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Activated quarterly categories: 5 cashback_percent. Quarterly maximum applies; amount not extracted. | Other purchases: 1 cashback_percent. 
@@ -825,7 +825,7 @@ Reference: `us-discover-it-student` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 27. Wells Fargo Active Cash — US
+### 27. Wells Fargo Active Cash: US
 
 Reference: `us-wells-fargo-active-cash` · Currency: USD
 
@@ -841,7 +841,7 @@ Reference: `us-wells-fargo-active-cash` · Currency: USD
 - [ ] Observed product-page bonus differs from older USD 200 terms found in search. Confirm the selected application channel.
 - [ ] Verify foreign fee and full eligibility.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Eligible purchases: 2 cashback_percent. Net purchases, after returns/credits.
@@ -857,7 +857,7 @@ Reference: `us-wells-fargo-active-cash` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 28. Wells Fargo Autograph — US
+### 28. Wells Fargo Autograph: US
 
 Reference: `us-wells-fargo-autograph` · Currency: USD
 
@@ -872,7 +872,7 @@ Reference: `us-wells-fargo-autograph` · Currency: USD
 
 - [ ] Verify foreign fee, eligible providers and full application restrictions.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Restaurants, travel, gas, transit, selected streaming and phone plans: 3 points_per_USD. Merchant/provider exclusions apply. | Other purchases: 1 points_per_USD. 
@@ -888,7 +888,7 @@ Reference: `us-wells-fargo-autograph` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 29. Bank of America Travel Rewards for Students — US
+### 29. Bank of America Travel Rewards for Students: US
 
 Reference: `us-bofa-student-travel` · Currency: USD
 
@@ -902,7 +902,7 @@ Reference: `us-bofa-student-travel` · Currency: USD
 
 - [ ] Page includes a temporary-unavailability banner alongside application content; manually confirm availability.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0; foreign_purchase_percent: 0
 - Rewards: Everyday purchases: 1.5 points_per_USD. 
@@ -918,7 +918,7 @@ Reference: `us-bofa-student-travel` · Currency: USD
 - Corrections / answers:
 - Source URL and date checked:
 
-### 30. Bank of America Customized Cash Rewards — US
+### 30. Bank of America Customized Cash Rewards: US
 
 Reference: `us-bofa-customized-cash` · Currency: USD
 
@@ -933,7 +933,7 @@ Reference: `us-bofa-customized-cash` · Currency: USD
 
 - [ ] Confirm foreign fee; do not assume eligibility for relationship rewards boosts.
 
-**Already captured — for comparison**
+**Already captured: for comparison**
 
 - Fees: annual: 0
 - Rewards: Chosen category: 3 cashback_percent. Combined USD 2,500 quarterly spend cap with groceries and wholesale clubs, then 1%. | Groceries and wholesale clubs: 2 cashback_percent. Shares the USD 2,500 quarterly cap. | Other purchases: 1 cashback_percent.  | Chosen category, introductory: 6 cashback_percent. First year only; same shared cap, then ongoing 3% category rate.

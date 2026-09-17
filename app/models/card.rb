@@ -159,7 +159,7 @@ class Card < ApplicationRecord
       options: [ "None right now", "1–2", "3–5", "6+" ]
     },
 
-    # Shared pool — drawn into paths as needed
+    # Shared pool: drawn into paths as needed
     "credit_score" => {
       key: "credit_score",
       type: :single,
@@ -337,7 +337,7 @@ class Card < ApplicationRecord
     # Beginner
     "Build my credit score"              => { "top_priority" => "Building credit" },
     "Start earning rewards"              => { "top_priority" => "Earning rewards" },
-    "Just need a card — keep it simple"  => { "top_priority" => "Low fees" },
+    "Just need a card, keep it simple"    => { "top_priority" => "Low fees" },
 
     # Growing
     "Better travel rewards"              => { "top_priority" => "Earning rewards", "rewards_type" => "Travel points & miles" },
@@ -411,7 +411,8 @@ class Card < ApplicationRecord
   # Retain interpretation of completed quizzes from the previous version.
   def self.scored_answers(answers)
     return answers.except("top_priority", "rewards_type") if answers["priorities"].present?
-    legacy_choice = answers.values.find { |value| value.is_a?(String) && IMPLICIT_SCORING.key?(value) }
+    choices = answers.values.grep(String).map { |value| value.gsub(/\s*\p{Pd}\s*/, ", ") }
+    legacy_choice = choices.find { |value| IMPLICIT_SCORING.key?(value) }
     (IMPLICIT_SCORING[legacy_choice] || {}).merge(answers)
   end
 

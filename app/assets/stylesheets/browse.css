@@ -886,6 +886,18 @@
   box-shadow: 0 1px 0 var(--hairline-strong);
 }
 
+.browse-page .stack-guidance {
+  display: grid;
+  gap: 24px;
+}
+.browse-page .stack-guidance > h3,
+.browse-page .stack-guidance > p {
+  margin: 0;
+}
+.browse-page .stack-guidance > p:not(.note) {
+  line-height: 1.55;
+}
+
 .browse-page .stack-members { margin: 24px 0; }
 .browse-page .stack-member {
   display: grid;
