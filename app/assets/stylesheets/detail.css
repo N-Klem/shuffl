@@ -68,6 +68,9 @@
 .detail-art.finish-graphite { background: var(--finish-graphite); color: #fff; }
 .detail-art.finish-steel { background: var(--finish-steel); color: var(--ink); }
 .detail-art.finish-silver { background: var(--finish-silver); color: var(--ink); }
+/* Issuer artwork has its own edge; the finish gradient must not show through
+   its transparent corners. Same specificity as the finish rules, so it wins by order. */
+.detail-art.has-card-image { background: transparent; }
 
 .detail-art .brand {
   position: absolute;

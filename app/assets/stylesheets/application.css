@@ -426,6 +426,9 @@ a:focus-visible .nav-roll-line + .nav-roll-line .nav-roll-letter {
 }
 .flash-alert { border-color: var(--burgundy); color: var(--burgundy); }
 
+/* Turbo's navigation progress bar ships in Bootstrap blue; it is the one accent here. */
+.turbo-progress-bar { height: 3px; background: var(--burgundy); }
+
 /* Supplied issuer artwork shares the existing card geometry and interactions. */
 html body .has-card-image { background: transparent; }
 .has-card-image > .card-image {
