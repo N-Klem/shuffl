@@ -1,16 +1,30 @@
-<section class="stack-panel" aria-label="Your stack">
-  <h1>your <span class="keyword-emphasis">stack</span> is ready.<br>make it <span class="keyword-emphasis">yours.</span></h1>
-  <p>a home for your cards, your rewards,<br>and whatever comes next.</p>
+<%# The panel only claims picks are waiting when this visitor really has an unsaved result. %>
+<% picks = latest_quiz_response && latest_quiz_response.user_id.nil? ? JSON.parse(latest_quiz_response.top_card_ids.presence || "[]").size : 0 %>
+<section class="stack-panel" aria-label="<%= picks > 0 ? "Your stack" : "Shuffl" %>">
+  <% if picks > 0 %>
+    <h1>your <span class="keyword-emphasis">stack</span> is ready.<br>make it <span class="keyword-emphasis">yours.</span></h1>
+    <p>a home for your cards, your rewards,<br>and whatever comes next.</p>
+  <% else %>
+    <h1>find your <span class="keyword-emphasis">cards.</span><br>build your <span class="keyword-emphasis">wallet.</span></h1>
+    <p>compare cards for how you spend,<br>and keep the ones that fit in one place.</p>
+  <% end %>
   <div class="card-fan" aria-label="Sample stack: Custom Cash, Venture Path and Dining Plus" role="img">
     <div class="credit-card finish-graphite"><span class="brand">shuffl.</span><span class="chip"></span><span class="card-name">Custom Cash</span></div>
     <div class="credit-card finish-burgundy"><span class="brand">shuffl.</span><span class="chip"></span><span class="card-name">Venture Path</span></div>
     <div class="credit-card finish-bone"><span class="brand">shuffl.</span><span class="chip"></span><span class="card-name">Dining Plus</span></div>
   </div>
   <div class="stack-caption">
-    <div>
-      <strong>your picks are coming with you.</strong>
-      <p>sign in to save them to my wallet.</p>
-    </div>
-    <span>3 cards</span>
+    <% if picks > 0 %>
+      <div>
+        <strong>your picks are coming with you.</strong>
+        <p>sign in to save them to my wallet.</p>
+      </div>
+      <span><%= pluralize(picks, "card") %></span>
+    <% else %>
+      <div>
+        <strong>no account needed to look around.</strong>
+        <p>create one when you want to keep a stack.</p>
+      </div>
+    <% end %>
   </div>
 </section>
