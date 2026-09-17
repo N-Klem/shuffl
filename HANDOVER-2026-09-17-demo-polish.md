@@ -122,11 +122,14 @@ Files: `app/models/card.rb`, `app/models/quiz_recommendation.rb`,
 `app/helpers/quiz_responses_helper.rb`, `app/javascript/controllers/quiz_controller.js`,
 `app/assets/stylesheets/quiz.css`.
 
-- **Ranked questions are tap-in-order pills.** Tap up to three; a numbered badge
-  shows the rank; tapping again removes; the rest dim at the cap. No slots, no
-  dragging. `DESIGN.md` describes it. The form posts `answer[]` in tap order plus a
-  hidden `ordered` field joined by U+001F. The heading line explains the rule and
-  the status line stays empty until the first tap (it used to say it twice).
+- **Ranked questions.** This session shipped tap-in-order pills with a numbered
+  badge. Noah then replaced that in PR #17 (merged 17 September): tapping a choice
+  moves its pill into a "Your priorities" area above the remaining options, a drag
+  handle (or the handle's arrow keys) reorders the selection, and tapping a selected
+  pill removes it. Up to three. `DESIGN.md` ("Seamless ranked quiz") describes the
+  current control; follow it, not the pill description in this session's commits.
+  The form still posts `answer[]` plus a hidden `ordered` field joined by U+001F,
+  and the status line stays empty until the first tap.
 - **"I don't know" for credit score reaches the results.** `Card#recommendable_for?`
   skips the band filter for that answer and the results footnote says so.
 - **The quiz never ends on nothing.** `QuizRecommendation#closest` relaxes in order:
