@@ -202,7 +202,7 @@ export default class extends Controller {
       this.messagesTarget.replaceChildren()
       data.messages.forEach(message => {
         this.addQuestion(message.question)
-        this.addReply(message.reply)
+        this.addReply(message.reply, message.question)
       })
       this.loaded = true
       this.showIntro(data.messages.length === 0)
@@ -220,6 +220,7 @@ export default class extends Controller {
     this.setBusy(true)
     this.showIntro(false)
     this.feedbackTarget.textContent = ""
+    this.clearFollowups()
     this.addQuestion(question)
     this.inputTarget.value = ""
     this.inputTarget.style.height = ""
@@ -227,7 +228,7 @@ export default class extends Controller {
     try {
       const data = await this.fetchStream(this.urlValue, { message: question })
       this.removePending()
-      this.addReply(data.reply)
+      this.addReply(data.reply, question)
       this.showRemaining(data.remaining)
     } catch (error) {
       this.removePending()
@@ -405,7 +406,7 @@ export default class extends Controller {
     this.scrollMessages()
   }
 
-  addReply(reply) {
+  addReply(reply, question = "") {
     const [row, article] = this.answerRow()
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
@@ -445,8 +446,50 @@ export default class extends Controller {
       })
       article.append(detail)
     }
+    // Only the latest reply offers follow-ups.
+    this.clearFollowups()
+    const followups = this.followups(reply, question)
+    if (followups.length) {
+      const group = this.node("div", undefined, "assistant-followups")
+      group.setAttribute("role", "group")
+      group.setAttribute("aria-label", "Follow-up questions")
+      followups.forEach(({ label, prompt }) => {
+        const button = this.node("button", label)
+        button.type = "button"
+        button.dataset.prompt = prompt
+        button.dataset.action = "assistant#starter"
+        group.append(button)
+      })
+      article.append(group)
+    }
     this.messagesTarget.append(row)
     this.scrollMessages()
+  }
+
+  clearFollowups() {
+    this.messagesTarget.querySelectorAll(".assistant-followups").forEach(group => group.remove())
+  }
+
+  // Up to two follow-ups, templated from the cards and stacks the reply named:
+  // factual questions the catalogue can answer, never open-ended prompts. A
+  // template is dropped when the question or the reply already covered it.
+  followups(reply, question) {
+    const cards = (reply.cards || []).map(card => card.name)
+    const stacks = reply.stacks || []
+    stacks.forEach(stack => (stack.cards || []).forEach(card => { if (!cards.includes(card.name)) cards.push(card.name) }))
+    const asked = question.toLowerCase()
+    const covered = `${asked} ${(reply.paragraphs || []).map(paragraph => paragraph.text).join(" ").toLowerCase()}`
+    const [first, second] = cards
+    const stack = stacks[0]?.name
+    const options = [
+      second && { label: `Compare ${first} and ${second}`, prompt: `Compare the ${first} and the ${second}.`, unless: /compar|versus|\bvs\b/.test(asked) },
+      stack && { label: `Who the ${stack} stack is for`, prompt: `Who is the ${stack} stack for?`, unless: /\bwho\b|for me|suit/.test(asked) },
+      first && { label: `${first} welcome offer`, prompt: `What's the welcome offer on the ${first}?`, unless: /welcome|bonus/.test(covered) },
+      first && { label: `Foreign transaction fees on the ${first}`, prompt: `Does the ${first} charge foreign transaction fees?`, unless: /foreign/.test(covered) },
+      first && { label: `Perks on the ${first}`, prompt: `What perks come with the ${first}?`, unless: /perk|benefit/.test(covered) },
+      first && { label: `Who the ${first} is for`, prompt: `Who is the ${first} best for?`, unless: /\bwho\b|best for|suit/.test(asked) }
+    ]
+    return options.filter(option => option && !option.unless).slice(0, 2)
   }
 
   cardElement(card) {

@@ -38,7 +38,8 @@ class AssistantChatsController < ApplicationController
   rescue AssistantMessage::LimitReached => e
     response.set_header("Retry-After", "60")
     finish({ error: e.message }, status: :too_many_requests)
-  rescue Assistant::OpenaiClient::Unavailable, Timeout::Error, ActionController::Live::ClientDisconnected
+  rescue Assistant::OpenaiClient::Unavailable, Timeout::Error, ActionController::Live::ClientDisconnected => e
+    Rails.logger.warn("Assistant chat failed: #{e.class} #{e.message}")
     AssistantMessage.where(id: message.id, status: "pending").update_all(status: "failed",
       input_tokens: client&.input_tokens.to_i, output_tokens: client&.output_tokens.to_i) if message
     finish({ error: "I couldn't verify an answer right now. Please try again shortly." }, status: :service_unavailable)

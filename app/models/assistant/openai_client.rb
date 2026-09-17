@@ -47,11 +47,13 @@ module Assistant
       response = Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 5, read_timeout: 18, write_timeout: 5, max_retries: 0) do |http|
         http.request(request)
       end
-      raise Unavailable unless response.is_a?(Net::HTTPSuccess)
+      # The message carries only metadata (HTTP code, provider status), so a failure
+      # can be diagnosed from the log without ever logging a prompt or a body.
+      raise Unavailable, "http #{response.code}" unless response.is_a?(Net::HTTPSuccess)
       data = JSON.parse(response.body)
       @input_tokens += data.dig("usage", "input_tokens").to_i
       @output_tokens += data.dig("usage", "output_tokens").to_i
-      raise Unavailable unless data["status"] == "completed"
+      raise Unavailable, "status #{data['status']} #{data.dig('incomplete_details', 'reason')}".strip unless data["status"] == "completed"
       data
     rescue IOError, SystemCallError, Timeout::Error, OpenSSL::SSL::SSLError, JSON::ParserError => e
       # Do not log prompts, credentials, provider bodies or personal information.
