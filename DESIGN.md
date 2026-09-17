@@ -473,6 +473,14 @@ Every page must have a bottom; none may end in empty white.
 
 ### Browse Cards / Stacks
 
+*Binding, requested by Noah, September 2026.* Card inspection and comparison use
+pine for reward rates and perk text, and brick for positive fees and charges.
+This is a scoped exception to pine appearing only on figures. Zero fees and unknown
+terms remain neutral. Section headings, conditions, eligibility and welcome-offer
+requirements remain neutral; do not colour an entire conditional offer as a benefit.
+Separate rewards, perks, welcome offers and costs with labelled sections and hairlines,
+so meaning survives without colour. Apply the same semantics on full card details.
+
 - Display headline: "Browse stacks" or "Browse cards"
 - Tab switcher: Cards | Stacks (underline active)
 - Filter row: dropdowns + search (all as text/select controls, not button bars)
