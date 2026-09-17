@@ -27,6 +27,22 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [ :first_name ])
   end
 
+  # Devise uses this hook after both sign-in and successful account creation.
+  # Keep the picks until the transaction succeeds, including across invalid forms.
+  def after_sign_in_path_for(resource)
+    ids = session[:pending_wallet_card_ids]
+    return super unless ids.present?
+
+    resource.with_lock do
+      Card.available.where(id: ids).each do |card|
+        resource.wallet_items.find_or_create_by!(card: card)
+      end
+    end
+    session.delete(:pending_wallet_card_ids)
+    stored_location_for(resource)
+    wallet_items_path
+  end
+
   # The quiz can be taken before signing up. The result id is kept in the
   # session so card pages can be personalised. The session lookup is scoped to
   # unclaimed (user_id: nil) responses so a shared computer can never surface

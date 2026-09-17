@@ -17,7 +17,14 @@ html[data-theme="dark"] :is(.results-page,.wallet-page,.browse-page) { backgroun
 html[data-theme="dark"] .site-nav { background: rgba(30,25,29,.94); border-color: var(--hairline); box-shadow: 0 8px 32px #0003; }
 html[data-theme="dark"] :is(.site-nav .wordmark,.nav-links a,h1,h2,h3,.number,.label-row,.browse-tabs button[aria-selected="true"]) { color: var(--ink); }
 html[data-theme="dark"] :is(.hero-description,.hero-carousel-footer,.eyebrow,.muted,.perks,.issuer,.note,.stack-names,.list-head,.results-top,.summary small,.metrics small,.detail-layout p,.hero p,.heading p,.home-continue p) { color: var(--muted); }
-html[data-theme="dark"] :is(dialog,.account-menu,.summary,.shelf,.detail,.allocation,.tray,.toolbar,.filter-extra,.quiz-answer,.quiz-finish-overlay) { background: var(--surface-raised); color: var(--ink); border-color: var(--hairline); }
+html[data-theme="dark"] :is(dialog,.account-menu,.tray,.quiz-finish-overlay) { background: var(--surface-raised); color: var(--ink); border-color: var(--hairline); }
+/* Static content shares the page surface; elevation belongs to floating UI. */
+html[data-theme="dark"] :is(.summary,.shelf,.detail,.allocation,.toolbar,.filter-extra,.quiz-answer) { background: var(--surface); color: var(--ink); border-color: var(--hairline); }
+html[data-theme="dark"] .wallet-app :is(.summary,.workspace,.detail,.notice-list,.perk,.timeline) { background: var(--surface); box-shadow: none; }
+html[data-theme="dark"] .wallet-app :is(.summary,.workspace) { border: 0; }
+html[data-theme="dark"] .browse-page .art { background: transparent; }
+/* Search, sorting and filter controls blend into the browse page too. */
+html[data-theme="dark"] .browse-app .controls { --surface-field: var(--surface); }
 html[data-theme="dark"] :is(input:not([type="range"],[type="checkbox"],[type="radio"]),select,textarea,.account-toggle) { background: var(--surface-field); color: var(--ink); border-color: var(--hairline-strong); }
 html[data-theme="dark"] input::placeholder { color: #a99da3; }
 html[data-theme="dark"] :is(.btn-outline-dark,button:not(.primary,.btn-primary,.credit,.fan-card,.art,.theme-toggle)) { color: var(--ink); border-color: var(--hairline-strong); }
@@ -31,7 +38,7 @@ html[data-theme="dark"] .dropdown-item:hover { background: #382b32; }
 html[data-theme="dark"] .nav-links a.active { border-bottom-color: #e5ccd2; }
 html[data-theme="dark"] .progress { background: var(--hairline); }
 html[data-theme="dark"] :is(.wallet-app,.browse-app,.auth-page,.quiz-page) { background: var(--surface); color: var(--ink); }
-html[data-theme="dark"] .auth-page .stack-panel { background: var(--surface-raised); }
+html[data-theme="dark"] .auth-page .stack-panel { background: var(--surface); }
 html[data-theme="dark"] :is(.auth-page .stack-panel > p,.auth-page .stack-caption p,.auth-page .tabs a,.auth-page label,.quiz-page label,.wallet-app p) { color: #c3b8be; }
 html[data-theme="dark"] .auth-page .tabs a.active { color: var(--ink); border-color: #e5a6b1; }
 html[data-theme="dark"] .quiz-answer:has(input:checked),html[data-theme="dark"] .quiz-answer:hover:not(:has(input:disabled)) { background: #38232d; border-color: #bc7782; }

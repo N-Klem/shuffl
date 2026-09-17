@@ -81,15 +81,16 @@ class WalletItemsController < ApplicationController
 
   def save_stack
     quiz = QuizResponse.find(params[:quiz_response_id])
-    unless user_signed_in?
-      store_location_for(:user, quiz_response_path(quiz))
-      return render json: { sign_in_url: new_user_session_path }, status: :unauthorized
-    end
-
     ids = Array(params[:card_ids]).map(&:to_s).uniq
     cards = Card.available.where(id: ids)
     unless ids.size.between?(1, 5) && cards.size == ids.size
       return render json: { error: "Choose between one and five available cards." }, status: :unprocessable_entity
+    end
+
+    unless user_signed_in?
+      session[:pending_wallet_card_ids] = cards.map(&:id)
+      store_location_for(:user, wallet_items_path)
+      return render json: { sign_in_url: new_user_session_path }, status: :unauthorized
     end
 
     current_user.with_lock do

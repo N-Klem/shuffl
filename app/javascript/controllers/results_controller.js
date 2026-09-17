@@ -1,4 +1,3 @@
-import { gatherCards } from "controllers/motion_helpers"
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
@@ -11,13 +10,13 @@ export default class extends Controller {
     const selected = [...this.payloadValue.selected]
     const kept = selected.map(() => false)
     const storageKey = 'shuffl-results-cards-v1-' + this.quizIdValue
-    let savedSnapshot = null
     const snapshot = () => JSON.stringify({ selected: selected.map(i => catalog[i].id), kept })
     const persist = () => { try { sessionStorage.setItem(storageKey, snapshot()) } catch {} }
     const syncSave = () => {
-      const same = savedSnapshot === snapshot()
-      root.querySelector('#save-stack').textContent = same ? 'Stack saved' : 'Save this stack'
-      root.querySelector('#save-status').textContent = same ? 'Saved to My Wallet.' : 'Save these cards to My Wallet.'
+      const count = kept.filter(Boolean).length
+      root.querySelector('#save-stack').textContent = 'Save my stack'
+      root.querySelector('#save-stack').disabled = count === 0
+      root.querySelector('#save-status').textContent = count ? `${count} ${count === 1 ? 'card' : 'cards'} ready to save to My Wallet.` : 'Keep the cards you want to save.'
     }
     // Preserve earlier Keep/Swap choices without importing any spending assumptions.
     try {
@@ -97,28 +96,26 @@ export default class extends Controller {
       root.querySelector('#status').textContent = keeping ? `${catalog[selected[i]].name} ${kept[i] ? 'kept.' : 'can now be swapped.'}` : `Swapped to ${catalog[selected[i]].name}.`
     }
     const onSave = async () => {
-      const button = root.querySelector('#save-stack'), state = snapshot()
+      const button = root.querySelector('#save-stack')
+      const ids = selected.filter((_, i) => kept[i]).map(i => catalog[i].id)
+      if (!ids.length || button.disabled) return
       persist()
       button.disabled = true
       button.textContent = 'Saving…'
       try {
         const response = await fetch(this.saveUrlValue, {
           method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content },
-          body: JSON.stringify({ quiz_response_id: this.quizIdValue, card_ids: selected.map(i => catalog[i].id) })
+          body: JSON.stringify({ quiz_response_id: this.quizIdValue, card_ids: ids })
         })
         const result = await response.json()
         if (response.status === 401) {
-          root.querySelector('#save-status').innerHTML = `<a href="${escape(result.sign_in_url)}">Sign in to save this stack</a>. Your choices will be here when you return.`
-          button.textContent = 'Save this stack'
+          window.location.assign(result.sign_in_url)
         } else if (response.ok) {
-          await gatherCards(root.querySelectorAll('.card-link'), button)
-          savedSnapshot = state
-          syncSave()
-          if (state === snapshot()) root.querySelector('#save-status').innerHTML = `Saved. <a href="${escape(result.wallet_url)}">View My Wallet</a>`
+          window.location.assign(result.wallet_url)
         } else throw new Error('Save failed')
       } catch {
         root.querySelector('#save-status').textContent = 'Could not save this stack. Please try again.'
-        button.textContent = 'Save this stack'
+        button.textContent = 'Save my stack'
       } finally { button.disabled = false }
     }
     root.querySelector('#cards').addEventListener('click', onCardsClick)

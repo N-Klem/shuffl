@@ -37,7 +37,7 @@ end
 
 if ARGV.include?("--baseline")
   File.write(BASELINE, counts.to_yaml)
-  puts "Wrote .design-baseline.yml — ceiling is now #{counts.values.sum { |t| t['hex'] }} raw hex."
+  puts "Wrote .design-baseline.yml: ceiling is now #{counts.values.sum { |t| t['hex'] }} raw hex."
   exit 0
 end
 
@@ -48,7 +48,7 @@ SHEETS.each do |path|
   body = File.read(path)
   BANNED.each do |needle, why|
     next unless body.downcase.include?(needle.downcase)
-    failures << "BANNED  #{File.basename(path)}: #{needle} — #{why}"
+    failures << "BANNED  #{File.basename(path)}: #{needle}: #{why}"
   end
 end
 
@@ -66,11 +66,11 @@ total   = now.values.sum { |t| t["hex"] }
 ceiling = base.values.sum { |t| t["hex"].to_i }
 
 if failures.empty?
-  puts "design:check OK — #{total} raw hex tracked as debt (ceiling #{ceiling}), no banned values."
+  puts "design:check OK: #{total} raw hex tracked as debt (ceiling #{ceiling}), no banned values."
 else
   puts "design:check FAILED", ""
   failures.each { |f| puts "  #{f}" }
   puts "", "See DESIGN.md. If a violation is genuinely unavoidable, say so in the PR and",
-          "run `bin/design-check --baseline` deliberately — do not edit the baseline by hand."
+          "run `bin/design-check --baseline` deliberately: do not edit the baseline by hand."
   exit 1
 end

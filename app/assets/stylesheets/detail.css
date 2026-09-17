@@ -1,4 +1,4 @@
-/* Card and stack detail pages — follows DESIGN.md ("The Quiet Interface").
+/* Card and stack detail pages: follows DESIGN.md ("The Quiet Interface").
    These two pages were still the original Rails scaffold (bare <ul>, default
    blue links) while every other page had been redesigned. The results page
    links here five times, so this was the last unstyled stop in the funnel. */
@@ -162,7 +162,7 @@
 }
 
 .detail-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-/* "Best for" tags link to the browse page filtered by that category — the
+/* "Best for" tags link to the browse page filtered by that category: the
    critique's "metadata should be a filter", done on the tag (a defined
    component) rather than the eyebrow (a label by DESIGN.md). */
 .detail-tags a { color: inherit; text-decoration: none; }
@@ -277,7 +277,7 @@
 .detail-back--tight { margin-top: 16px; }
 .detail-section--flush { margin-top: 0; }
 
-/* Artwork lifts slightly on hover — the "hover reveal" from DESIGN.md, kept quiet. */
+/* Artwork lifts slightly on hover: the "hover reveal" from DESIGN.md, kept quiet. */
 .detail-art { transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1); }
 a:hover > .detail-art, a:focus-visible > .detail-art { transform: translateY(-4px); }
 

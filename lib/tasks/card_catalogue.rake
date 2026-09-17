@@ -30,7 +30,7 @@ namespace :cards do
         CardCandidate.in_shortlist_order.each do |card|
           r = card.research
           fees = r.fetch("fees", {})
-          rewards = r.fetch("rewards", []).map { |rule| "#{rule['rate']} #{rule['unit']} — #{rule['category']}; #{rule['conditions']}" }.join(" | ")
+          rewards = r.fetch("rewards", []).map { |rule| "#{rule['rate']} #{rule['unit']}: #{rule['category']}; #{rule['conditions']}" }.join(" | ")
           sources = r.fetch("sources", []).map { |s| "#{s['url']} (#{s['evidence']}; checked #{s['checked_on']})" }.join(" | ")
           row = [ card.shortlist_position, card.source_key, card.country, card.currency, card.name, r["issuer"], card.review_status,
                  fees["annual"], fees["monthly"], fees["intro"], fees["foreign_purchase_percent"], rewards,
@@ -45,7 +45,7 @@ namespace :cards do
                     "- Eligibility: #{r['eligibility'] || 'UNKNOWN'}", "- Quiz tags (editorial): #{r['quiz_tags'].join(', ')}",
                     "- Recommendation conditions: #{r['recommendation_conditions'].join('; ').presence || 'Country and eligibility checks'}",
                     "- Review flags: #{r['review_flags'].join('; ')}", "- Reviewer notes: #{card.review_notes.presence || 'Not reviewed'}", "", "Sources:", "" ]
-          r["sources"].each { |s| lines << "- [#{s['label']}](#{s['url']}) — #{s['evidence']}; checked #{s['checked_on']}" }
+          r["sources"].each { |s| lines << "- [#{s['label']}](#{s['url']}): #{s['evidence']}; checked #{s['checked_on']}" }
           lines << ""
         end
       end

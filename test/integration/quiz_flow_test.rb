@@ -81,13 +81,14 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select ".quiz-bubble", count: 10
   end
 
-  test "ranked questions render as tap-in-order pills with no board" do
+  test "ranked questions render a separate selected area and reorder handles" do
     get new_quiz_response_path
     assert_select ".quiz-options-ranked .quiz-answer input[type=checkbox]", count: 5
-    assert_select ".quiz-options-ranked .quiz-rank", count: 5
+    assert_select ".quiz-options-ranked .quiz-drag-handle", count: 5
+    assert_select ".quiz-ranking .quiz-selected", count: 1
     assert_select "input[name=ordered]", count: 1
     assert_select ".rank-board", count: 0
-    assert_select ".quiz-heading p", text: /Tap up to three, in order/
+    assert_select ".quiz-heading p", text: /Choose up to three, then drag/
   end
 
   test "not knowing the credit score still produces a stack, with a note" do

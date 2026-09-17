@@ -45,7 +45,7 @@ export default class extends Controller {
   phase+=(target-phase)*(reduce.matches?1:1-Math.exp(-dt/.23));
   // Collapse quicker than it opens (.10 vs .22). The wheel reveals leisurely,
   // but on the way back the transient pale card behind the front one shouldn't
-  // hang over the fan for a second — snap the morph closed decisively instead.
+  // hang over the fan for a second: snap the morph closed decisively instead.
   const blendTau=destination<blend?.10:.22;
   blend+=(destination-blend)*(reduce.matches?1:1-Math.exp(-dt/blendTau));
   draw();
