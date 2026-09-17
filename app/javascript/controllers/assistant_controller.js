@@ -6,9 +6,11 @@ export default class extends Controller {
 
   connect() {
     // Bottom-right by default, where DESIGN.md puts it and where left-aligned
-    // headings and links are never underneath it. Dragging still moves it anywhere.
-    this.x = innerWidth - 84
-    this.y = innerHeight - 88
+    // headings and links are never underneath it. Until the user drags it the
+    // position stays null and parkedX/parkedY follow the window; after a drag
+    // it is theirs and only clamped at render time.
+    this.x = null
+    this.y = null
     try {
       const saved = JSON.parse(localStorage.getItem("shuffl-assistant-position"))
       if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
@@ -74,14 +76,14 @@ export default class extends Controller {
   }
 
   parkedX() {
-    return Math.max(12, Math.min(this.x, innerWidth - 72))
+    return Math.max(12, Math.min(this.x ?? innerWidth - 84, innerWidth - 72))
   }
 
   // The orb is fixed to the viewport, so at the end of a page it would sit on
   // top of the footer with no way to scroll it clear. Let the footer push it up
   // rather than cover content.
   parkedY() {
-    let y = Math.max(12, Math.min(this.y, innerHeight - 72))
+    let y = Math.max(12, Math.min(this.y ?? innerHeight - 88, innerHeight - 72))
     const footer = document.querySelector(".site-footer")
     if (footer) {
       const ceiling = footer.getBoundingClientRect().top - this.orbTarget.offsetHeight - 16
@@ -167,7 +169,7 @@ export default class extends Controller {
     const delta = directions[event.key]
     if (!delta) return
     event.preventDefault()
-    this.x += delta[0]; this.y += delta[1]
+    this.x = this.parkedX() + delta[0]; this.y = this.parkedY() + delta[1]
     this.resize(); this.save()
   }
 
