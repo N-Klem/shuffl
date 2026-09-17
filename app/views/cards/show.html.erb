@@ -108,6 +108,7 @@
         <% else %>
           <%= button_to "Add to Wallet", wallet_items_path(card_id: @card.id), method: :post, class: "btn-wallet" %>
         <% end %>
+        <button type="button" class="detail-back detail-back--tight detail-ask" data-assistant-ask="From the catalogue, what does the <%= @card.name %> offer, and who suits it?">Ask <%= CardAssistant::NAME %> about this card</button>
       </div>
     </div>
   </div>

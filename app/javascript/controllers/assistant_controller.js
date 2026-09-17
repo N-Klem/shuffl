@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["orb", "panel", "messages", "feedback", "form", "input", "send", "clear", "starters", "status", "intro", "transcript", "avatar"]
-  static values = { url: String, saveUrl: String, name: String }
+  static values = { url: String, saveUrl: String, walletUrl: String, name: String }
 
   connect() {
     this.x = 24
@@ -29,6 +29,15 @@ export default class extends Controller {
       this.pageObserver = new ResizeObserver(this.repark)
       this.pageObserver.observe(document.body)
     }
+
+    // Any element on the page with data-assistant-ask opens the chat with that question.
+    this.onAsk = event => {
+      const trigger = event.target.closest("[data-assistant-ask]")
+      if (!trigger) return
+      event.preventDefault()
+      this.ask(trigger.dataset.assistantAsk)
+    }
+    document.addEventListener("click", this.onAsk)
   }
 
   disconnect() {
@@ -36,6 +45,7 @@ export default class extends Controller {
     clearTimeout(this.pendingTimer)
     if (this.pageObserver) this.pageObserver.disconnect()
     removeEventListener("load", this.repark)
+    document.removeEventListener("click", this.onAsk)
   }
 
   // this.x/this.y are where the user put the orb. They are never overwritten by
@@ -110,13 +120,32 @@ export default class extends Controller {
 
   toggle(event) {
     if (this.moved && event.detail !== 0) { this.moved = false; return }
-    this.panelTarget.hidden = !this.panelTarget.hidden
-    this.orbTarget.setAttribute("aria-expanded", String(!this.panelTarget.hidden))
+    this.panelTarget.hidden ? this.open() : this.close()
+  }
+
+  open() {
+    this.panelTarget.hidden = false
+    this.orbTarget.setAttribute("aria-expanded", "true")
     this.resize()
-    if (!this.panelTarget.hidden && this.hasInputTarget) {
+    if (this.hasInputTarget) {
       this.inputTarget.focus({ preventScroll: true })
-      if (!this.loaded) this.loadChat()
+      this.ensureLoaded()
     }
+  }
+
+  // One load per page, shared by whoever asks for it.
+  ensureLoaded() {
+    if (this.loaded) return Promise.resolve()
+    this.loading ||= this.loadChat().finally(() => { this.loading = null })
+    return this.loading
+  }
+
+  async ask(prompt) {
+    this.open()
+    if (!this.hasInputTarget) return
+    await this.ensureLoaded()
+    this.inputTarget.value = prompt
+    this.formTarget.requestSubmit()
   }
 
   close() {
@@ -223,7 +252,9 @@ export default class extends Controller {
     try {
       const data = await this.fetchJson(this.saveUrlValue, "POST", payload)
       button.textContent = "Saved to wallet"
-      this.feedbackTarget.textContent = "Saved. New cards are in Planned in My Wallet."
+      const link = this.node("a", "Open My Wallet →")
+      link.href = this.walletUrlValue
+      this.feedbackTarget.replaceChildren("Saved to Planned in My Wallet. ", link)
       this.dispatch("wallet-updated", { detail: { wallet: data.wallet } })
     } catch (error) { button.disabled = false; this.showError(error) }
   }
@@ -267,7 +298,9 @@ export default class extends Controller {
     this.feedbackTarget.textContent = error.name === "AbortError" ? "That took too long. Please try again shortly." : error.message
   }
 
-  element(tag, text, className) {
+  // Not named `element`: that is Stimulus's own property for the controller's root,
+  // and shadowing it broke dispatch() after a wallet save.
+  node(tag, text, className) {
     const element = document.createElement(tag)
     if (text !== undefined) element.textContent = text
     if (className) element.className = className
@@ -275,18 +308,18 @@ export default class extends Controller {
   }
 
   addQuestion(text) {
-    const article = this.element("article", undefined, "assistant-message assistant-question")
-    article.append(this.element("strong", "You", "assistant-who"), this.element("p", text))
+    const article = this.node("article", undefined, "assistant-message assistant-question")
+    article.append(this.node("strong", "You", "assistant-who"), this.node("p", text))
     this.messagesTarget.append(article)
     this.scrollMessages()
   }
 
   // Every row from the assistant: avatar, a hidden name for screen readers, then the body.
   answerRow(className) {
-    const article = this.element("article", undefined, ["assistant-message", "assistant-answer", className].filter(Boolean).join(" "))
+    const article = this.node("article", undefined, ["assistant-message", "assistant-answer", className].filter(Boolean).join(" "))
     article.append(this.avatarTarget.content.firstElementChild.cloneNode(true))
-    const body = this.element("div", undefined, "assistant-body")
-    body.append(this.element("strong", this.nameValue, "assistant-who"))
+    const body = this.node("div", undefined, "assistant-body")
+    body.append(this.node("strong", this.nameValue, "assistant-who"))
     article.append(body)
     return [article, body]
   }
@@ -295,10 +328,10 @@ export default class extends Controller {
   // take longer than catalogue answers, so the wording changes once it is likely one.
   addPending() {
     const [article, body] = this.answerRow("assistant-pending")
-    const dots = this.element("span", undefined, "assistant-typing")
-    dots.append(this.element("i"), this.element("i"), this.element("i"))
-    const text = this.element("p")
-    const label = this.element("span", "Reading the catalogue…")
+    const dots = this.node("span", undefined, "assistant-typing")
+    dots.append(this.node("i"), this.node("i"), this.node("i"))
+    const text = this.node("p")
+    const label = this.node("span", "Reading the catalogue…")
     text.append(dots, label)
     body.append(text)
     this.messagesTarget.append(article)
@@ -315,7 +348,7 @@ export default class extends Controller {
 
   addError(text) {
     const [article, body] = this.answerRow("assistant-error")
-    body.append(this.element("p", text))
+    body.append(this.node("p", text))
     this.messagesTarget.append(article)
     this.scrollMessages()
   }
@@ -324,11 +357,11 @@ export default class extends Controller {
     const [row, article] = this.answerRow()
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
-      const p = this.element("p", paragraph.text)
+      const p = this.node("p", paragraph.text)
       ;(paragraph.evidence_ids || []).forEach(id => {
         const source = sources.find(item => item.id === id)
         if (!source) return
-        const link = this.element("a", ` [${sources.indexOf(source) + 1}]`)
+        const link = this.node("a", ` [${sources.indexOf(source) + 1}]`)
         link.href = source.url
         link.target = "_blank"
         link.rel = "noopener noreferrer"
@@ -339,19 +372,19 @@ export default class extends Controller {
     })
     ;(reply.cards || []).forEach(card => article.append(this.cardElement(card)))
     ;(reply.stacks || []).forEach(stack => {
-      const detail = this.element("details", undefined, "assistant-item")
-      detail.append(this.element("summary", stack.name), this.element("p", stack.description))
-      if (stack.notes) detail.append(this.element("p", stack.notes))
+      const detail = this.node("details", undefined, "assistant-item")
+      detail.append(this.node("summary", stack.name), this.node("p", stack.description))
+      if (stack.notes) detail.append(this.node("p", stack.notes))
       stack.cards.forEach(card => detail.append(this.cardElement(card)))
       this.addActions(detail, stack, "stack")
       article.append(detail)
     })
     if (sources.length) {
-      const detail = this.element("details", undefined, "assistant-sources")
-      detail.append(this.element("summary", "Sources"))
+      const detail = this.node("details", undefined, "assistant-sources")
+      detail.append(this.node("summary", "Sources"))
       sources.forEach((source, index) => {
-        const p = this.element("p")
-        const link = this.element("a", `${index + 1}. ${source.title}`)
+        const p = this.node("p")
+        const link = this.node("a", `${index + 1}. ${source.title}`)
         link.href = source.url; link.target = "_blank"; link.rel = "noopener noreferrer"
         p.append(link, document.createTextNode(source.type === "web" ? ` — issuer lookup, ${source.checked_on}` : " — catalogue snapshot"))
         detail.append(p)
@@ -363,41 +396,56 @@ export default class extends Controller {
   }
 
   cardElement(card) {
-    const detail = this.element("details", undefined, "assistant-item")
-    detail.append(this.element("summary", card.name), this.element("p", `${card.issuer} · ${card.fee}`), this.element("p", card.rewards))
-    if (card.description) detail.append(this.element("p", card.description))
+    const detail = this.node("details", undefined, "assistant-item")
+    detail.append(this.node("summary", card.name), this.node("p", `${card.issuer} · ${card.fee}`), this.node("p", card.rewards))
+    if (card.description) detail.append(this.node("p", card.description))
     if (card.terms && Object.keys(card.terms).length) {
-      const terms = this.element("details")
-      terms.append(this.element("summary", "All recorded terms"), this.factsElement(card.terms))
+      const terms = this.node("details")
+      terms.append(this.node("summary", "Details"), this.termsElement(card.terms))
       detail.append(terms)
     }
     this.addActions(detail, card, "card")
     return detail
   }
 
-  factsElement(value) {
-    if (value === null || value === "") return this.element("span", "Not recorded")
-    if (Array.isArray(value)) {
-      const list = this.element("ul")
-      value.forEach(item => { const li = this.element("li"); li.append(this.factsElement(item)); list.append(li) })
-      return list
+  // The terms a person asks about, in their words. The raw record also carries
+  // research bookkeeping (review status, source labels) that has no place in a chat.
+  termsElement(terms) {
+    const list = this.node("dl", undefined, "assistant-terms")
+    const add = (label, value) => {
+      if (value === null || value === undefined || value === "" || (Array.isArray(value) && !value.length)) return
+      list.append(this.node("dt", label))
+      const dd = this.node("dd")
+      if (Array.isArray(value)) {
+        const ul = this.node("ul")
+        value.forEach(item => ul.append(this.node("li", item)))
+        dd.append(ul)
+      } else {
+        dd.textContent = value
+      }
+      list.append(dd)
     }
-    if (typeof value === "object") {
-      const list = this.element("dl")
-      Object.entries(value).forEach(([key, item]) => {
-        const dd = this.element("dd"); dd.append(this.factsElement(item))
-        list.append(this.element("dt", key.replaceAll("_", " ")), dd)
-      })
-      return list
-    }
-    return this.element("span", String(value))
+    const fees = terms.fees || {}
+    const foreign = fees.foreign_purchase_percent
+    const unitWord = { cashback_percent: "cashback", points_per_USD: "points", miles_per_USD: "miles" }
+    add("Annual fee", fees.annual === null || fees.annual === undefined ? null : `$${fees.annual}`)
+    add("Foreign transaction fee", foreign === null || foreign === undefined ? "Not recorded" : Number(foreign) === 0 ? "None" : `${foreign}%`)
+    add("Rewards", (terms.rewards || []).map(rule =>
+      `${rule.rate}${rule.unit === "cashback_percent" ? "%" : "x"} ${unitWord[rule.unit] || "rewards"} · ${rule.category}` +
+      `${rule.conditions ? ` (${rule.conditions})` : ""}${rule.temporary ? " · limited time" : ""}`))
+    add("Welcome offer", terms.welcome_offer)
+    add("Perks", terms.perks)
+    add("APR", terms.interest?.purchase_apr)
+    add("First-year fee", fees.intro)
+    add("Eligibility", terms.eligibility)
+    return list
   }
 
   addActions(parent, item, type) {
-    const actions = this.element("div", undefined, "assistant-item-actions")
-    const link = this.element("a", "Full page ↗")
+    const actions = this.node("div", undefined, "assistant-item-actions")
+    const link = this.node("a", "Full page ↗")
     link.href = item.url; link.target = "_blank"; link.rel = "noopener noreferrer"
-    const button = this.element("button", item.saved ? "Saved to wallet" : `Save ${type} to wallet`)
+    const button = this.node("button", item.saved ? "Saved to wallet" : `Save ${type} to wallet`)
     button.type = "button"; button.disabled = item.saved
     button.dataset[type === "stack" ? "stackId" : "cardId"] = item.id
     button.dataset.action = "assistant#saveItem"

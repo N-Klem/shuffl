@@ -213,6 +213,8 @@
   text-underline-offset: 4px;
 }
 .detail-back:hover { color: var(--burgundy); }
+/* A button dressed as the tertiary link: it opens the assistant rather than navigating. */
+.detail-ask { display: block; padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
 
 /* Stack detail: the cards it contains. */
 .stack-cards { list-style: none; margin: 0; padding: 0; }
