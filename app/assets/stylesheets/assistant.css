@@ -79,8 +79,8 @@ html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.9
 .assistant-composer { padding: 8px 16px 14px; border-top: 1px solid var(--hairline); }
 .assistant-feedback { margin: 0 0 8px; font-size: 13px; line-height: 1.4; color: var(--body-color); }
 .assistant-feedback:empty { display: none; }
-.assistant-field { display: flex; align-items: flex-end; gap: 8px; padding: 6px 6px 6px 14px; border: 1px solid var(--hairline-strong); border-radius: var(--radius-card); background: var(--surface-field); transition: border-color 120ms ease; }
-.assistant-field:focus-within { border-color: var(--ink); }
+/* No focus treatment on the field by request: the caret is the indicator while typing. */
+.assistant-field { display: flex; align-items: flex-end; gap: 8px; padding: 6px 6px 6px 14px; border: 1px solid var(--hairline-strong); border-radius: var(--radius-card); background: var(--surface-field); }
 .assistant-field textarea { flex: 1; min-width: 0; margin: 0; padding: 8px 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: var(--text-dense); line-height: 1.4; resize: none; max-height: 120px; outline: none; }
 .assistant-field textarea::placeholder { color: var(--muted); }
 .assistant-panel button.assistant-send { flex: none; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: var(--burgundy); color: white; display: grid; place-items: center; cursor: pointer; transition: background-color 120ms ease; }
