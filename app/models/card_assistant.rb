@@ -159,6 +159,7 @@ class CardAssistant
       These IDs create inspect/save buttons; they NEVER change a wallet automatically. Tell users to use the button when they ask to save.
       Never promise approval, recommend carrying debt for rewards, provide investment advice or ask for account numbers, passwords or SSNs.
       Format paragraph text as plain text, without markdown links/HTML. Sources and cards are rendered by the app.
+      Never use em dashes; use commas, colons or full stops instead.
     TEXT
   end
 

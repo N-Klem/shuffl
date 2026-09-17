@@ -144,7 +144,7 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     credits = { "priorities" => ["Useful perks"], "useful_benefits" => ["Shopping or subscription credits"] }
     assert fit("us-amex-platinum", credits.merge("credit_providers" => "Streaming subscriptions")).features.key?("benefit:Shopping or subscription credits")
     refute fit("us-amex-platinum", credits.merge("credit_providers" => "Retail purchases")).features.key?("benefit:Shopping or subscription credits")
-    refute fit("us-amex-platinum", credits.merge("credit_providers" => "Neither — I wouldn’t spend just to use a credit")).features.key?("benefit:Shopping or subscription credits")
+    refute fit("us-amex-platinum", credits.merge("credit_providers" => "Neither, I wouldn’t spend just to use a credit")).features.key?("benefit:Shopping or subscription credits")
     first = fit("us-capital-one-venture-x", "useful_benefits" => ["Airport lounge access", "Dining credits"])
     second = fit("us-capital-one-venture-x", "useful_benefits" => ["Dining credits", "Airport lounge access"])
     assert_operator first.features["benefit:Airport lounge access"], :>, second.features["benefit:Airport lounge access"]

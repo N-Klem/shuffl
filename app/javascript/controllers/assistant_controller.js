@@ -410,7 +410,8 @@ export default class extends Controller {
     const [row, article] = this.answerRow()
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
-      const p = this.node("p", paragraph.text)
+      // The site uses no em dashes; the model is told so, and this catches any that slip through.
+      const p = this.node("p", String(paragraph.text ?? "").replace(/\s*—\s*/g, ", "))
       const cited = (paragraph.evidence_ids || []).map(id => sources.find(item => item.id === id)).filter(Boolean)
       // Three inline markers at most; a long run of citations reads as noise, so the
       // rest fold into the Sources list below.
@@ -441,7 +442,7 @@ export default class extends Controller {
         const p = this.node("p")
         const link = this.node("a", `${index + 1}. ${source.title}`)
         link.href = source.url; link.target = "_blank"; link.rel = "noopener noreferrer"
-        p.append(link, document.createTextNode(source.type === "web" ? ` — issuer lookup, ${source.checked_on}` : " — catalogue snapshot"))
+        p.append(link, document.createTextNode(source.type === "web" ? ` · issuer lookup, ${source.checked_on}` : " · catalogue snapshot"))
         detail.append(p)
       })
       article.append(detail)

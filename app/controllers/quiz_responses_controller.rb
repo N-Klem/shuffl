@@ -72,7 +72,7 @@ class QuizResponsesController < ApplicationController
       redirect_to root_path, notice: "Saved. Pick up where you left off whenever you're ready."
     else
       redirect_to new_user_session_path,
-                  notice: "Sign in and we'll keep your answers so far — you can finish the quiz later."
+                  notice: "Sign in and we'll keep your answers so far. You can finish the quiz later."
     end
   end
 
@@ -126,7 +126,7 @@ class QuizResponsesController < ApplicationController
       question && Card.valid_quiz_answer?(question, value)
     end
     session[:quiz_step] = resolve_step(current_questions)
-    flash.now[:notice] = "Welcome back — picking up where you left off."
+    flash.now[:notice] = "Welcome back. Picking up where you left off."
   end
 
   def submitted_values(question)

@@ -58,7 +58,7 @@
           <% if @card.reward_rules.empty? %><p><%= @card.value_profile[:detail] %></p><% end %>
           <ul class="detail-perks">
             <% @card.reward_rules.each do |rule| %>
-              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> — <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
+              <li><strong><%= rule["rate"] %> <%= rule["unit"].tr("_", " ") %> · <%= rule["category"] %></strong><br><%= rule["conditions"] %></li>
             <% end %>
           </ul>
           <% if @card.catalogue_terms.dig("fees", "intro").present? %><p>First-year fee terms: <%= @card.catalogue_terms.dig("fees", "intro") %></p><% end %>

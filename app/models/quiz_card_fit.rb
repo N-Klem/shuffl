@@ -213,7 +213,7 @@ class QuizCardFit
 
   def follow_up_label(category)
     answer = @answers[FOLLOW_UP_CATEGORIES.key(category)]
-    answer.present? ? " — #{answer.downcase}" : ""
+    answer.present? ? " (#{answer.downcase})" : ""
   end
 
   def rule_channels(rule)

@@ -135,7 +135,7 @@ class Card < ApplicationRecord
     rule = reward_rules.max_by { |reward| reward.fetch("rate").to_d }
     return value_profile[:detail] unless rule
     unit = rule["unit"] == "cashback_percent" ? "% cashback" : " #{rule['unit'].tr('_', ' ')}"
-    "#{rule['rate']}#{unit} — #{rule['category']}"
+    "#{rule['rate']}#{unit} on #{rule['category']}"
   end
 
   EXPENSE_OPTIONS = [
@@ -246,7 +246,7 @@ class Card < ApplicationRecord
       key: "loyalty_program",
       type: :single,
       prompt: "Do you have a preferred airline or hotel chain?",
-      options: [ "Yes — I'm loyal to one brand", "I have a slight preference", "No, whatever is cheapest" ]
+      options: [ "Yes, I'm loyal to one brand", "I have a slight preference", "No, whatever is cheapest" ]
     }
   }.freeze
 
@@ -319,7 +319,7 @@ class Card < ApplicationRecord
     },
     "credit_providers" => {
       key: "credit_providers", type: :single, prompt: "Where would you naturally use shopping or subscription credits?",
-      options: [ "Streaming subscriptions", "Retail purchases", "Both", "Neither — I wouldn’t spend just to use a credit" ]
+      options: [ "Streaming subscriptions", "Retail purchases", "Both", "Neither, I wouldn’t spend just to use a credit" ]
     }
   }.freeze
   QUIZ_QUESTION_POOL = QUESTION_POOL.merge(FOLLOW_UP_QUESTIONS).freeze
@@ -646,7 +646,7 @@ class Card < ApplicationRecord
   end
 
   def loyalty_bonus(answer, cats)
-    answer == "Yes — I'm loyal to one brand" && cats.include?("Travel") ? 1 : 0
+    answer == "Yes, I'm loyal to one brand" && cats.include?("Travel") ? 1 : 0
   end
 
   def online_shopping_bonus(answer, cats)
