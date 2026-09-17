@@ -62,7 +62,13 @@
 .home-page .stacks-footer { margin-top: 22px; align-items: flex-end; }
 .home-page .stacks-footer p { color: #17191e; font-size: 17px; }
 .home-page .tertiary-link { font-size: 21px; letter-spacing: -.035em; border-color: #252525; }
-@media (min-width: 1600px) { .home-page .hero { padding-block: 80px; } }
+/* Above the largest tier the sections box to the navbar's content width (Bootstrap's
+   1320px container plus the page gutter), so the hero lines up with the wordmark and the
+   card fan stops growing with the window. Below it they stay full-bleed as before. */
+@media (min-width: 1600px) {
+  .home-page .hero { padding-block: 80px; }
+  .home-page section.container { max-width: 1320px; margin-inline: auto; padding-inline: var(--page-gutter); }
+}
 @media (max-width: 1050px) {
   .home-page .hero { flex-wrap: wrap; padding-block: 48px; }
   .home-page .hero-headline h1 { font-size: 6.8vw; }
