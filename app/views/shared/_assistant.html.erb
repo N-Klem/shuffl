@@ -23,7 +23,7 @@
         <span class="assistant-avatar" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 11h18M3 15h18M9.5 5v14M14.5 5v14"/></svg></span>
         <div class="assistant-body">
           <strong class="assistant-who"><%= CardAssistant::NAME %></strong>
-          <p>hi, i'm <%= CardAssistant::NAME %>. I compare cards, explore stacks and find a card for how you spend, using catalogue facts and issuer sources. If I don't know, I'll say so.</p>
+          <p>hi, i'm <%= CardAssistant::NAME %>. Ask me about cards, stacks, or how you spend.</p>
         </div>
       </article>
       <% if user_signed_in? %>
@@ -46,7 +46,7 @@
           <textarea id="assistant-question" data-assistant-target="input" data-action="keydown->assistant#keydown input->assistant#grow" maxlength="1500" rows="1" required placeholder="Ask about a card or a stack…"></textarea>
           <button type="submit" class="assistant-send" data-assistant-target="send" aria-label="Send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
         </form>
-        <p class="assistant-fineprint"><span data-assistant-target="status"></span>AI can make mistakes; check issuer terms before applying. Don't share account details. Questions go to OpenAI.</p>
+        <p class="assistant-fineprint"><span data-assistant-target="status"></span>AI can make mistakes. Check issuer terms before applying.</p>
       </div>
     <% end %>
   </section>

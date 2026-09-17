@@ -258,8 +258,9 @@ export default class extends Controller {
     this.startersTarget.hidden = !show
   }
 
+  // The daily allowance only matters when it is nearly used up.
   showRemaining(remaining) {
-    this.statusTarget.textContent = remaining === null || remaining === undefined ? "" : `${remaining} messages left today · `
+    this.statusTarget.textContent = Number.isFinite(remaining) && remaining <= 5 ? `${remaining} messages left today · ` : ""
   }
 
   showError(error) {
