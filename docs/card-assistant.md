@@ -4,16 +4,17 @@ The floating chat uses OpenAI Responses, the current available card catalogue an
 
 ## Connect it
 
-1. Set `OPENAI_API_KEY` in the **Rails server environment**, using a dedicated OpenAI project with API billing enabled. Never put a real key in source control, browser JavaScript, a screenshot or chat. This app does not automatically load `.env` files.
-2. Restart the Rails server. On Heroku, add the key through the app's Settings → Config Vars. Deploy this branch only after review and run `heroku run rails db:migrate` on the intended app.
+1. Create the key in a dedicated OpenAI project with API billing enabled, then store it in Rails encrypted credentials: run `bin/rails credentials:edit` and add `openai:` with `api_key:` nested under it. The encrypted file is committed, so anyone holding `config/master.key` can use the key, and Heroku decrypts it with `RAILS_MASTER_KEY`. Setting `OPENAI_API_KEY` in the server environment overrides the credential. Never put a real key in plain text in source control, browser JavaScript, a screenshot or chat. This app does not automatically load `.env` files.
+2. Restart the Rails server. Deploy this branch only after review and run `heroku run rails db:migrate` on the intended app.
 3. Sign in, open the chat bubble and try the examples below. No additional database/search service or Node dependency is needed.
 
 Configuration (server environment only):
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `OPENAI_API_KEY` | none | Required API credential |
-| `OPENAI_ASSISTANT_MODEL` | `gpt-4.1-mini` | Must support Responses structured output and hosted web search |
+| `OPENAI_API_KEY` | credentials `openai.api_key` | API credential; the environment variable overrides the credential |
+| `OPENAI_ASSISTANT_MODEL` | `gpt-4.1-mini` | Screening and answer calls; must support Responses structured output |
+| `OPENAI_RESEARCH_MODEL` | `gpt-4.1` | The single issuer web-search call; must support `web_search` with domain `filters`, which gpt-4.1-mini rejects |
 | `ASSISTANT_ENABLED` | `true` | Set `false` to stop new model calls immediately |
 | `ASSISTANT_USER_DAILY_LIMIT` | `20` | Attempts per account per UTC day, maximum 100 |
 | `ASSISTANT_GLOBAL_DAILY_LIMIT` | `200` | Attempts across the app per UTC day, maximum 10,000; 0 disables calls |
