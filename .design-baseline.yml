@@ -24,7 +24,7 @@ product_motion.css:
   hex: 8
   fonts: 0
 quiz.css:
-  hex: 17
+  hex: 1
   fonts: 0
 results.css:
   hex: 11
@@ -33,10 +33,10 @@ spinning_buttons.css:
   hex: 8
   fonts: 0
 theme.css:
-  hex: 31
+  hex: 27
   fonts: 0
 wallet.css:
-  hex: 29
+  hex: 26
   fonts: 0
 z_mobile.css:
   hex: 1
