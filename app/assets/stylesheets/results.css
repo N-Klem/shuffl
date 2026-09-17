@@ -728,6 +728,10 @@
 .results-page .card-fee.has-fee strong { color: var(--brick); }
 .results-page .card-fee span { color: var(--muted); font-size: var(--text-dense); }
 .results-page .results-recommendations .card-bottom { grid-column: 1 / -1; align-items: flex-start; border: 0; padding: 0; gap: 16px; flex-wrap: nowrap; }
+.results-page .results-recommendations .why-column { flex: 1; min-width: 0; }
+/* The reason reads back the person's own answers, so it sits in ink at body size;
+   the disclosure beneath it carries the terms and qualifiers. */
+.results-page .card-why { margin: 0; max-width: 60ch; font-size: 15px; line-height: 1.5; color: var(--ink); }
 .results-page .results-recommendations .why { flex: 1; min-width: 0; margin: 0; }
 .results-page .results-recommendations .why summary { justify-content: flex-start; width: fit-content; }
 .results-page .results-recommendations .actions { flex-shrink: 0; }
@@ -744,5 +748,5 @@
   .results-page .recommended-use, .results-page .card-benefit { grid-column: 1 / -1; }
   .results-page .card-fee { grid-column: 1 / -1; flex-direction: row; align-items: baseline; gap: 8px; }
   .results-page .card-fee strong { font-size: 16px; }
-  .results-page .results-recommendations .card-bottom { grid-column: 1 / -1; width: 100%; }
+  .results-page .results-recommendations .card-bottom { grid-column: 1 / -1; width: 100%; flex-direction: column; gap: 12px; }
 }

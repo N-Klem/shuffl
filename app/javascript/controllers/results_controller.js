@@ -38,13 +38,33 @@ export default class extends Controller {
       'Gas & transport': 'Your commute companion', 'Travel': 'Your travel companion',
       'Rent or bills': 'Your bill-paying card', 'everyday': 'Your everyday earner'
     }
+    // One plain sentence per card, built from the person's own answers: the rank
+    // they gave the category this card is used for, and the preferences it meets.
+    const spending = this.payloadValue.spending || []
+    const list = items => items.length > 1 ? items.slice(0, -1).join(', ') + ' and ' + items.at(-1) : items[0] || ''
+    const why = (c, use, stated) => {
+      const wants = c.matches || [], key = use?.use_key, rank = spending.indexOf(key)
+      const covers = { 1: 'This card has it', 2: 'This card covers both', 3: 'This card covers all three' }
+      if (rank >= 0) {
+        const lead = `You put ${key.toLowerCase()} ${['first', 'second', 'third'][rank]}`
+        if (!wants.length) return `${lead}. This card earns extra there.`
+        // A card above already read these preferences back; don't recite them twice.
+        if (stated.has(wants.join())) return `${lead}, and it ticks the same boxes: ${list(wants)}.`
+        return `${lead} and wanted ${list(wants)}. ${covers[wants.length + 1]}.`
+      }
+      const tail = key === 'everyday' ? 'it earns on everything else' : key ? `it covers ${key.toLowerCase()} too` : ''
+      if (!wants.length) return tail ? tail[0].toUpperCase() + tail.slice(1) + '.' : ''
+      return `You wanted ${list(wants)}. ${covers[wants.length]}${tail ? `, and ${tail}` : ''}.`
+    }
     const render = () => {
-      const assignedUses = new Set()
+      const assignedUses = new Set(), statedWants = new Set()
       root.querySelector('#cards').innerHTML = selected.map((id, i) => {
         const c = catalog[id], options = c.recommendedUses || []
         const use = options.find(option => !assignedUses.has(option.use_key)) || options[0]
         if (use) assignedUses.add(use.use_key)
         const hook = c.valueProfile.kind === 'credit' ? 'Your credit builder' : use ? (hooks[use.use_key] || 'Your rewards companion') : 'Your card benefits'
+        const reason = why(c, use, statedWants)
+        statedWants.add((c.matches || []).join())
         return `<article class="recommendation" aria-label="${escape(c.name)}">
           <div class="art-column"><a class="card-link" href="${escape(c.url)}" aria-label="Explore ${escape(c.name)} in detail" style="--metal:${c.finish};--card-ink:${c.ink}">
             <div class="face ${c.imageUrl ? 'has-card-image' : ''}" aria-hidden="true">${c.imageUrl ? `<img class="card-image" src="${escape(c.imageUrl)}" alt="" decoding="async">` : `<span class="card-name">${escape(c.name)}</span>`}</div>
@@ -52,7 +72,7 @@ export default class extends Controller {
           <div class="recommendation-copy"><div class="card-identity"><p class="card-hook">${escape(hook)}</p><h2>${escape(c.name)}</h2></div>
             ${use ? `<div class="recommended-use"><p class="use-reward">${rate(use)}</p><h3>Use for ${escape(use.use_for)}</h3>${use.conditions ? `<p class="caption">${escape(use.conditions)}</p>` : ''}</div>` : `<p class="card-benefit">${escape(c.valueProfile.detail)}</p>`}
             ${c.ongoingFee != null ? `<div class="card-fee ${c.ongoingFee > 0 ? 'has-fee' : 'no-fee'}"><strong>${c.ongoingFee > 0 ? '−' : ''}${escape(money(c.ongoingFee))}</strong><span>${c.ongoingFee === 0 ? 'No annual fee' : 'Ongoing card fees / year'}</span></div>` : ''}
-            <div class="card-bottom"><details class="why"><summary>Why this card?</summary>${(c.matchReasons || []).map(reason => `<p>${escape(reason)}</p>`).join('')}${c.perks.slice(0, 2).map(perk => `<p>${escape(perk)}</p>`).join('')}<a href="${escape(c.url)}">Full card details and terms ↗</a></details>
+            <div class="card-bottom"><div class="why-column">${reason ? `<p class="card-why">${escape(reason)}</p>` : ''}<details class="why"><summary>${reason ? 'More on this card' : 'Why this card?'}</summary>${(c.matchReasons || []).map(text => `<p>${escape(text)}</p>`).join('')}${c.perks.slice(0, 2).map(perk => `<p>${escape(perk)}</p>`).join('')}<a href="${escape(c.url)}">Full card details and terms ↗</a></details></div>
             <div class="actions"><button class="keep" data-keep="${i}" aria-pressed="${kept[i]}" aria-label="${kept[i] ? 'Unkeep' : 'Keep'} ${escape(c.name)}">${kept[i] ? 'Kept' : 'Keep'}</button><button data-swap="${i}" aria-label="Swap ${escape(c.name)}" ${kept[i] || catalog.length === selected.length ? 'disabled' : ''}>Swap</button></div></div>
           </div></article>`
       }).join('')

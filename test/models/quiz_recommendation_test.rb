@@ -243,5 +243,17 @@ class QuizRecommendationTest < ActiveSupport::TestCase
       assert payload[:cards][index][:matchReasons].present?
       assert_equal false, payload[:cards][index][:estimatesAvailable]
     end
+    assert_equal ["Groceries", "Dining out", "Online shopping"], payload[:spending]
+  end
+
+  test "preferences met are read back as short fragments, strongest first" do
+    assert_equal ["cashback"], fit("us-citi-double-cash").preferences_met
+    assert_equal ["cashback", "no annual fee"], fit("us-citi-double-cash", "priorities" => ["Cashback", "Keeping costs down"]).preferences_met
+    assert_equal ["no annual fee", "cashback"], fit("us-citi-double-cash", "priorities" => ["Keeping costs down", "Cashback"]).preferences_met
+    assert_empty fit("us-chase-sapphire-preferred").preferences_met
+    travel = fit("us-chase-sapphire-preferred", "priorities" => ["Travel rewards"], "international_travel" => "Monthly or more").preferences_met
+    assert_equal ["travel rewards", "no foreign transaction fee"], travel
+    assert_equal ["help building credit", "no annual fee"],
+      fit("us-chase-freedom-rise", "priorities" => ["Building credit", "Keeping costs down"], "credit_score" => "No credit history").preferences_met
   end
 end
