@@ -74,6 +74,13 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select "#save-stack", count: 1
   end
 
+  test "a missing result redirects to the quiz instead of erroring" do
+    get quiz_response_path(id: 999_999)
+    assert_redirected_to new_quiz_response_path
+    follow_redirect!
+    assert_select ".quiz-bubble", count: 10
+  end
+
   test "ranked questions render as tap-in-order pills with no board" do
     get new_quiz_response_path
     assert_select ".quiz-options-ranked .quiz-answer input[type=checkbox]", count: 5

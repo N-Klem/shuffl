@@ -77,7 +77,9 @@ class QuizResponsesController < ApplicationController
   end
 
   def show
-    @quiz_response = QuizResponse.find(params[:id])
+    @quiz_response = QuizResponse.find_by(id: params[:id])
+    # A bookmarked or shared result that no longer exists should not be a dead end.
+    return redirect_to new_quiz_response_path, alert: "That result is no longer available. Take the quiz again and we'll build you a fresh stack." unless @quiz_response
     @show_quiz_finish = session[:quiz_finish_id].to_s == @quiz_response.id.to_s
     session.delete(:quiz_finish_id) if @show_quiz_finish
     ids = JSON.parse(@quiz_response.top_card_ids)
