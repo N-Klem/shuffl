@@ -52,6 +52,7 @@ html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.9
 .assistant-starters[hidden] { display: none; }
 .assistant-panel .assistant-starters button { min-height: 38px; padding: 8px 14px; border: 1px solid var(--hairline-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.3; text-align: left; cursor: pointer; transition: border-color 120ms ease, background-color 120ms ease; }
 .assistant-panel .assistant-starters button:hover:not(:disabled), .assistant-panel .assistant-starters button:focus-visible { border-color: var(--ink); background: var(--surface-field); }
+.assistant-panel .assistant-starters button:active:not(:disabled), .assistant-panel button.assistant-send:active:not(:disabled) { transform: scale(.97); }
 .assistant-signin { margin: 0 0 0 34px; font-size: 14px; color: var(--body-color); }
 .assistant-transcript .tertiary-link { margin-left: 34px; font-size: 14px; }
 
