@@ -49,7 +49,6 @@ export default class extends Controller {
 
   disconnect() {
     this.request?.abort()
-    clearTimeout(this.pendingTimer)
     if (this.pageObserver) this.pageObserver.disconnect()
     removeEventListener("load", this.repark)
     document.removeEventListener("click", this.onAsk)
@@ -226,7 +225,7 @@ export default class extends Controller {
     this.inputTarget.style.height = ""
     this.addPending()
     try {
-      const data = await this.fetchJson(this.urlValue, "POST", { message: question })
+      const data = await this.fetchStream(this.urlValue, { message: question })
       this.removePending()
       this.addReply(data.reply)
       this.showRemaining(data.remaining)
@@ -285,6 +284,45 @@ export default class extends Controller {
     } finally { clearTimeout(timer) }
   }
 
+  // A question's reply arrives as newline-delimited JSON: a progress line as each
+  // stage of the work starts, then one final line with the reply or an error.
+  // Failures before the first line come back as ordinary JSON with a status.
+  async fetchStream(url, body) {
+    const request = new AbortController()
+    this.request = request
+    const timer = setTimeout(() => request.abort(), 40000)
+    try {
+      const response = await fetch(url, {
+        method: "POST", credentials: "same-origin", signal: request.signal,
+        headers: { "Accept": "application/x-ndjson, application/json", "Content-Type": "application/json", "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content || "" },
+        body: JSON.stringify(body)
+      })
+      if (!response.headers.get("Content-Type")?.includes("x-ndjson")) {
+        const data = await response.json()
+        if (!response.ok) throw new Error(data.error || "That action couldn't be completed. Please sign in and try again.")
+        return data
+      }
+      const reader = response.body.getReader(), decoder = new TextDecoder()
+      let buffered = "", last = null
+      for (;;) {
+        const { value, done } = await reader.read()
+        buffered += decoder.decode(value, { stream: !done })
+        const lines = buffered.split("\n")
+        buffered = done ? "" : lines.pop()
+        for (const line of lines) {
+          if (!line.trim()) continue
+          const event = JSON.parse(line)
+          if (event.progress !== undefined) this.addProgress(event.progress)
+          else last = event
+        }
+        if (done) break
+      }
+      if (!last) throw new Error("I couldn't verify an answer right now. Please try again shortly.")
+      if (last.error) throw new Error(last.error)
+      return last
+    } finally { clearTimeout(timer) }
+  }
+
   setBusy(busy) {
     this.busy = busy
     this.sendTarget.disabled = busy
@@ -333,24 +371,29 @@ export default class extends Controller {
     return [article, body]
   }
 
-  // The wait sits in the transcript, where the answer will land. Issuer lookups
-  // take longer than catalogue answers, so the wording changes once it is likely one.
+  // The wait sits in the transcript, where the answer will land. It fills with
+  // the server's own progress ("Read 30 cards and 5 stacks · Checking issuer
+  // sites · Writing") as each stage of the work starts.
   addPending() {
     const [article, body] = this.answerRow("assistant-pending")
     const dots = this.node("span", undefined, "assistant-typing")
     dots.append(this.node("i"), this.node("i"), this.node("i"))
     const text = this.node("p")
-    const label = this.node("span", "Reading the catalogue…")
-    text.append(dots, label)
+    text.append(this.node("span", undefined, "assistant-trail"), dots)
     body.append(text)
     this.messagesTarget.append(article)
     this.pending = article
-    this.pendingTimer = setTimeout(() => { label.textContent = "Checking issuer sites too. This can take a few more seconds…" }, 6000)
+    this.scrollMessages()
+  }
+
+  addProgress(label) {
+    const trail = this.pending?.querySelector(".assistant-trail")
+    if (!trail) return
+    trail.append(this.node("span", label, "assistant-stage"))
     this.scrollMessages()
   }
 
   removePending() {
-    clearTimeout(this.pendingTimer)
     this.pending?.remove()
     this.pending = null
   }

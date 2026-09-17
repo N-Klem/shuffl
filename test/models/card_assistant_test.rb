@@ -49,6 +49,13 @@ class CardAssistantTest < ActiveSupport::TestCase
     refute_includes client.calls.last[:input], @user.email
   end
 
+  test "progress reports each stage as it starts, with the matching count" do
+    notes = []
+    CardAssistant.new(user: @user, client: FakeClient.new(@screen, @answer), progress: ->(text) { notes << text })
+      .reply("Find 3% dining cashback with no foreign fees")
+    assert_equal [ "Reading your question", "1 card matches", "Writing" ], notes
+  end
+
   test "off-topic refusal stops before catalogue answer and web search" do
     client = FakeClient.new(@screen.merge("allowed" => false))
     assert_equal CardAssistant::REFUSAL, reply(client)[:paragraphs].first[:text]

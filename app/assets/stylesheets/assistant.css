@@ -39,13 +39,19 @@ html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.9
 .assistant-body > p:last-child { margin-bottom: 0; }
 .assistant-more-sources { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .assistant-pending p { color: var(--muted); }
+/* The progress trail: each stage the server reports joins the line as it starts,
+   the current one a shade darker, with the dots trailing it. */
+.assistant-stage { animation: assistant-stage-in 220ms ease; }
+.assistant-stage + .assistant-stage::before { content: " · "; }
+.assistant-stage:last-child { color: var(--body-color); }
+@keyframes assistant-stage-in { from { opacity: 0; } to { opacity: 1; } }
 .assistant-error p { color: var(--brick); }
-.assistant-typing { display: inline-flex; gap: 4px; margin-right: 8px; vertical-align: middle; }
+.assistant-typing { display: inline-flex; gap: 4px; margin-left: 8px; vertical-align: middle; }
 .assistant-typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: assistant-dot 1.2s ease-in-out infinite; }
 .assistant-typing i:nth-child(2) { animation-delay: .2s; }
 .assistant-typing i:nth-child(3) { animation-delay: .4s; }
 @keyframes assistant-dot { 0%, 80%, 100% { opacity: .3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
-@media (prefers-reduced-motion: reduce) { .assistant-typing i { animation: none; opacity: .6; } }
+@media (prefers-reduced-motion: reduce) { .assistant-typing i { animation: none; opacity: .6; } .assistant-stage { animation: none; } }
 
 /* Starters: pills, gone once there is a conversation. */
 .assistant-starters { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 34px; }

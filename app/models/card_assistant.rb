@@ -29,11 +29,14 @@ class CardAssistant
     }, required: %w[paragraphs card_ids stack_ids]
   }.freeze
 
-  def initialize(user:, history: [], client: Assistant::OpenaiClient.new)
-    @user, @history, @client = user, history, client
+  # `progress` is called with a short label as each stage starts or finishes, so
+  # the panel can show what is actually happening instead of a spinner.
+  def initialize(user:, history: [], client: Assistant::OpenaiClient.new, progress: nil)
+    @user, @history, @client, @progress = user, history, client, progress
   end
 
   def reply(question)
+    note "Reading your question"
     @cards = Card.available.order(:id).to_a
     @stacks = Stack.available.includes(:cards, :stack_cards).order(:id).to_a
     screen = parse(@client.call(instructions: screening_instructions,
@@ -46,20 +49,24 @@ class CardAssistant
       return simple("Do you mean #{screen['dining_rate'].to_f.to_s.delete_suffix('.0')}% cashback on dining, or that many points/miles per dollar? They aren't interchangeable.")
     end
     eligible = @cards.select { |card| matches?(card, screen) }.map(&:id)
+    note catalogue_note(screen, eligible)
     evidence = catalogue_evidence
     web_evidence = screen["online"] == true ? research(question) : []
     evidence.concat(web_evidence)
+    note "Writing"
     result = answer(question, evidence, screen, eligible)
     # If the catalogue cannot answer it, try issuer evidence once. The outer
     # request deadline and one-search limit still apply.
     if screen["online"] != true && Array(result["paragraphs"]).all? { |p| p["kind"] == "unknown" }
       evidence.concat(research(question))
       screen["online"] = true
+      note "Writing"
       result = answer(question, evidence, screen, eligible)
     end
     # One rewrite when the model ignores the length brief: a wall of card names is
     # the answer nobody wanted. Verification below still applies to the rewrite.
     if Array(result["paragraphs"]).any? { |p| p["text"].to_s.split.size > 70 }
+      note "Shortening"
       result = answer(question, evidence, screen, eligible,
         correction: "Your previous reply was too long. Rewrite it in at most three paragraphs of under 60 words each, " \
                     "naming at most five cards and citing only those; keep the facts the same.")
@@ -70,6 +77,7 @@ class CardAssistant
       # A recommendation that reached past the eligible list gets one corrected
       # attempt before failing closed; anything else fails closed immediately.
       raise unless screen["recommendation"]
+      note "Correcting"
       result = answer(question, evidence, screen, eligible,
         correction: "Your previous reply recommended cards outside eligible_recommendations. Only those cards meet the " \
                     "constraints; recommend only them, or say there is no exact match.")
@@ -165,7 +173,20 @@ class CardAssistant
     end
   end
 
+  def note(text)
+    @progress&.call(text)
+  end
+
+  # Only a constraint the screen actually extracted makes "N cards match" true;
+  # a recommendation without one reads the whole catalogue like any question.
+  def catalogue_note(screen, eligible)
+    return "Read #{@cards.size} cards and #{@stacks.size} stacks" unless screen["recommendation"] && (screen["no_foreign_fees"] || screen["dining_rate"])
+    return "No exact matches" if eligible.empty?
+    "#{eligible.size} #{eligible.one? ? 'card matches' : 'cards match'}"
+  end
+
   def research(question)
+    note "Checking issuer sites"
     # 2,000 tokens: the search tool's own output counts against this cap, and a
     # summary that overruns it comes back "incomplete", which fails the request.
     response = @client.call(instructions: <<~TEXT, input: { question: question, history: @history.last(2) }.to_json, max_output_tokens: 2000, web: true)
@@ -182,7 +203,7 @@ class CardAssistant
     end
     # Retain only the sentence surrounding a real provider citation, not an
     # uncited generated summary. Links are never accepted from model-written JSON.
-    citations.first(8).filter_map.with_index do |(text, citation), index|
+    evidence = citations.first(8).filter_map.with_index do |(text, citation), index|
       start = citation["start_index"]
       finish = citation["end_index"]
       next unless start.is_a?(Integer) && finish.is_a?(Integer) && start >= 0 && finish > start && finish <= text.length
@@ -192,6 +213,13 @@ class CardAssistant
       { id: "web:#{index}", title: citation["title"].to_s.first(160), type: "web",
         url: citation["url"], facts: sentence.first(1800), checked_on: Date.current.iso8601 }
     end
+    # Name the issuer, not its subdomains: creditcards.chase.com is still chase.com.
+    hosts = evidence.filter_map do |item|
+      host = URI.parse(item[:url]).host.to_s
+      ISSUER_DOMAINS.find { |domain| host == domain || host.end_with?(".#{domain}") }
+    end.uniq.first(2)
+    note(hosts.empty? ? "Nothing found on issuer sites" : "Checked #{hosts.to_sentence}")
+    evidence
   end
 
   def matches?(card, screen)
