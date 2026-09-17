@@ -25,15 +25,9 @@
     <% if @question[:type] == :ranked %>
       <%= hidden_field_tag :ordered, @selected.join(""), data: { quiz_target: "ordered" } %>
     <% end %>
-    <% if @question[:type] == :ranked %>
-      <div class="rank-board" data-quiz-target="board" hidden>
-        <div class="rank-column"><p class="rank-caption">YOUR TOP THREE <span>Most important first</span></p><div data-quiz-target="slots" class="rank-slots"></div></div>
-        <div class="rank-cloud-column"><p class="rank-caption">MAKE IT YOURS <span>Drag a choice into a slot, or tap to add</span></p><div data-quiz-target="pool" class="rank-cloud" aria-label="Available choices"></div></div>
-      </div>
-    <% end %>
-    <fieldset aria-describedby="quiz-status" class="<%= 'rank-fallback' if @question[:type] == :ranked %>">
+    <fieldset aria-describedby="quiz-status">
       <legend class="visually-hidden"><%= @question[:prompt] %></legend>
-      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %>">
+      <div class="quiz-options <%= "quiz-options-many" if @question[:options].size > 6 %> <%= "quiz-options-ranked" if @question[:type] == :ranked %>">
         <% @question[:options].each_with_index do |option, index| %>
           <% budget_custom = @question[:type] == :budget && option == "Custom" && @selected.any? && !%w[0 100 300].include?(@selected.first) %>
           <% rank = @question[:type] == :ranked ? @selected.index(option) : nil %>

@@ -74,6 +74,15 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select '[data-controller~="results"]', count: 0
   end
 
+  test "ranked questions render as tap-in-order pills with no board" do
+    get new_quiz_response_path
+    assert_select ".quiz-options-ranked .quiz-answer input[type=checkbox]", count: 5
+    assert_select ".quiz-options-ranked .quiz-rank", count: 5
+    assert_select "input[name=ordered]", count: 1
+    assert_select ".rank-board", count: 0
+    assert_select ".quiz-heading p", text: /Tap up to three, in order/
+  end
+
   test "not knowing the credit score still produces a stack, with a note" do
     CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
     Card.publish_us_demo!

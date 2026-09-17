@@ -105,39 +105,24 @@
 .quiz-page .quiz-save-link:hover { color: var(--burgundy); }
 .quiz-page .quiz-save-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
 
-/* Spatial ranking: the same slots for goals and spending, with a wrapping pool. */
-.ranking-ready .rank-fallback { display: none; }
-.rank-board[hidden] { display: none; }
-.rank-board { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 36px; padding: 20px 0 16px; }
-.rank-caption { margin: 0 0 16px; font-size: 11px; letter-spacing: .1em; color: var(--muted); }
-.rank-caption span { display: block; margin-top: 6px; font-size: 13px; letter-spacing: 0; }
-.rank-slots { display: grid; gap: 10px; }
-.rank-slot { display: flex; align-items: center; gap: 12px; min-height: 76px; padding: 10px 12px; border: 1px dashed var(--hairline-strong); border-radius: var(--radius-card); background: var(--surface); }
-.rank-slot.is-filled { border-style: solid; background: var(--surface-raised); }
-.rank-position { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.rank-placeholder { font-size: 15px; color: var(--muted); }
-.rank-cloud { min-height: 250px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; align-items: center; gap: 14px 10px; padding: 12px 0; border-radius: var(--radius-card); }
-.quiz-page .rank-choice { padding: 12px 16px; border: 1px solid var(--hairline-strong); border-radius: 24px; background: var(--surface-raised); color: var(--ink); font-size: 16px; min-height: 46px; max-width: 100%; }
-.rank-choice:nth-child(3n + 1) { margin-top: 12px; }
-.quiz-page .rank-item { padding: 6px 0; border: 0; background: none; color: var(--ink); font-size: 17px; font-weight: 500; text-align: left; flex: 1; min-width: 0; min-height: 44px; }
-.rank-item-controls { display: grid; grid-template-columns: repeat(3, 28px); flex-shrink: 0; }
-.quiz-page .rank-item-controls button { border: 0; background: none; color: var(--muted); min-height: 44px; padding: 0; font-size: 17px; }
-.rank-item-controls button:disabled { opacity: .25; }
-.rank-board [data-draggable] { cursor: grab; touch-action: none; user-select: none; }
-.rank-board [data-draggable]:active { cursor: grabbing; }
-.rank-board .is-drop-target { outline: 2px solid var(--focus-ring); outline-offset: 3px; background: var(--surface-field); }
-.rank-drag-ghost { position: fixed; top: 0; left: 0; z-index: 1000; pointer-events: none; max-width: 280px; padding: 14px 18px; border: 1px solid var(--focus-ring); border-radius: 24px; color: var(--ink); background: var(--surface-raised); box-shadow: 0 8px 24px rgb(0 0 0 / 18%); }
+/* Ranked question: tap pills in order. The badge carries the rank; there are no
+   slots and no dragging. The pills are the checkboxes, visually hidden. */
+.quiz-page .quiz-options-ranked { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 26px; }
+.quiz-page .quiz-options-ranked .quiz-answer { position: relative; min-height: 62px; padding: 0 26px; gap: 12px; border-color: var(--hairline-strong); border-radius: 999px; background: var(--surface); }
+.quiz-page .quiz-options-ranked .quiz-answer input { position: absolute; width: 1px; height: 1px; margin: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.quiz-page .quiz-options-ranked .quiz-answer span { font-size: clamp(17px, 1.45vw, 21px); }
+/* White, not the surface token: the pill is burgundy in both themes. */
+.quiz-page .quiz-options-ranked .quiz-rank { display: none; margin: 0 0 0 -6px; width: 28px; height: 28px; font-size: 14px; color: var(--burgundy); background: white; opacity: 1; }
+.quiz-page .quiz-options-ranked .quiz-answer.is-ranked { padding-left: 16px; border-color: var(--burgundy); background: var(--burgundy); color: white; }
+.quiz-page .quiz-options-ranked .quiz-answer.is-ranked .quiz-rank { display: grid; }
+.quiz-page .quiz-options-ranked .quiz-answer:has(input:disabled) { opacity: .45; }
 .quiz-page .quiz-status { color: var(--keyword-ink, var(--burgundy)); }
-@media (hover: hover) and (pointer: fine) {
-  .quiz-page .rank-choice:hover { border-color: var(--ink); background: var(--surface-field); }
-}
-@media (max-width: 600px) {
-  .rank-board { grid-template-columns: 1fr; gap: 22px; padding-top: 20px; }
-  .rank-slot { min-height: 70px; }
-  .rank-cloud { min-height: 0; justify-content: flex-start; padding: 0; gap: 8px; }
-  .rank-choice:nth-child(n) { margin-top: 0; }
-  .quiz-page .rank-choice { font-size: 14px; padding: 10px 14px; }
-  .rank-caption { margin-bottom: 10px; }
+@media (max-width: 767px) {
+  .quiz-page .quiz-options-ranked { gap: 10px; padding-top: 18px; }
+  .quiz-page .quiz-options-ranked .quiz-answer { min-height: 48px; padding: 0 18px; gap: 10px; }
+  .quiz-page .quiz-options-ranked .quiz-answer.is-ranked { padding-left: 12px; }
+  .quiz-page .quiz-options-ranked .quiz-answer span { font-size: 16px; }
+  .quiz-page .quiz-options-ranked .quiz-rank { width: 24px; height: 24px; font-size: 13px; }
 }
 
 .quiz-heading p, .quiz-progress-copy { color: var(--muted); }
