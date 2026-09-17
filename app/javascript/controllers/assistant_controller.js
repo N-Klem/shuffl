@@ -363,9 +363,10 @@ export default class extends Controller {
     const sources = reply.sources || []
     ;(reply.paragraphs || []).forEach(paragraph => {
       const p = this.node("p", paragraph.text)
-      ;(paragraph.evidence_ids || []).forEach(id => {
-        const source = sources.find(item => item.id === id)
-        if (!source) return
+      const cited = (paragraph.evidence_ids || []).map(id => sources.find(item => item.id === id)).filter(Boolean)
+      // Three inline markers at most; a long run of citations reads as noise, so the
+      // rest fold into the Sources list below.
+      cited.slice(0, 3).forEach(source => {
         const link = this.node("a", ` [${sources.indexOf(source) + 1}]`)
         link.href = source.url
         link.target = "_blank"
@@ -373,6 +374,7 @@ export default class extends Controller {
         link.setAttribute("aria-label", `Source: ${source.title}${source.checked_on ? `, checked ${source.checked_on}` : ""}`)
         p.append(link)
       })
+      if (cited.length > 3) p.append(this.node("span", ` +${cited.length - 3} in sources`, "assistant-more-sources"))
       article.append(p)
     })
     ;(reply.cards || []).forEach(card => article.append(this.cardElement(card)))

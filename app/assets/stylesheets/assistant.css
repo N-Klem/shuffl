@@ -37,6 +37,7 @@ html[data-theme="dark"] .floating-assistant { --assistant-glass:rgba(35,29,34,.9
 .assistant-body { flex: 1; min-width: 0; padding-top: 3px; }
 .assistant-body > p { margin: 0 0 8px; color: var(--body-color); white-space: pre-wrap; }
 .assistant-body > p:last-child { margin-bottom: 0; }
+.assistant-more-sources { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .assistant-pending p { color: var(--muted); }
 .assistant-error p { color: var(--brick); }
 .assistant-typing { display: inline-flex; gap: 4px; margin-right: 8px; vertical-align: middle; }
