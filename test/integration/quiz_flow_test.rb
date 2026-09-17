@@ -59,7 +59,7 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "real catalogue returns no match instead of aspirational cards" do
+  test "a credit range with no exact match still gets the closest stack, with a note" do
     CardCandidate.import_file!(Rails.root.join("data/real_cards/catalogue.json"))
     Card.publish_us_demo!
     get new_quiz_response_path
@@ -68,10 +68,10 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     submit_answer("Building (300–579)"); follow_redirect!
     7.times { answer_current; follow_redirect! }
     assert_response :success
-    assert_equal [], JSON.parse(QuizResponse.order(:id).last.top_card_ids)
-    assert_select "h1", "No matching stack yet."
-    assert_select "#save-stack", count: 0
-    assert_select '[data-controller~="results"]', count: 0
+    refute_empty JSON.parse(QuizResponse.order(:id).last.top_card_ids)
+    assert_select "h1", text: /rewarding/
+    assert_select ".footnote", text: /couldn't match your credit range exactly/
+    assert_select "#save-stack", count: 1
   end
 
   test "ranked questions render as tap-in-order pills with no board" do

@@ -13,8 +13,38 @@ class QuizRecommendation
     fits.sort_by { |fit| [-fit.score, fit.card.annual_fee || Float::INFINITY, fit.card.id] }.map(&:card)
   end
 
+  def budget
+    answers.fetch("annual_fee_budget", "0").to_d
+  end
+
   def cards
-    budget = answers.fetch("annual_fee_budget", "0").to_d
+    select_within(budget)
+  end
+
+  # The strict result, or the closest one when nothing fits: the credit filter is
+  # relaxed first (it is context, not an approval check), then the fee ceiling is
+  # raised tier by tier to the cheapest stack that exists, then both. Returns the
+  # stack and the limits that had to give, so the results page can say so.
+  def closest
+    stack = cards
+    return [ stack, [] ] if stack.any?
+    lenient = self.class.new(answers.merge("credit_score" => "I don't know"))
+    stack = lenient.cards
+    return [ stack, [ :credit ] ] if stack.any?
+    stack = cheapest_stack
+    return [ stack, [ :budget ] ] if stack.any?
+    [ lenient.cheapest_stack, [ :credit, :budget ] ]
+  end
+
+  def cheapest_stack
+    fits.map { |fit| fit.card.annual_fee }.compact.uniq.sort.each do |tier|
+      stack = select_within(tier)
+      return stack if stack.any?
+    end
+    []
+  end
+
+  def select_within(budget)
     candidates = fits.select { |fit| fit.card.annual_fee && fit.card.annual_fee <= budget }
     best, best_score, best_fee = [], -Float::INFINITY, Float::INFINITY
     maximum = [Card.stack_size_limit(answers), candidates.size].min

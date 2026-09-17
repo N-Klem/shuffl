@@ -20,6 +20,27 @@ class QuizRecommendationTest < ActiveSupport::TestCase
     fit(key, extra.merge("spending_priorities" => [category])).features.fetch("spend:#{category}", 0)
   end
 
+  test "closest relaxes the credit filter, then the budget, and says which" do
+    stack, relaxed = QuizRecommendation.new(@answers).closest
+    assert_equal QuizRecommendation.new(@answers).cards.map(&:id), stack.map(&:id)
+    assert_empty relaxed
+
+    stack, relaxed = QuizRecommendation.new(@answers.merge("credit_score" => "Building (300–579)")).closest
+    refute_empty stack
+    assert_equal [ :credit ], relaxed
+
+    Card.update_all(catalogue_status: "retired")
+    Card.find_by!(source_key: "us-chase-sapphire-preferred").update!(catalogue_status: "published", annual_fee: 95)
+    assert_empty QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0")).cards
+    stack, relaxed = QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0")).closest
+    assert_equal [ "us-chase-sapphire-preferred" ], stack.map(&:source_key)
+    assert_equal [ :budget ], relaxed
+
+    stack, relaxed = QuizRecommendation.new(@answers.merge("annual_fee_budget" => "0", "credit_score" => "Building (300–579)")).closest
+    assert_equal [ "us-chase-sapphire-preferred" ], stack.map(&:source_key)
+    assert_equal [ :credit, :budget ], relaxed
+  end
+
   test "supermarket bonuses are not counted at superstores or wholesale clubs" do
     key = "us-amex-blue-cash-preferred"
     regular = spending(key, "Groceries", "groceries_where" => "Supermarkets")

@@ -82,6 +82,7 @@ class QuizResponsesController < ApplicationController
     session.delete(:quiz_finish_id) if @show_quiz_finish
     ids = JSON.parse(@quiz_response.top_card_ids)
     @cards = ids.filter_map { |id| Card.find_by(id: id) }
+    @relaxed = relaxed_limits(@quiz_response.answers_hash, @cards)
     @results_payload = ResultsStack.new(@quiz_response).payload
   end
 
@@ -150,9 +151,19 @@ class QuizResponsesController < ApplicationController
     @selected = Array(session[:quiz_answers][@question[:key]])
   end
 
+  # Derived rather than stored: a strict result passes both checks, so a saved
+  # stack that fails one can only have come from the relaxed selection.
+  def relaxed_limits(answers, cards)
+    return {} unless answers.key?("annual_fee_budget") && cards.any?
+    {
+      credit: answers["credit_score"] != "I don't know" && cards.any? { |card| !card.recommendable_for?(answers) },
+      budget: cards.sum { |card| card.annual_fee.to_d } > answers["annual_fee_budget"].to_d
+    }
+  end
+
   def finish_quiz
     answers = session[:quiz_answers]
-    top_cards = QuizRecommendation.new(answers).cards
+    top_cards, _relaxed = QuizRecommendation.new(answers).closest
 
     @quiz_response = resumable_draft || QuizResponse.new(user: current_user)
     @quiz_response.update!(
