@@ -38,6 +38,9 @@ export default class extends Controller {
       this.ask(trigger.dataset.assistantAsk)
     }
     document.addEventListener("click", this.onAsk)
+
+    // A panel left open stays open across page loads, like any chat widget.
+    try { if (sessionStorage.getItem("shuffl-assistant-open") === "1") this.open(false) } catch (_) {}
   }
 
   disconnect() {
@@ -123,12 +126,13 @@ export default class extends Controller {
     this.panelTarget.hidden ? this.open() : this.close()
   }
 
-  open() {
+  open(focus = true) {
     this.panelTarget.hidden = false
     this.orbTarget.setAttribute("aria-expanded", "true")
     this.resize()
+    try { sessionStorage.setItem("shuffl-assistant-open", "1") } catch (_) {}
     if (this.hasInputTarget) {
-      this.inputTarget.focus({ preventScroll: true })
+      if (focus) this.inputTarget.focus({ preventScroll: true })
       this.ensureLoaded()
     }
   }
@@ -152,6 +156,7 @@ export default class extends Controller {
     const focusInside = this.panelTarget.contains(document.activeElement)
     this.panelTarget.hidden = true
     this.orbTarget.setAttribute("aria-expanded", "false")
+    try { sessionStorage.removeItem("shuffl-assistant-open") } catch (_) {}
     if (focusInside) this.orbTarget.focus()
   }
 

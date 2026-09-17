@@ -23,6 +23,9 @@
       <% end %>
       <p class="detail-foryou-copy detail-foryou-copy--spaced">Not sure this is your stack? The quiz ranks every card against how you spend.</p>
       <%= link_to "Take the quiz", new_quiz_response_path, class: "detail-back detail-back--tight" %>
+      <% if @available %>
+        <button type="button" class="detail-back detail-back--tight detail-ask" data-assistant-ask="What's in the <%= @stack.name %> stack, and who is it for?">Ask <%= CardAssistant::NAME %> about this stack</button>
+      <% end %>
     </div>
 
     <div>
