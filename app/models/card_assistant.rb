@@ -57,13 +57,22 @@ class CardAssistant
       screen["online"] = true
       result = answer(question, evidence, screen, eligible)
     end
+    # One rewrite when the model ignores the length brief: a wall of card names is
+    # the answer nobody wanted. Verification below still applies to the rewrite.
+    if Array(result["paragraphs"]).any? { |p| p["text"].to_s.split.size > 70 }
+      result = answer(question, evidence, screen, eligible,
+        correction: "Your previous reply was too long. Rewrite it in at most three paragraphs of under 60 words each, " \
+                    "naming at most five cards and citing only those; keep the facts the same.")
+    end
     begin
       verified_reply(result, evidence, screen, eligible)
     rescue ArgumentError
       # A recommendation that reached past the eligible list gets one corrected
       # attempt before failing closed; anything else fails closed immediately.
       raise unless screen["recommendation"]
-      result = answer(question, evidence, screen, eligible, correction: true)
+      result = answer(question, evidence, screen, eligible,
+        correction: "Your previous reply recommended cards outside eligible_recommendations. Only those cards meet the " \
+                    "constraints; recommend only them, or say there is no exact match.")
       verified_reply(result, evidence, screen, eligible)
     end
   rescue JSON::ParserError, KeyError, TypeError, ArgumentError
@@ -80,7 +89,7 @@ class CardAssistant
 
   private
 
-  def answer(question, evidence, screen, eligible, correction: false)
+  def answer(question, evidence, screen, eligible, correction: nil)
     # Names as well as ids, and a flag on each card: the model treats bare ids as
     # opaque and reaches past them.
     eligible_cards = @cards.select { |card| eligible.include?(card.id) }.map { |card| { id: card.id, name: card.name } }
@@ -93,10 +102,7 @@ class CardAssistant
       eligible_recommendation_ids: eligible, eligible_recommendations: eligible_cards, recommendation: screen["recommendation"],
       wallet_card_ids: @user.wallet_items.pluck(:card_id), web_checked: screen["online"],
       today: Date.current.iso8601 }
-    if correction
-      input[:correction] = "Your previous reply recommended cards outside eligible_recommendations. Only those cards meet the constraints; " \
-        "recommend only them, or say there is no exact match."
-    end
+    input[:correction] = correction if correction
     parse(@client.call(instructions: answer_instructions, input: input.to_json, max_output_tokens: 1800, schema: ANSWER_SCHEMA))
   end
 
